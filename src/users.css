@@ -1,0 +1,245 @@
+/* General Styles */
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f8f8f8;
+  margin: 20px;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 50vh; /* Full height for proper centering */
+  flex-direction: column;
+}
+
+h1 {
+  text-align: left;
+  color: #030303;
+  margin-top: 20px;
+  margin-bottom: 30px;
+  font-size:x-large;
+}
+
+/* Container Styles */
+.container {
+  width: 100%;
+  margin: 20px auto;
+  padding: 20px;
+  box-shadow: 0px 1px 3px #329d9c;
+  border-radius: 5px;
+}
+
+/* Button Styles */
+button {
+  background-color: #2ba369;
+  color: rgb(188, 228, 190);
+  padding: 10px 20px;
+  border: none;
+  font-size: 14px;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #1e4c33;
+}
+
+button:disabled {
+  background-color: #a3bfa2;
+  cursor: not-allowed;
+}
+
+/* Table Styles */
+/* Table Container */
+table {
+  width: 100px;
+  border-collapse: collapse;
+  margin-top: 20px;
+  background-color: #ffffff;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Table Headers */
+th {
+  background-color: #2d6a4f;
+  color: white;
+  text-align: left;
+  padding: 14px;
+  font-size: 16px;
+}
+
+/* Table Rows */
+tr {
+  border-bottom: 1px solid #ddd;
+}
+
+tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+tr:hover {
+  background-color: #e0f2f1;
+  transition: background 0.3s ease-in-out;
+}
+
+/* Table Cells */
+td {
+  padding: 14px;
+  font-size: 15px;
+  color: #333;
+}
+
+/* Action Buttons */
+td button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 20px;
+  margin-right: 10px;
+  transition: color 0.3s ease-in-out;
+}
+
+td button:first-child {
+  color: #3498db;
+}
+
+td button:first-child:hover {
+  color: #1e88e5;
+}
+
+td button:last-child {
+  color: #e74c3c;
+}
+
+td button:last-child:hover {
+  color: #c0392b;
+}
+
+/* Responsive Table */
+@media (max-width: 768px) {
+  table {
+    font-size: 14px;
+  }
+
+  th, td {
+    padding: 10px;
+  }
+}
+
+/* Modal Styles */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000; /* Ensure modal is on top */
+}
+
+/* Modal content */
+.modal-content {
+  background-color: white;
+  padding: 30px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  width: 100%;
+  max-width: 500px; /* Ensure modal is not too wide */
+  overflow-y: auto; /* In case of longer forms */
+  position: relative;
+}
+
+.modal-content1 {
+  background-color: white;
+  padding: 30px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  width: 100%;
+  max-width: 250px; /* Ensure modal is not too wide */
+  overflow-y: auto; /* In case of longer forms */
+  position: relative;
+}
+
+.modal-content h2 {
+  text-align: center;
+  color: #00796b;
+  margin-bottom: 20px;
+}
+
+/* Input fields */
+input,
+select {
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+}
+
+input[type="password"] {
+  display: inline-block;
+  width: calc(100% - 100px); /* For password visibility toggle */
+}
+
+/* Buttons inside modal  sa date to */
+button[type="button1"] {
+  background-color: #189418;
+  width: 90px;
+  padding: 8px;
+  border-radius: 6cqb;
+  margin-left: 400px;
+  margin-top: 10px;
+}
+
+button[type="submit"] {
+  width: 100%;
+  padding: 12px;
+  background-color: #2d6a4f;
+  color: white;
+  font-size: 16px;
+  border-radius: 4px;
+  margin-top: 20px;
+}
+
+button[type="submit"]:hover {
+  background-color: #1e4c33;
+}
+
+button[type="button"]:hover {
+  background-color: #387c56;
+}
+
+/* Password visibility toggle */
+.password-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Error message */
+.error-message {
+  color: red;
+  text-align: center;
+  margin-top: 10px;
+}
+
+/* Modal Responsive Styles */
+@media (max-width: 768px) {
+  .modal-content {
+    width: 90%;
+    padding: 20px;
+  }
+
+  .password-container {
+    flex-direction: column;
+  }
+
+  .password-toggle-btn,
+  .generate-password-btn {
+    width: 100%;
+    margin-top: 10px;
+  }
+}

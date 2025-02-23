@@ -1,0 +1,170 @@
+/* Sidebar container */
+.sidebar {
+  height: 100%;
+  width: 160px; /* Default Sidebar width */ 
+  position: fixed;
+  top: 0;
+  left: 0;
+  background-color: #ffffff; /* Darker teal color */
+  padding-top: 20px;
+  font-family:Georgia, 'Times New Roman', Times, serif;
+  transition: width 0.3s ease; /* Smooth transition for sidebar width */
+  color: #fff;
+  display: block; /* Default state */
+  z-index: 1000;
+}
+
+/* Sidebar links container */
+.sidebar ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+/* Sidebar item styles */
+.sidebar li {
+  padding: 12px 20px;
+  text-align: left;
+  transition: background-color 0.3s ease; /* Smooth background transition */
+}
+
+/* Link styles */
+.sidebar a {
+  color: #0c0b0b; /* White color for links */
+  text-decoration: none;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+}
+
+/* Add icons to links (optional) */
+.sidebar a .icon {
+  margin-right: 10px; /* Space between icon and text */
+  font-size: 20px;
+}
+
+/* Hover effect */
+.sidebar a:hover {
+  background-color: #046664; /* Darker teal */
+  padding-left: 30px; /* Indent when hovered */
+  transition: all 0.3s ease; /* Smooth hover transition */
+}
+
+/* Optional: Active link style */
+.sidebar a.active {
+  background-color: #ffffff; /* Light teal */
+  color: #fff;
+}
+
+/* Dropdown Button Styles */
+.dropdown-btn {
+  background-color: #ffffff;
+  color: #080808;
+  border: none;
+  padding: 12px 20px;
+  text-align: left;
+  width: 100%;
+  font-size: 18px;
+  cursor: pointer;
+  border-radius: 4px;
+
+}
+
+.dropdown-btn:hover {
+  background-color: #004d40;
+}
+
+/* Always visible dropdown menu */
+.dropdown {
+  background-color: #ffffff;
+  padding: 20px;
+  margin-top: 10px;
+  display:block;
+}
+
+.dropdown li {
+  padding: 8px 0;
+}
+
+/* Content Wrapper */
+.content-wrapper {
+  margin-left: 220px; /* Offset content by the sidebar width */
+  padding: 20px;
+  transition: margin-left 0.3s ease; /* Smooth transition for content */
+}
+
+/* Sidebar Toggle Button */
+.sidebar-toggle {
+  display: none; /* Hidden by default */
+  background-color: #ffffff;
+  color: white;
+  font-size: 24px;
+  padding: 10px;
+  cursor: pointer;
+  border: none;
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  z-index: 2; /* Ensure it's above sidebar */
+}
+
+/* Responsive adjustments */
+/* Tablet: Collapse Sidebar to Icons */
+@media screen and (max-width: 1024px) {
+  .sidebar {
+    width: 80px;
+  }
+
+  .sidebar a {
+    justify-content: center;
+    padding-left: 0;
+  }
+
+  .sidebar a .icon {
+    margin: 0;
+  }
+
+  .sidebar ul li span {
+    display: none; /* Hide text */
+  }
+
+  .dropdown {
+    padding-left: 10px;
+  }
+
+  .content-wrapper {
+    margin-left: 80px;
+  }
+}
+
+/* Mobile: Fully Hide Sidebar */
+@media screen and (max-width: 768px) {
+  .sidebar {
+    left: -240px;
+    width: 240px;
+  }
+
+  .sidebar.open {
+    left: 0;
+  }
+
+  .content-wrapper {
+    margin-left: 0;
+  }
+
+  .sidebar-toggle {
+    display: block;
+  }
+}
+
+
+.logo {
+  text-align: center;
+  padding-bottom: 10px;
+}
+
+.logo-img {
+  width: 80%; /* Makes the logo responsive */
+  max-width: 80px; /* Adjust size as necessary */
+  height: 80px;
+  margin: 0 auto;
+}

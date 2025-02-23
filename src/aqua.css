@@ -1,0 +1,197 @@
+/* General container styling */
+.aqua-container {
+    padding: 20px;
+    font-family: Arial, sans-serif;
+    text-align: center;
+    background-color: #f5f5f5;
+    min-height: 100vh;
+}
+
+
+/* Page title and description */
+.aqua-title {
+    font-size: 2.5rem;
+    color: #333333;
+    margin-bottom: 10px;
+}
+
+.aqua-description {
+    font-size: 1.2rem;
+    color: #555;
+    margin-bottom: 30px;
+}
+
+/* Card grid layout */
+.aqua-card-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* 3 cards per row */
+    gap: 30px;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+/* Adjusting grid for 5 cards */
+.aqua-card-grid > .aqua-card:nth-child(5) {
+    grid-column: 2; /* Center the last card in the second row */
+}
+
+/* Individual card styling */
+.aqua-card {
+    width: 100%;
+    max-width: 330px;
+    background: #e6f7e6;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    text-align: center;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.aqua-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+/* Card content */
+.aqua-card-content {
+    padding: 20px;
+}
+
+.aqua-card-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #4caf50;
+    margin-bottom: 10px;
+}
+
+.aqua-card-description {
+    font-size: 1rem;
+    color: #666;
+    margin-bottom: 15px;
+}
+
+/* Button styling */
+.aqua-card-button,
+.sensor-card-button {
+    padding: 10px 20px;
+    background-color: #52ce5c;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    text-transform: uppercase;
+    font-size: 0.9em;
+    transition: background-color 0.3s ease;
+}
+
+.aqua-card-button:hover,
+.sensor-card-button:hover {
+    background-color: #0056b3;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .aqua-card-grid {
+        grid-template-columns: 1fr; /* Stack cards on smaller screens */
+    }
+
+    .aqua-card {
+        max-width: 90%;
+    }
+}
+
+
+.dashboard-container {
+    padding: 20px;
+    font-family: Arial, sans-serif;
+    text-align: center;
+    background-color: #f5f5f5;
+    min-height: 90vh;
+    padding-left: 200px;
+ 
+   
+ 
+}
+
+.dashboard-card-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr); /* 3 cards per row */
+    gap: 30px;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.dashboard-card-grid > .aqua-card:nth-child(5) {
+    grid-column: 2; /* Center the last card in the second row */
+}
+
+
+
+.chart-container {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px; /* Adjusts the space between the charts */
+    padding: 20px;
+  }
+  
+  .dashboard-chart {
+    width: 100%; /* Adjusts the width of each chart */
+    height: 250px; /* Set a fixed height for your charts */
+    display: flex;
+    gap: 60px;
+    justify-content:center;
+    align-items: center;
+    border: 1px solid #329d9c; /* Optional, for border styling */
+    border-radius: 10px; /* Optional, for rounded corners */
+    background-color: #f9f9f9; /* Optional, background color for the chart container */
+  }
+
+
+  .piechart{
+    display: flex;
+   width: 330px;
+   padding-left: 100px;
+   margin-top: 10px;
+   margin-bottom: 20px;
+   
+
+   
+  }
+ 
+
+  
+
+
+  
+
+
+  .logo-img1{
+
+ 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 120px;
+    margin-left: 60px;
+   
+  }
+
+  .logo-img2{
+
+ 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100px;
+    margin-left: 100px;
+   
+   
+  }
+
+  .textbox1{
+    width: 120%;
+    margin-left: 20px;
+  }
+  
+
+
