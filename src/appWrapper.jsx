@@ -1,5 +1,5 @@
 import React from 'react';
-import { Route, BrowserRouter as Router, Routes, } from 'react-router-dom';
+import { Navigate, Route, BrowserRouter as Router, Routes, useLocation } from 'react-router-dom';
 
 import Aquaculture from './aquaculture';
 import Dashboard from './dashboard';
@@ -30,7 +30,8 @@ import Soilmonitoring from './soilmonitoring';
 import Users from './users';
 import Watertemp from './watertemp';
 
-const AppWrapper = () => {
+const AppContent = () => {
+  const location = useLocation(); // Get current path
 
   // Define routes where Navbar should not be shown
   const noNavbarRoutes = [
@@ -42,43 +43,51 @@ const AppWrapper = () => {
   ];
 
   return (
-    <Router>
+    <>
       {/* Render Navbar conditionally based on current route */}
       {!noNavbarRoutes.includes(location.pathname) && <Navbar />}
 
       <Routes>
-        {/* Define routes for different pages */}
-        <Route path="/" element={<Dashboard />} /> {/* Default dashboard route */}
-        <Route path="/users" element={<Users />} /> {/* Users page */}
-        <Route path="/sensors" element={<Sensors />} /> {/* Sensors page */}
-        <Route path="/profile" element={<Profile />} /> {/* Profile page */}
-        <Route path="/plantregistration" element={<PlantRegistration />} /> {/* Plant Registration page */}
-        <Route path="/plants" element={< Plants />} /> {/* Plant Registration page */}
-        <Route path="/hydro" element={< Hydro />} /> {/* Plant Registration page */}
-        <Route path= "/soil" element={< Soil />} />
-        <Route path= "/rhydro" element={< Rhydro />} />
-        <Route path= "/rsoil" element={< Rsoil />} />
-        <Route path="/harvest" element={<Harvest/>} />
-        <Route path="/humidity" element={<Humidity/>} />
-        <Route path="/aquaculture" element={<Aquaculture/>} />
-        <Route path="/watertemp" element={<Watertemp/>} />
-        <Route path="/do" element={<Do/>} />
-        <Route path="/soilbased" element={<Soilbased/>} />
-        <Route path="/soilmonitoring" element={<Soilmonitoring/>} />
-        <Route path="/hydrowaterlevel" element={<Hydrowaterlevel/>} />
-        <Route path="/reservior" element={<Reservior/>} />
-        <Route path="/food" element={<Food/>} />
-        <Route path="/pesticide" element={<Pesticide/>} />
-        <Route path="/history" element={<History/>} />
-   
- 
+        {/* Redirect root ("/") to login */}
+        <Route path="/" element={<Navigate to="/login" />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/users" element={<Users />} />
+        <Route path="/sensors" element={<Sensors />} />
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/plantregistration" element={<PlantRegistration />} />
+        <Route path="/plants" element={<Plants />} />
+        <Route path="/hydro" element={<Hydro />} />
+        <Route path="/soil" element={<Soil />} />
+        <Route path="/rhydro" element={<Rhydro />} />
+        <Route path="/rsoil" element={<Rsoil />} />
+        <Route path="/harvest" element={<Harvest />} />
+        <Route path="/humidity" element={<Humidity />} />
+        <Route path="/aquaculture" element={<Aquaculture />} />
+        <Route path="/watertemp" element={<Watertemp />} />
+        <Route path="/do" element={<Do />} />
+        <Route path="/soilbased" element={<Soilbased />} />
+        <Route path="/soilmonitoring" element={<Soilmonitoring />} />
+        <Route path="/hydrowaterlevel" element={<Hydrowaterlevel />} />
+        <Route path="/reservior" element={<Reservior />} />
+        <Route path="/food" element={<Food />} />
+        <Route path="/pesticide" element={<Pesticide />} />
+        <Route path="/history" element={<History />} />
+
         {/* Routes without Navbar */}
-        <Route path="/resetpassword" element={<ResetPassword />} /> {/* Reset Password page */}
-        <Route path="/requestpasswordreset" element={<RequestPasswordReset />} /> {/* Request Password Reset page */}
-        <Route path="/entercurrentpassword" element={<EnterCurrentPassword />} /> {/* Enter Current Password page */}
-        <Route path="/passwordchanged" element={<PasswordChanged />} /> {/* Password Changed page */}
-        <Route path="/login" element={<Login />} /> {/* Password Changed page */}
+        <Route path="/resetpassword" element={<ResetPassword />} />
+        <Route path="/requestpasswordreset" element={<RequestPasswordReset />} />
+        <Route path="/entercurrentpassword" element={<EnterCurrentPassword />} />
+        <Route path="/passwordchanged" element={<PasswordChanged />} />
+        <Route path="/login" element={<Login />} />
       </Routes>
+    </>
+  );
+};
+
+const AppWrapper = () => {
+  return (
+    <Router>
+      <AppContent />
     </Router>
   );
 };

@@ -2,7 +2,7 @@ import bcrypt from 'bcryptjs'; // For password comparison
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './aqua.css';
-import { supabase } from './createClient'; // Make sure your supabase client is correctly configured
+import { supabase } from './createClient'; // Ensure Supabase is correctly configured
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -23,7 +23,7 @@ const Login = () => {
       // Fetch user data from Supabase based on email
       const { data, error: userError } = await supabase
         .from('users')
-        .select('email, password, position') // Select both email, password, and position fields
+        .select('email, password, position') // Select email, password, and position fields
         .eq('email', email)
         .single();
 
@@ -32,8 +32,8 @@ const Login = () => {
         return;
       }
 
-      // Compare the entered password with the stored hashed password
-      const isMatch = await bcrypt.compare(password, data.password); // Compare the entered password with the hashed password
+      // Compare entered password with the stored hashed password
+      const isMatch = await bcrypt.compare(password, data.password);
       if (!isMatch) {
         setError('Incorrect password.');
         return;
@@ -46,10 +46,11 @@ const Login = () => {
       }
 
       setSuccess('Login successful! Redirecting to the Dashboard...');
-      // Redirect to the Dashboard page after successful login
+      
+      // Redirect to the Dashboard after successful login
       setTimeout(() => {
-        navigate('/'); // Adjust the route as per your routing setup
-      }, 2000);
+        navigate('/dashboard'); // Redirect to dashboard
+      }, 1000);
 
     } catch (error) {
       setError('Error: ' + error.message);
@@ -57,10 +58,8 @@ const Login = () => {
   };
 
   return (
-
-
-    <div class ="container">
-       <img src="/logo.png" alt="Logo" className="logo-img1" />
+    <div className="container">
+      <img src="/logo.png" alt="Logo" className="logo-img1" />
       <h2>Login</h2>
       <form onSubmit={handleSubmit}>
         <div>
@@ -74,9 +73,9 @@ const Login = () => {
           />
         </div>
 
-        <div className='textbox1'>
+        <div className="textbox1">
           <label htmlFor="password">Password</label>
-          <br></br>
+          <br />
           <input
             type="password"
             id="password"
@@ -86,7 +85,7 @@ const Login = () => {
           />
         </div>
 
-        <button type="submit"> Login</button>
+        <button type="submit">Login</button>
       </form>
 
       {error && <p style={{ color: 'red' }}>{error}</p>}

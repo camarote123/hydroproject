@@ -34,7 +34,7 @@ const Navbar = () => {
         </div>
 
         <ul>
-          <li><Link to="/" onClick={toggleSidebar}><FaHome className="icon" /> Dashboard</Link></li>
+          <li><Link to="/dashboard" onClick={toggleSidebar}><FaHome className="icon" /> Dashboard</Link></li>
           <li><Link to="/users" onClick={toggleSidebar}><FaUsers className="icon" /> Users</Link></li>
           <li><Link to="/sensors" onClick={toggleSidebar}><FaCogs className="icon" /> Sensors</Link></li>
 
@@ -66,6 +66,8 @@ const Navbar = () => {
           </li>
 
           <li><Link to="/harvest" onClick={toggleSidebar}><FaLeaf className="icon" /> Harvested Plants</Link></li>
+
+          
         </ul>
       </div>
     </>
