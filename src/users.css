@@ -7,7 +7,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 50vh; /* Full height for proper centering */
+  min-height: 50vh;
   flex-direction: column;
 }
 
@@ -16,7 +16,7 @@ h1 {
   color: #030303;
   margin-top: 20px;
   margin-bottom: 30px;
-  font-size:x-large;
+  font-size: x-large;
 }
 
 /* Container Styles */
@@ -29,14 +29,7 @@ h1 {
 }
 
 /* Button Styles */
-button {
-  background-color: #2ba369;
-  color: rgb(188, 228, 190);
-  padding: 10px 20px;
-  border: none;
-  font-size: 14px;
-  transition: background-color 0.3s ease;
-}
+
 
 button:hover {
   background-color: #1e4c33;
@@ -47,21 +40,27 @@ button:disabled {
   cursor: not-allowed;
 }
 
+.create-user-btn {
+  background-color: #136813EF;
+  color: white;
+  border-radius: 4px;
+  margin-bottom: 20px;
+}
+
 /* Table Styles */
-/* Table Container */
 table {
-  width: 100px;
+  width: 100%;
   border-collapse: collapse;
   margin-top: 20px;
   background-color: #ffffff;
-  border-radius: 10px;
+  border-radius: 5px;
   overflow: hidden;
   box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
 }
 
 /* Table Headers */
 th {
-  background-color: #2d6a4f;
+  background-color: #136813EF;
   color: white;
   text-align: left;
   padding: 14px;
@@ -90,28 +89,29 @@ td {
 }
 
 /* Action Buttons */
-td button {
+.action-buttons button {
   background: none;
   border: none;
   cursor: pointer;
   font-size: 20px;
   margin-right: 10px;
+  padding: 5px;
   transition: color 0.3s ease-in-out;
 }
 
-td button:first-child {
+.action-buttons button:first-child {
   color: #3498db;
 }
 
-td button:first-child:hover {
+.action-buttons button:first-child:hover {
   color: #1e88e5;
 }
 
-td button:last-child {
+.action-buttons button:last-child {
   color: #e74c3c;
 }
 
-td button:last-child:hover {
+.action-buttons button:last-child:hover {
   color: #c0392b;
 }
 
@@ -137,7 +137,7 @@ td button:last-child:hover {
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1000; /* Ensure modal is on top */
+  z-index: 1000;
 }
 
 /* Modal content */
@@ -147,76 +147,85 @@ td button:last-child:hover {
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
   width: 100%;
-  max-width: 500px; /* Ensure modal is not too wide */
-  overflow-y: auto; /* In case of longer forms */
+  max-width: 400px;
   position: relative;
 }
 
-.modal-content1 {
+.modal-content-delete {
   background-color: white;
-  padding: 30px;
+  padding: 20px;
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
   width: 100%;
-  max-width: 250px; /* Ensure modal is not too wide */
-  overflow-y: auto; /* In case of longer forms */
-  position: relative;
+  max-width: 250px;
+  text-align: center;
 }
 
 .modal-content h2 {
-  text-align: center;
-  color: #00796b;
+  color: #333;
   margin-bottom: 20px;
+  font-size: 20px;
+  text-align: center;
 }
 
 /* Input fields */
 input,
 select {
   width: 100%;
-  padding: 10px;
-  margin: 10px 0;
+  padding: 12px;
+  margin-bottom: 15px;
   border-radius: 4px;
   border: 1px solid #ddd;
+  box-sizing: border-box;
+  font-size: 14px;
 }
 
-input[type="password"] {
-  display: inline-block;
-  width: calc(100% - 100px); /* For password visibility toggle */
+select {
+  background-color: white;
+  appearance: menulist;
 }
 
-/* Buttons inside modal  sa date to */
-button[type="button1"] {
-  background-color: #189418;
-  width: 90px;
-  padding: 8px;
-  border-radius: 6cqb;
-  margin-left: 400px;
-  margin-top: 10px;
+/* Password field with generate button */
+.password-group {
+  position: relative;
+  margin-bottom: 15px;
 }
 
-button[type="submit"] {
+.password-group input {
   width: 100%;
-  padding: 12px;
-  background-color: #2d6a4f;
+  margin-bottom: 5px;
+}
+
+.generate-password-btn {
+  background-color: #136813EF;
   color: white;
-  font-size: 16px;
+  padding: 8px 12px;
+  float: right;
+  font-size: 14px;
   border-radius: 4px;
+}
+
+/* Button group for form actions */
+.button-group {
+  display: flex;
+  justify-content: space-between;
   margin-top: 20px;
 }
 
-button[type="submit"]:hover {
-  background-color: #1e4c33;
+.button-group button {
+  width: 48%;
+  padding: 10px;
+  text-align: center;
 }
 
-button[type="button"]:hover {
-  background-color: #387c56;
+.cancel-btn {
+  background-color: #e0e0e0;
+  color: #333;
 }
 
-/* Password visibility toggle */
-.password-container {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+.create-btn {
+  background-color: #136813EF;
+  color: white;
 }
 
 /* Error message */
@@ -224,22 +233,23 @@ button[type="button"]:hover {
   color: red;
   text-align: center;
   margin-top: 10px;
+  font-size: 14px;
 }
 
-/* Modal Responsive Styles */
-@media (max-width: 768px) {
-  .modal-content {
+/* Responsive Modal */
+@media (max-width: 480px) {
+  .modal-content,
+  .modal-content-delete {
     width: 90%;
     padding: 20px;
   }
-
-  .password-container {
+  
+  .button-group {
     flex-direction: column;
   }
-
-  .password-toggle-btn,
-  .generate-password-btn {
+  
+  .button-group button {
     width: 100%;
-    margin-top: 10px;
+    margin-bottom: 10px;
   }
 }

@@ -14,7 +14,7 @@ const Sensors = () => {
 
   return (
   
-    <div className ="container">
+    <div className ="sensor-container">
     <div>
    <Navbar/>
       <div className="sensors-container">

@@ -34,7 +34,7 @@
   .sensor-card {
     max-width: 330px;
     width: 100%;
-    background: #bae7bc;
+    background: #ffffff;
     border-radius: 12px;
     box-shadow: 0 40px 80px rgba(3, 94, 41, 0.1);
     overflow: hidden;
@@ -49,7 +49,7 @@
     font-size: 1.25em;
     font-weight: bold;
     margin-bottom: 10px;
-    color: #333;
+    color: #000000;
   }
   
   .sensor-card-description {
@@ -61,7 +61,7 @@
   /* Button */
   .sensor-card-button {
     padding: 10px 20px;
-    background-color: #52ce5c;
+    background-color: #136813EF;
     color: white;
     border: none;
     border-radius: 4px;
@@ -111,8 +111,16 @@
 
   /* General container styling */
 .humidity-container {
-    padding: 20px;
-    font-family: Arial, sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: calc(100vw - 160px); /* Subtract sidebar width */
+  margin-left: 200px; /* Offset by sidebar width */
+  background-color: #f4f4f4;
+  font-family: Arial, sans-serif;
+  transition: margin-left 0.3s ease, width 0.3s ease;
+   
   }
   
   .humidity-content {
@@ -139,13 +147,14 @@
   /* Individual card styling */
   .humidity-card {
     width: 200px;
-    background-color: #2dc066;
+    background-color: #136813EF ;
     border: 3px solid #329d9c;
     border-radius: 10px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     padding: 20px;
     text-align: center;
     transition: transform 0.2s ease-in-out;
+
     
   }
   
@@ -154,15 +163,16 @@
   }
   
   .humidity-card-title {
-    font-size: 1.5rem;
+    font-size: 1rem;
     font-weight: bold;
-    color: #333;
+    color: #ffffff;
     margin-bottom: 10px;
   }
   
   .humidity-card-description {
-    font-size: 1.2rem;
-    color: #c6e7bd;
+    font-size: 2rem;
+    font-weight: bold;
+    color: #fff8f8;
   }
   
   /* Graph container */
@@ -194,13 +204,13 @@
   
   .humidity-table th,
   .humidity-table td {
-    border: 1px solid #51ac36;
+    border: 1px solid #136813EF;
     padding: 10px;
     text-align: center;
   }
   
   .humidity-table th {
-    background-color: #4fd86d;
+    background-color: #136813EF;
     font-weight: bold;
   }
   
@@ -210,7 +220,7 @@
 
 .date-picker-btn{
   .date-picker-btn {
-    background-color: #4CAF50;
+    background-color: #136813EF;
     color: white;
     border: none;
     padding: 8px 15px;
@@ -220,7 +230,7 @@
   }
   
   .date-picker-btn:hover {
-    background-color: #45a049;
+    background-color: #136813EF;
   }
   
 }
@@ -229,3 +239,17 @@
  margin-top: 20px;
 }
 
+
+.soil-container{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: calc(100vw - 160px); /* Subtract sidebar width */
+  margin-left: 160px; /* Offset by sidebar width */
+  background-color: #f4f4f4;
+  font-family: Arial, sans-serif;
+  transition: margin-left 0.3s ease, width 0.3s ease;
+
+
+}

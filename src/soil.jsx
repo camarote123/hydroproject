@@ -77,7 +77,7 @@ const Soil = () => {
           resetForm();
         }
       } else {
-        // Add new plant
+        // Register Plant
         const { error } = await supabase
           .from('plants')
           .insert([formData]);
@@ -177,18 +177,18 @@ const Soil = () => {
   }
 
   return (
-    <div>
+    <div >
       <Navbar />
       <h1>Soil-Based Plant Data</h1>
 
-      {/* Button to open Add New Plant modal */}
-      <button onClick={openAddNewPlantModal}>Add New Plant</button>
+      {/* Button to open Register Plant modal */}
+      <button onClick={openAddNewPlantModal}>Register Plant</button>
 
       {/* Modal for adding or updating a plant */}
       {isModalOpen && (
         <div className="modal-overlay">
           <div className="modal-content2">
-            <h2>{editingRecord ? 'Edit Plant' : 'Add New Plant'}</h2>
+            <h2>{editingRecord ? 'Edit Plant' : 'Register Plant'}</h2>
             <form onSubmit={handleSubmit}>
               <label>Growth Site</label>
               <input
@@ -211,7 +211,8 @@ const Soil = () => {
                 value={formData.nitrogen_measurement || ''}
                 onChange={(e) => setFormData({ ...formData, nitrogen_measurement: e.target.value })}
                 required
-                title="Input Nitrogen Measurement Details"
+                title="Format. 00.00 - 00.00"
+                pattern="^\d{2}\.\d{2} - \d{2}\.\d{2}$"
               />
               <label>Phosphorus Measurement</label>
               <input
@@ -219,15 +220,17 @@ const Soil = () => {
                 value={formData.phosphorus_measurement || ''}
                 onChange={(e) => setFormData({ ...formData, phosphorus_measurement: e.target.value })}
                 required
-                title ="Input Phosphorus Measurement Details"
+                title="Format. 00.00 - 00.00"
+                pattern="^\d{2}\.\d{2} - \d{2}\.\d{2}$"
               />
               <label>Potassium Measurement</label>
               <input
                 type="text"
                 value={formData.potassium_measurement || ''}
                 onChange={(e) => setFormData({ ...formData, potassium_measurement: e.target.value })}
-                required 
-                title=" Input Potassium Measurement Details"
+                required
+                title="Format. 00.00 - 00.00"
+                pattern="^\d{2}\.\d{2} - \d{2}\.\d{2}$"
               />
               <label>pH Level</label>
               <input
@@ -235,7 +238,8 @@ const Soil = () => {
                 value={formData.ph_level || ''}
                 onChange={(e) => setFormData({ ...formData, ph_level: e.target.value })}
                 required
-                title="Input ph_level Details"
+                title="Format. 00.00 - 00.00"
+                pattern="^\d{2}\.\d{2} - \d{2}\.\d{2}$"
               />
               <label>Temperature</label>
               <input
@@ -243,7 +247,8 @@ const Soil = () => {
                 value={formData.temperature || ''}
                 onChange={(e) => setFormData({ ...formData, temperature: e.target.value })}
                 required
-                title="Input Temperature Details"
+                title="Format. 00.00 - 00.00"
+                pattern="^\d{2}\.\d{2} - \d{2}\.\d{2}$"
               />
               <label>Humidity</label>
               <input
@@ -251,7 +256,8 @@ const Soil = () => {
                 value={formData.humidity || ''}
                 onChange={(e) => setFormData({ ...formData, humidity: e.target.value })}
                 required
-                title="Input humidity Details"
+                title="Format. 00.00 - 00.00"
+                pattern="^\d{2}\.\d{2} - \d{2}\.\d{2}$"
               />
               <label>Pesticide</label>
               <input
@@ -274,7 +280,11 @@ const Soil = () => {
             </form>
           </div>
         </div>
+        
+        
       )}
+
+      
 
       {/* Modal for confirming deletion */}
       {isDeleteModalOpen && (
@@ -291,7 +301,7 @@ const Soil = () => {
       )}
 
       {/* Display list of plants */}
-      <div >
+      <div className='container3'>
         <table border="1" style={{ width: '100%', borderCollapse: 'collapse' }}>
           <thead>
             <tr>
@@ -320,7 +330,7 @@ const Soil = () => {
                 <td>{plant.pesticide}</td>
                 <td>{plant.harvest_duration}</td>
                 <td>
-                  <div className="action-buttons1">
+                  <div className="action-buttons">
                     <button onClick={() => editPlant(plant)}><FaEdit /></button>
                     <button onClick={() => openDeleteModal(plant)}><FaTrashAlt /></button>
                   </div>

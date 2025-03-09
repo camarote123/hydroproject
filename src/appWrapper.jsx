@@ -11,10 +11,13 @@ import History from './history';
 import Humidity from './humidity';
 import Hydro from './hydro';
 import Hydrowaterlevel from './hydrowaterlevel';
+import Location from './location';
 import Login from './login';
 import Navbar from './navbar';
+import Npk from './npk';
 import PasswordChanged from './passwordchanged';
 import Pesticide from './pesticide';
+import Phlevel from './phlevel';
 import PlantRegistration from './plantregistration';
 import Plants from './plants';
 import Profile from './profile';
@@ -27,6 +30,7 @@ import Sensors from './sensors';
 import Soil from './soil';
 import Soilbased from './soilbased';
 import Soilmonitoring from './soilmonitoring';
+import Soilmonitoring2 from './soilmonitoring2';
 import Users from './users';
 import Watertemp from './watertemp';
 
@@ -67,11 +71,16 @@ const AppContent = () => {
         <Route path="/do" element={<Do />} />
         <Route path="/soilbased" element={<Soilbased />} />
         <Route path="/soilmonitoring" element={<Soilmonitoring />} />
+        <Route path="/soilmonitoring2" element={<Soilmonitoring2 />} />
         <Route path="/hydrowaterlevel" element={<Hydrowaterlevel />} />
         <Route path="/reservior" element={<Reservior />} />
         <Route path="/food" element={<Food />} />
         <Route path="/pesticide" element={<Pesticide />} />
         <Route path="/history" element={<History />} />
+        <Route path="/phlevel" element={<Phlevel />} />
+        <Route path="/npk" element={<Npk />} />
+        <Route path="/location" element={<Location />} />
+        
 
         {/* Routes without Navbar */}
         <Route path="/resetpassword" element={<ResetPassword />} />

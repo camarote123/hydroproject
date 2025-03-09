@@ -1,3 +1,4 @@
+import { createClient } from '@supabase/supabase-js';
 import {
   CategoryScale,
   Chart as ChartJS,
@@ -11,14 +12,20 @@ import {
 } from 'chart.js';
 import 'chartjs-adapter-date-fns';
 import zoomPlugin from 'chartjs-plugin-zoom';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Line } from 'react-chartjs-2';
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
-import { supabase } from './createClient';
+import { useNavigate } from 'react-router-dom';
 import Navbar from './navbar';
 import './sensor.css';
 
+// Initialize Supabase client
+const supabaseUrl = 'https://blxxjmoszhndbfgqrprb.supabase.co';
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJseHhqbW9zemhuZGJmZ3FycHJiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzIwMzkyMjEsImV4cCI6MjA0NzYxNTIyMX0._WjnfmgLYBaJP6g64fiCM__a7JWbXPDaZBK_j2yIvV8';
+const supabase = createClient(supabaseUrl, supabaseKey);
+
+// Register Chart.js components + zoom plugin
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -37,9 +44,13 @@ const Food = () => {
   const [selectedDate, setSelectedDate] = useState(null);
   const [isHistoryModalOpen, setIsHistoryModalOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 10;
+  const itemsPerPage = 16;
+  const navigate = useNavigate();
+  const totalRecordsRef = useRef(0);
+  const allDataRef = useRef([]);
+  const [loading, setLoading] = useState(false);
 
-  // ✅ Fetch Latest Feeder Data
+  // Fetch Latest Feeder Data
   const fetchLatestFeeder = async () => {
     try {
       let { data, error } = await supabase
@@ -57,10 +68,15 @@ const Food = () => {
     }
   };
 
-  // ✅ Fetch Historical Data
-  const fetchHistoricalData = async (date) => {
+  // Fetch Historical Data
+  const fetchHistoricalData = async (date, from = 0, to = 1000) => {
+    setLoading(true);
     try {
-      let query = supabase.from('feeder').select('*').order('created_at', { ascending: true });
+      let query = supabase
+        .from('feeder')
+        .select('*', { count: 'exact' })
+        .order('created_at', { ascending: true })
+        .range(from, to);
 
       if (date) {
         const startOfDay = new Date(date);
@@ -71,32 +87,51 @@ const Food = () => {
         query = query.gte('created_at', startOfDay.toISOString()).lte('created_at', endOfDay.toISOString());
       }
 
-      let { data, error } = await query;
+      let { data, error, count } = await query;
       if (error) throw error;
-      setFeederData(data);
-      setCurrentPage(1); // Reset page when new data is fetched
+
+      // Convert timestamps to UTC+8
+      const adjustedData = data.map(item => ({
+        ...item,
+        created_at: new Date(new Date(item.created_at).getTime() + 8 * 60 * 60 * 1000),
+      }));
+
+      if (from === 0) {
+        setFeederData(adjustedData);
+      } else {
+        setFeederData(prevData => [...prevData, ...adjustedData]);
+      }
+
+      allDataRef.current = [...allDataRef.current, ...adjustedData];
+      if (count !== null) totalRecordsRef.current = count;
+
     } catch (error) {
       console.error('Error fetching feeder data:', error);
     }
+    setLoading(false);
   };
 
-  // ✅ Paginate Data
+  // Paginate Data
   const totalPages = Math.ceil(feederData.length / itemsPerPage);
   const paginatedData = feederData.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
 
-  // ✅ Pagination Controls
+  // Pagination Controls
   const handlePrevPage = () => {
     if (currentPage > 1) setCurrentPage(currentPage - 1);
   };
 
-  const handleNextPage = () => {
-    if (currentPage < totalPages) setCurrentPage(currentPage + 1);
+  const handleNextPage = async () => {
+    if ((currentPage * itemsPerPage) < totalRecordsRef.current) {
+      const newPage = currentPage + 1;
+      await fetchHistoricalData(selectedDate, (newPage - 1) * itemsPerPage, newPage * itemsPerPage);
+      setCurrentPage(newPage);
+    }
   };
 
-  // ✅ Chart Data
+  // Chart Data
   const chartData = {
     labels: feederData.map(item => new Date(item.created_at)),
     datasets: [
@@ -109,11 +144,12 @@ const Food = () => {
         borderColor: 'rgba(54, 162, 235, 1)',
         backgroundColor: 'rgba(54, 162, 235, 0.2)',
         fill: true,
+        pointRadius: 0,
       },
     ],
   };
 
-  // ✅ Chart Options
+  // Chart Options
   const chartOptions = {
     responsive: true,
     maintainAspectRatio: false,
@@ -161,13 +197,21 @@ const Food = () => {
 
     fetchData();
 
-    // ✅ Real-time Subscription
+    // Real-time Subscription
     const feederSubscription = supabase
       .channel('realtime:feeder')
       .on(
         'postgres_changes',
         { event: 'INSERT', schema: 'public', table: 'feeder' },
-        () => fetchData()
+        (payload) => {
+          const newRecord = {
+            ...payload.new,
+            created_at: new Date(new Date(payload.new.created_at).getTime() + 8 * 60 * 60 * 1000), // UTC+8 conversion
+          };
+          setFeederData((prevData) => [...prevData, newRecord]); // Append new record
+          allDataRef.current = [...allDataRef.current, newRecord];
+          setLatestFeeder(newRecord); // Update latest data
+        }
       )
       .subscribe();
 
@@ -177,10 +221,10 @@ const Food = () => {
   }, [selectedDate]);
 
   return (
-    <div className="feeder-container">
+    <div className="humidity-container">
       <Navbar />
-      <div className="feeder-content">
-        <h1 className="feeder-title">Feeder Data</h1>
+      <div className="humidity-content">
+        <h1 className="humidity-title">Feeder Data</h1>
 
         {/* Latest Data Card */}
         <div className="card-grid">
@@ -214,6 +258,11 @@ const Food = () => {
         {/* History Modal */}
         <button className="history-button" onClick={() => setIsHistoryModalOpen(true)}>View History</button>
 
+        <div>
+          <br></br>
+          <button onClick={() => navigate('/phlevel')}> BACK</button>
+        </div>
+
         {isHistoryModalOpen && (
           <div className="modal-overlay">
             <div className="modal-content">
@@ -231,7 +280,7 @@ const Food = () => {
                   {paginatedData.map((item) => (
                     <tr key={item.id}>
                       <td>{item.distance} cm</td>
-                      <td>{new Date(item.created_at).toLocaleString()}</td>
+                      <td>{new Date(item.created_at).toLocaleString('en-PH', { timeZone: 'Asia/Manila' })}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -242,6 +291,7 @@ const Food = () => {
                 <button onClick={handlePrevPage} disabled={currentPage === 1}>Previous</button>
                 <span>Page {currentPage} of {totalPages}</span>
                 <button onClick={handleNextPage} disabled={currentPage === totalPages}>Next</button>
+                {loading && <span>Loading...</span>}
               </div>
             </div>
           </div>

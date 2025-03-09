@@ -73,7 +73,7 @@ const Login = () => {
           />
         </div>
 
-        <div className="textbox1">
+        <div >
           <label htmlFor="password">Password</label>
           <br />
           <input

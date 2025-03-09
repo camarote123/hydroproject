@@ -12,8 +12,8 @@ import {
 } from 'chart.js';
 import React, { useEffect, useState } from 'react';
 import { Bar, Pie } from 'react-chartjs-2';
-import './aqua.css';
 import { supabase } from './createClient';
+import './dashboard.css';
 import Navbar from './navbar';
 
 // Register Chart.js components
@@ -36,11 +36,70 @@ const Dashboard = () => {
   const [waterLevelData, setWaterLevelData] = useState([]);
   const [waterData, setWaterData] = useState([]);
   const [feederData, setFeederData] = useState([]);
-  const [soilMoistureData, setSoilMoistureData] = useState([]);
   const [historyData, setHistoryData] = useState([]);
   const [harvestData, setHarvestData] = useState([]);
   const [soilData, setSoilData] = useState([]);
   const [hydroData, setHydroData] = useState([]);
+  const [soilmonitoringData, setSoilMonitoring] = useState([]);
+  const [soilmonitoring2Data, setSoilMonitoring2] = useState([]);
+  const [phlevelData, setPhlevel] = useState([]);
+  const [npkData, setNpk] = useState([]);
+
+  const fetchNpk = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('npk')
+        .select('*')
+        .order('timestamp', { ascending: false });
+
+      if (error) throw error;
+      setNpk(data);
+    } catch (error) {
+      console.error('Error fetching npk data:', error);
+    }
+  };
+
+  const fetchPhlevel = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('ph_level')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      setPhlevel(data);
+    } catch (error) {
+      console.error('Error fetching ph_level data:', error);
+    }
+  };
+
+  const fetchSoilMonitoring = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('soil_moisture3')
+        .select('*')
+        .order('timestamp', { ascending: false });
+
+      if (error) throw error;
+      setSoilMonitoring(data);
+    } catch (error) {
+      console.error('Error fetching Soil Montoring data:', error);
+    }
+  };
+
+  const fetchSoilMonitoring2 = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('soil_moisture4')
+        .select('*')
+        .order('timestamp', { ascending: false });
+
+      if (error) throw error;
+      setSoilMonitoring2(data);
+    } catch (error) {
+      console.error('Error fetching Soil Montoring data:', error);
+    }
+  };
 
   // Fetch data for each sensor and store it in state
   const fetchHumidityData = async () => {
@@ -127,23 +186,9 @@ const Dashboard = () => {
     }
   };
 
-  const fetchSoilMoistureData = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('soil_moisture')
-        .select('*')
-        .order('timestamp', { ascending: false });
-
-      if (error) throw error;
-      setSoilMoistureData(data);
-    } catch (error) {
-      console.error('Error fetching soil moisture data:', error);
-    }
-  };
-
   const fetchHistoryData = async () => {
     try {
-      const { data, error } = await supabase.from('history').select('*') .order('date_created', {descending: false}) ;
+      const { data, error } = await supabase.from('history').select('*').order('date_created', { descending: false });
       if (error) {
         console.error('Error fetching history data:', error.message);
       } else {
@@ -199,10 +244,7 @@ const Dashboard = () => {
     fetchData();
   }, []);
 
-   // Function to get the pie chart data
-
-
-
+  // Function to get the pie chart data
   useEffect(() => {
     // Fetch data initially and set up the interval
     fetchHumidityData();
@@ -211,9 +253,12 @@ const Dashboard = () => {
     fetchWaterLevelData();
     fetchWaterData();
     fetchFeederData();
-    fetchSoilMoistureData();
     fetchHistoryData();
     fetchHarvestData();
+    fetchSoilMonitoring();
+    fetchSoilMonitoring2();
+    fetchPhlevel();
+    fetchNpk();
 
     const intervalId = setInterval(() => {
       fetchHumidityData();
@@ -222,9 +267,12 @@ const Dashboard = () => {
       fetchWaterLevelData();
       fetchWaterData();
       fetchFeederData();
-      fetchSoilMoistureData();
       fetchHistoryData();
       fetchHarvestData();
+      fetchSoilMonitoring();
+      fetchSoilMonitoring2();
+      fetchPhlevel();
+      fetchNpk();
     }, 2000);
 
     return () => clearInterval(intervalId);
@@ -261,7 +309,9 @@ const Dashboard = () => {
   const { hydroponicCounts, soilCounts } = countPlantsByDateAndSystem();
 
   const allDates = [...new Set([...Object.keys(hydroponicCounts), ...Object.keys(soilCounts)])];
-const sortedDates = allDates.sort((a, b) => new Date(a) - new Date(b)); // Sort descending
+  const sortedDates = allDates.sort((a, b) => new Date(a) - new Date(b)); // Sort descending
+
+  const historytotal = historyData.length;
 
   const combinedChartData = {
     labels: sortedDates, // Merge the labels (dates)
@@ -269,15 +319,15 @@ const sortedDates = allDates.sort((a, b) => new Date(a) - new Date(b)); // Sort 
       {
         label: 'Hydroponic Plants',
         data: sortedDates.map((date) => hydroponicCounts[date] || 0), // Map data to sorted dates
-        backgroundColor: 'rgba(75, 192, 192, 0.2)',
-        borderColor: 'rgba(75, 192, 192, 1)',
+        backgroundColor: 'rgba(214, 166, 7, 0.81)',
+        borderColor: 'rgb(233, 236, 235)',
         borderWidth: 1,
       },
       {
         label: 'Soil-based Plants',
         data: sortedDates.map((date) => soilCounts[date] || 0), // Map data to sorted dates
-        backgroundColor: 'rgba(255, 99, 132, 0.2)',
-        borderColor: 'rgba(255, 99, 132, 1)',
+        backgroundColor: 'rgba(19, 104, 19, 0.94)',
+        borderColor: 'rgb(255, 255, 255)',
         borderWidth: 1,
       },
     ],
@@ -288,7 +338,7 @@ const sortedDates = allDates.sort((a, b) => new Date(a) - new Date(b)); // Sort 
     plugins: {
       title: {
         display: true,
-        text: 'Plants Planted',
+        text: `Total Plants Planted (Total: ${historytotal})`,
       },
     },
   };
@@ -311,8 +361,8 @@ const sortedDates = allDates.sort((a, b) => new Date(a) - new Date(b)); // Sort 
       {
         label: 'Number of Harvests',
         data: Object.values(harvestDataForChart),
-        backgroundColor: 'rgba(75, 192, 192, 0.2)',
-        borderColor: 'rgba(75, 192, 192, 1)',
+        backgroundColor: 'rgba(19, 104, 19, 0.94)',
+        borderColor: 'rgb(253, 253, 253)',
         borderWidth: 1,
       },
     ],
@@ -323,12 +373,10 @@ const sortedDates = allDates.sort((a, b) => new Date(a) - new Date(b)); // Sort 
     plugins: {
       title: {
         display: true,
-        text: 'Harvest Count by Date',
+        text: 'Harvested Plants Data',
       },
     },
   };
-
-  
 
   const getPieChartData = (data) => {
     const plantNameCount = data.reduce((acc, record) => {
@@ -341,8 +389,8 @@ const sortedDates = allDates.sort((a, b) => new Date(a) - new Date(b)); // Sort 
       datasets: [
         {
           data: Object.values(plantNameCount),
-          backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#FF9F40'],
-          hoverBackgroundColor: ['#FF4C72', '#2F83C4', '#F9B936', '#33C9C0', '#F79D41'],
+          backgroundColor: ['#136813', '#D6A607', '#0E4D4D', '#8B5E3B', '#C97A14', '#5A6E3A', '#A67C00'],
+      
         },
       ],
     };
@@ -351,12 +399,39 @@ const sortedDates = allDates.sort((a, b) => new Date(a) - new Date(b)); // Sort 
   const soilPieChartData = getPieChartData(soilData);
   const hydroPieChartData = getPieChartData(hydroData);
 
+  // Calculate totals for each pie chart
+  const soilTotal = soilData.length;
+  const hydroTotal = hydroData.length;
+  const harvestTotal = harvestData.length;
+ 
+
   const pieChartOptions3 = {
     responsive: true,
     plugins: {
+      legend: {
+        display: true,
+        position: 'right', // Move legend to the side
+        labels: {
+          font: {
+            size: 14,
+          },
+          color: '#333', // Adjust text color
+        },
+      },
       title: {
         display: true,
-        text: 'SOIL',
+        text: `SOIL (Total: ${soilTotal})`,
+        font: {
+          size: 18,
+        },
+        color: '#000',
+      },
+      tooltip: {
+        enabled: true,
+        backgroundColor: 'rgba(0,0,0,0.7)',
+        bodyFont: {
+          size: 14,
+        },
       },
     },
   };
@@ -364,12 +439,34 @@ const sortedDates = allDates.sort((a, b) => new Date(a) - new Date(b)); // Sort 
   const pieChartOptions2 = {
     responsive: true,
     plugins: {
+      legend: {
+        display: true,
+        position: 'right', // Move legend to the side
+        labels: {
+          font: {
+            size: 14,
+          },
+          color: '#333', // Adjust text color
+        },
+      },
       title: {
         display: true,
-        text: 'HYDROPONICS',
+        text: `HYDROPONICS (Total: ${hydroTotal})`,
+        font: {
+          size: 18,
+        },
+        color: '#000',
+      },
+      tooltip: {
+        enabled: true,
+        backgroundColor: 'rgba(0,0,0,0.7)',
+        bodyFont: {
+          size: 14,
+        },
       },
     },
   };
+
   const harvestNameCount = () => {
     const countByName = {};
     harvestData.forEach((record) => {
@@ -387,11 +484,7 @@ const sortedDates = allDates.sort((a, b) => new Date(a) - new Date(b)); // Sort 
       {
         label: 'Harvest Names',
         data: Object.values(harvestNameData),
-        backgroundColor: [
-  '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF',
-  '#FF9F40', '#C9CBCF', '#00A36C', '#8A2BE2', '#DC143C',
-  '#20B2AA', '#D2691E', '#FF1493', '#1E90FF', '#32CD32'
-],
+        backgroundColor: ['#136813', '#D6A607', '#0E4D4D', '#8B5E3B', '#C97A14', '#5A6E3A', '#A67C00', '#8B3A3A', '#2D4821', '#C4A484'],
         borderColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF'],
         borderWidth: 1,
       },
@@ -401,125 +494,217 @@ const sortedDates = allDates.sort((a, b) => new Date(a) - new Date(b)); // Sort 
   const pieChartOptions = {
     responsive: true,
     plugins: {
+      legend: {
+        display: true,
+        position: 'right', // Move legend to the side
+        labels: {
+          font: {
+            size: 14,
+          },
+          color: '#333', // Adjust text color
+        },
+      },
       title: {
         display: true,
-        text: 'Harvested Plants',
+        text: `Harvested Plants (Total: ${harvestTotal})`,
+        font: {
+          size: 18,
+        },
+        color: '#000',
+      },
+      tooltip: {
+        enabled: true,
+        backgroundColor: 'rgba(0,0,0,0.7)',
+        bodyFont: {
+          size: 14,
+        },
       },
     },
   };
 
-
   return (
-   
     <div className="dashboard-container">
-   
       <Navbar />
-   
+
+      {/* Header Row with Title and Environment Text */}
+      <div className="dashboard-header">
         <h1 className="dashboard-title">Monitoring Dashboard</h1>
-        <div className="dashboard-card">
-          {/* Card Grid */}
-          <div className="dashboard-card-grid">
-            {/* Data Cards */}
-            <div className="humidity-card">
-              <div className="humidity-card-content">
-                <div className="humidity-card-title">HUMIDITY</div>
-                <div className="humidity-card-description">
-                  {humidityData.length > 0 ? `${humidityData[0].humidity}%` : 'Loading...'}
-                </div>
-              </div>
-            </div>
 
-            <div className="humidity-card">
-              <div className="humidity-card-content">
-                <div className="humidity-card-title">TEMPERATURE</div>
-                <div className="humidity-card-description">
-                  {humidityData.length > 0 ? `${humidityData[0].temperature}°C` : 'Loading...'}
-                </div>
-              </div>
+        <div className="environment-info">
+          <h2 className="environment-title">ENVIRONMENT</h2>
+          <div className="environment-readings">
+            <div className="environment-reading">
+              <span className="reading-label">HUMIDITY:</span>
+              <span className="reading-value">{humidityData.length > 0 ? `${humidityData[0].humidity}%` : 'Loading...'}</span>
             </div>
-
-            <div className="humidity-card">
-              <div className="humidity-card-content">
-                <div className="humidity-card-title"> WATER TEMPERATURE</div>
-                <div className="humidity-card-description">
-                  {temperatureData.length > 0 ? `${temperatureData[0].temperature}°C` : 'Loading...'}
-                </div>
-              </div>
+            <div className="environment-reading">
+              <span className="reading-label">TEMPERATURE:</span>
+              <span className="reading-value">{humidityData.length > 0 ? `${humidityData[0].temperature}°C` : 'Loading...'}</span>
             </div>
+          </div>
+        </div>
+      </div>
 
-            <div className="humidity-card">
-              <div className="humidity-card-content">
-                <div className="humidity-card-title">DISSOLVED OXYGEN</div>
-                <div className="humidity-card-description">
-                  {doData.length > 0 ? `${doData[0].do_level} mg/L` : 'Loading...'}
-                </div>
-              </div>
-            </div>
-
-            <div className="humidity-card">
-              <div className="humidity-card-content">
-                <div className="humidity-card-title">HYDRO WATER LEVEL</div>
-                <div className="humidity-card-description">
-                  {waterLevelData.length > 0 ? `${waterLevelData[0].water_level}%` : 'Loading...'}
-                </div>
-              </div>
-            </div>
-
-            <div className="humidity-card">
-              <div className="humidity-card-content">
-                <div className="humidity-card-title">WATER DISTANCE</div>
-                <div className="humidity-card-description">
-                  {waterData.length > 0 ? `${waterData[0].distance} cm` : 'Loading...'}
-                </div>
-              </div>
-            </div>
-
-            <div className="humidity-card">
-              <div className="humidity-card-content">
-                <div className="humidity-card-title">FEEDER </div>
-                <div className="humidity-card-description">
-                  {feederData.length > 0 ? `${feederData[0].distance} cm` : 'Loading...'}
-                </div>
-              </div>
-            </div>
-
-            <div className="humidity-card">
-              <div className="humidity-card-content">
-                <div className="humidity-card-title">SOIL MOISTURE</div>
-                <div className="humidity-card-description">
-                  {soilMoistureData.length > 0 ? `${soilMoistureData[0].moisture}%` : 'Loading...'}
-                </div>
+      {/* SOIL SECTION */}
+      <div className="dashboard-section">
+        <h2 className="section-title">SOIL</h2>
+        <div className="dashboard-card-grid">
+          {/* Soil Moisture Cards */}
+          <div className="dashboard-card">
+            <div className="dashboard-card-content">
+              <div className="dashboard-card-title">SOIL MOISTURE 1</div>
+              <div className="dashboard-card-description">
+                {soilmonitoringData.length > 0 ? `${soilmonitoringData[0].moisture}%` : 'Loading...'}
               </div>
             </div>
           </div>
+
+          <div className="dashboard-card">
+            <div className="dashboard-card-content">
+              <div className="dashboard-card-title">SOIL MOISTURE 2</div>
+              <div className="dashboard-card-description">
+                {soilmonitoringData.length > 0 ? `${soilmonitoringData[0].moisture2}%` : 'Loading...'}
+              </div>
+            </div>
+          </div>
+
+          <div className="dashboard-card">
+        <div className="dashboard-card-content">
+          <div className="dashboard-card-title">SOIL MOISTURE 3</div>
+          <div className="dashboard-card-description">
+            {soilmonitoring2Data.length > 0 ? `${soilmonitoring2Data[0].moisture}%` : 'Loading...'}
+          </div>
+        </div>
+      </div>
+
+      <div className="dashboard-card">
+        <div className="dashboard-card-content">
+          <div className="dashboard-card-title">SOIL MOISTURE 4</div>
+          <div className="dashboard-card-description">
+            {soilmonitoring2Data.length > 0 ? `${soilmonitoring2Data[0].moisture2}%` : 'Loading...'}
+          </div>
+        </div>
+      </div>
+
+      {/* NPK Cards */}
+      <div className="dashboard-card">
+        <div className="dashboard-card-content">
+          <div className="dashboard-card-title">NITROGEN</div>
+          <div className="dashboard-card-description">
+            {npkData.length > 0 ? `${npkData[0].nitrogen}%` : 'Loading...'}
+          </div>
+        </div>
+      </div>
+ 
+      <div className="dashboard-card">
+        <div className="dashboard-card-content">
+          <div className="dashboard-card-title">PHOSPHORUS</div>
+          <div className="dashboard-card-description">
+            {npkData.length > 0 ? `${npkData[0].phosphorus}%` : 'Loading...'}
+          </div>
+        </div>
+      </div>
+
+      <div className="dashboard-card">
+        <div className="dashboard-card-content">
+          <div className="dashboard-card-title">POTASSIUM</div>
+          <div className="dashboard-card-description">
+            {npkData.length > 0 ? `${npkData[0].potassium}%` : 'Loading...'}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {/* AQUACULTURE SECTION */}
+  <div className="dashboard-section">
+    <h2 className="section-title">AQUACULTURE</h2>
+    <div className="dashboard-card-grid">
+      <div className="dashboard-card">
+        <div className="dashboard-card-content">
+          <div className="dashboard-card-title">WATER TEMPERATURE</div>
+          <div className="dashboard-card-description">
+            {temperatureData.length > 0 ? `${temperatureData[0].temperature}°C` : 'Loading...'}
+          </div>
+        </div>
+      </div>
+
+      <div className="dashboard-card">
+        <div className="dashboard-card-content">
+          <div className="dashboard-card-title">PH LEVEL</div>
+          <div className="dashboard-card-description">
+            {phlevelData.length > 0 ? `pH: ${phlevelData[0].ph_level}` : 'Loading...'}
+          </div>
+        </div>
+      </div>
+
+      <div className="dashboard-card">
+        <div className="dashboard-card-content">
+          <div className="dashboard-card-title">DISSOLVED OXYGEN</div>
+          <div className="dashboard-card-description">
+            {doData.length > 0 ? `${doData[0].do_level} mg/L` : 'Loading...'}
+          </div>
+        </div>
+      </div>
+
+      <div className="dashboard-card">
+        <div className="dashboard-card-content">
+          <div className="dashboard-card-title">HYDRO WATER LEVEL</div>
+          <div className="dashboard-card-description">
+            {waterLevelData.length > 0 ? `${waterLevelData[0].water_level}%` : 'Loading...'}
+          </div>
+        </div>
+      </div>
+
+      <div className="dashboard-card">
+        <div className="dashboard-card-content">
+          <div className="dashboard-card-title">WATER DISTANCE</div>
+          <div className="dashboard-card-description">
+            {waterData.length > 0 ? `${waterData[0].distance} cm` : 'Loading...'}
+          </div>
+        </div>
+      </div>
+
+      <div className="dashboard-card">
+        <div className="dashboard-card-content">
+          <div className="dashboard-card-title">FEEDER</div>
+          <div className="dashboard-card-description">
+            {feederData.length > 0 ? `${feederData[0].distance} cm` : 'Loading...'}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
           
 
           <br />
           <br />
           <br />
 
-       
-          <div className="piechart">
-            <Pie data={soilPieChartData} options={pieChartOptions3} />
-            <Pie data={pieChartData} options={pieChartOptions} />
-            <Pie data={hydroPieChartData} options={pieChartOptions2} />
-          </div>
-      
 
-  {/* Combined Bar Graph */}
-  <div className="chart-container">
-            <div className="dashboard-chart">
-              <Bar data={combinedChartData} options={combinedChartOptions} />
-              <Bar data={barChartData} options={barChartOptions} />
-            </div>
-          </div>
-         
+          <div className="chart-wrapper">
+  {/* Pie Chart Section */}
+  <div className="piechart-container">
+    <Pie data={soilPieChartData} options={pieChartOptions3} />
+    <Pie data={pieChartData} options={pieChartOptions} />
+    <Pie data={hydroPieChartData} options={pieChartOptions2} />
+  </div>
 
-          <br />
-   
-         
+  {/* Bar Chart Section */}
+  <div className="barchart-container">
+    <Bar data={combinedChartData} options={combinedChartOptions} />
+    <Bar data={barChartData} options={barChartOptions} />
+  </div>
+</div>
+
+
+
+        
         </div>
-      </div>
+
 
   );
 };

@@ -24,14 +24,32 @@ const Soilbased = () => {
 
         {/* Card Grid */}
         <div className="aqua-card-grid">
-          {/* Card 1 */}
-          <div className="aqua-card">
+        <div className="aqua-card">
             <div className="aqua-card-content">
-              <div className="aqua-card-title">SOIL MONITORING</div>
-              
+              <div className="aqua-card-title">SOIL MONITORING 1, 2</div>
+              <div className="aqua-card-description">
+        
+              </div>
               <button
-                className="aqua-card-button"
+                className="sensor-card-button"
                 onClick={() => handleNavigation('/soilmonitoring')}
+              >
+                View Data
+              </button>
+            </div>
+          </div>
+
+
+            {/* Card 2 */}
+            <div className="aqua-card">
+            <div className="aqua-card-content">
+              <div className="aqua-card-title">SOIL MONITORING 3, 4</div>
+              <div className="aqua-card-description">
+        
+              </div>
+              <button
+                className="sensor-card-button"
+                onClick={() => handleNavigation('/soilmonitoring2')}
               >
                 View Data
               </button>
@@ -53,17 +71,19 @@ const Soilbased = () => {
               </button>
             </div>
           </div>
+
+
           
            {/* Card 3 */}
           <div className="aqua-card">
             <div className="aqua-card-content">
               <div className="aqua-card-title">NUTRIENTS</div>
               <div className="aqua-card-description">
-                Tracks moisture levels in the air.
+            
               </div>
               <button
                 className="sensor-card-button"
-                onClick={() => handleNavigation('/humidity-sensor')}
+                onClick={() => handleNavigation('/npk')}
               >
                 View Data
               </button>

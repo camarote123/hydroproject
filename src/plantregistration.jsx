@@ -29,6 +29,8 @@ const PlantRegistration = () => {
   const [loading, setLoading] = useState(true);
   const [plantsBySite, setPlantsBySite] = useState([]);
   const [growthSites, setGrowthSites] = useState([]);
+  const [hydroLocations, setHydroLocations] = useState([]);
+  const [soilLocations, setSoilLocations] = useState([]);
   const [formData, setFormData] = useState({
     growth_site: '',
     plant_name: '',
@@ -41,17 +43,18 @@ const PlantRegistration = () => {
     pesticide: '',
     harvest_duration: '',
     expected_harvest_date: '',
+    location: '',
   });
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingRecord, setEditingRecord] = useState(null);
   const [historyData, setHistoryData] = useState([]);
   const [startDate, setStartDate] = useState(null); // State for start date
   const [endDate, setEndDate] = useState(null); // State for end date
+  const [notification, setNotification] = useState(''); // State for notification
 
   useEffect(() => {
     fetchData();
     fetchPlants();
-    fetchHistoryData();
+    fetchLocations();
   }, []);
 
   const fetchData = async () => {
@@ -79,6 +82,26 @@ const PlantRegistration = () => {
         setPlantsBySite(data);
         const uniqueGrowthSites = [...new Set(data.map(plant => plant.growth_site))];
         setGrowthSites(uniqueGrowthSites);
+      }
+    } catch (err) {
+      console.error('Unexpected error:', err);
+    }
+  };
+
+  const fetchLocations = async () => {
+    try {
+      const { data: hydroData, error: hydroError } = await supabase.from('hydro_locations').select('*');
+      if (hydroError) {
+        console.error('Error fetching hydro locations:', hydroError.message);
+      } else {
+        setHydroLocations(hydroData);
+      }
+
+      const { data: soilData, error: soilError } = await supabase.from('soil_locations').select('*');
+      if (soilError) {
+        console.error('Error fetching soil locations:', soilError.message);
+      } else {
+        setSoilLocations(soilData);
       }
     } catch (err) {
       console.error('Unexpected error:', err);
@@ -117,8 +140,8 @@ const PlantRegistration = () => {
       if (error) {
         console.error('Error fetching plant details:', error.message);
       } else {
-        setFormData({
-          ...formData,
+        setFormData((prevFormData) => ({
+          ...prevFormData,
           plant_name: data.plant_name,
           nitrogen_measurement: data.nitrogen_measurement,
           phosphorus_measurement: data.phosphorus_measurement,
@@ -129,7 +152,7 @@ const PlantRegistration = () => {
           pesticide: data.pesticide,
           harvest_duration: data.harvest_duration,
           expected_harvest_date: calculateExpectedHarvestDate(data.harvest_duration),
-        });
+        }));
       }
     } catch (err) {
       console.error('Unexpected error:', err);
@@ -145,59 +168,55 @@ const PlantRegistration = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+  
     try {
-      let result;
-
-      if (editingRecord) {
-        const { error } = await supabase
-          .from('registration')
-          .update(formData)
-          .eq('id', editingRecord.id);
-
-        if (error) {
-          console.error('Error updating record:', error.message);
+      const dataToSubmit = { ...formData };
+  
+      // Insert data into registration table and return the inserted data
+      const { data, error } = await supabase
+        .from('registration')
+        .insert([dataToSubmit])
+        .select(); // Ensure it returns the inserted data
+  
+      if (error) {
+        console.error('Error adding record:', error.message);
+        return;
+      }
+  
+      if (data && data.length > 0) {
+        const newRegistration = data[0]; // Get the inserted row
+  
+        // Insert the same data into the history table
+        const { error: historyError } = await supabase.from('history').insert([
+          {
+            growth_site: newRegistration.growth_site,
+            plant_name: newRegistration.plant_name,
+            harvest_duration: newRegistration.harvest_duration,
+            expected_harvest_date: newRegistration.expected_harvest_date,
+            registration_id: newRegistration.id, // Link to registration table
+            location: newRegistration.location,
+          },
+        ]);
+  
+        if (historyError) {
+          console.error('Error adding record to history:', historyError.message);
         } else {
-          result = await supabase
-            .from('history')
-            .insert([{
-              growth_site: formData.growth_site,
-              plant_name: formData.plant_name,
-              expected_harvest_date: formData.expected_harvest_date,
-              registration_id: editingRecord.id,
-            }]);
-
-          if (result.error) {
-            console.error('Error inserting into history:', result.error.message);
-          }
-        }
-      } else {
-        const { error } = await supabase.from('registration').insert([formData]);
-
-        if (error) {
-          console.error('Error adding record:', error.message);
-        } else {
-          const { data: newRegistrationData } = await supabase
-            .from('registration')
-            .select('id')
-            .order('id', { ascending: false })
-            .limit(1);
-
-          const { error: historyError } = await supabase.from('history').insert([{
-            growth_site: formData.growth_site,
-            plant_name: formData.plant_name,
-            harvest_duration: formData.harvest_duration,
-            expected_harvest_date: formData.expected_harvest_date,
-            registration_id: newRegistrationData[0].id,
-          }]);
-
-          if (historyError) {
-            console.error('Error adding record to history:', historyError.message);
-          } else {
-            fetchData();
-            resetForm();
-          }
+          console.log('Record added to history table successfully');
         }
       }
+  
+      // Close the modal
+      setIsModalOpen(false);
+  
+      // Fetch updated data
+      fetchData();
+      fetchHistoryData(); // Ensure history is updated as well
+  
+      // Reset form fields
+      resetForm();
+  
+      // Notify user
+      alert('Record added successfully!');
     } catch (err) {
       console.error('Unexpected error:', err);
     }
@@ -216,9 +235,8 @@ const PlantRegistration = () => {
       pesticide: '',
       harvest_duration: '',
       expected_harvest_date: '',
+      location: '',
     });
-    setEditingRecord(null);
-    setIsModalOpen(false);
   };
 
   const openAddNewPlantModal = () => {
@@ -228,7 +246,8 @@ const PlantRegistration = () => {
 
   const handleGrowthSiteChange = (e) => {
     const selectedGrowthSite = e.target.value;
-    setFormData({
+    setFormData((prevFormData) => ({
+      ...prevFormData,
       growth_site: selectedGrowthSite,
       plant_name: '',
       nitrogen_measurement: '',
@@ -240,12 +259,13 @@ const PlantRegistration = () => {
       pesticide: '',
       harvest_duration: '',
       expected_harvest_date: '',
-    });
+      location: '',
+    }));
   };
 
   const handlePlantChange = (e) => {
     const selectedPlantName = e.target.value;
-    setFormData({ ...formData, plant_name: selectedPlantName });
+    setFormData((prevFormData) => ({ ...prevFormData, plant_name: selectedPlantName }));
 
     if (selectedPlantName) {
       fetchPlantDetails(selectedPlantName);
@@ -254,11 +274,11 @@ const PlantRegistration = () => {
 
   const handleHarvestDurationChange = (e) => {
     const harvestDuration = e.target.value;
-    setFormData({
-      ...formData,
+    setFormData((prevFormData) => ({
+      ...prevFormData,
       harvest_duration: harvestDuration,
       expected_harvest_date: calculateExpectedHarvestDate(harvestDuration),
-    });
+    }));
   };
 
   // Utility function to format date
@@ -310,7 +330,7 @@ const PlantRegistration = () => {
       {
         label: 'Hydroponic Plants',
         data: Object.values(hydroponicCounts),
-        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+        backgroundColor: 'rgba(75, 192, 192, 12)',
         borderColor: 'rgba(75, 192, 192, 1)',
         borderWidth: 1,
       },
@@ -323,8 +343,8 @@ const PlantRegistration = () => {
       {
         label: 'Soil-based Plants',
         data: Object.values(soilCounts),
-        backgroundColor: 'rgba(255, 99, 132, 0.2)',
-        borderColor: 'rgba(255, 99, 132, 1)',
+        backgroundColor: 'rgba(19, 104, 19, 0.94)',
+        borderColor: 'rgb(255, 255, 255)',
         borderWidth: 1,
       },
     ],
@@ -341,6 +361,15 @@ const PlantRegistration = () => {
     },
   };
 
+  // Filter out used locations
+  const availableHydroLocations = hydroLocations.filter(
+    (location) => !data.some((record) => record.location === location.name)
+  );
+
+  const availableSoilLocations = soilLocations.filter(
+    (location) => !data.some((record) => record.location === location.name)
+  );
+
   if (loading) {
     return <p>Loading...</p>;
   }
@@ -352,6 +381,9 @@ const PlantRegistration = () => {
 
       <button onClick={openAddNewPlantModal}>Register Plant</button>
       <button onClick={() => navigate('/history')}>View History</button>
+      
+
+      {notification && <div className="notification">{notification}</div>} {/* Notification */}
 
       <div>
         <br />
@@ -382,12 +414,11 @@ const PlantRegistration = () => {
       {isModalOpen && (
         <div className="modal-overlay">
           <div className="modal-content">
-            <h2>{editingRecord ? 'Edit Plant' : 'Add New Plant'}</h2>
+            <h2>Add New Plant</h2>
             <form onSubmit={handleSubmit}>
               <select
                 value={formData.growth_site}
                 onChange={handleGrowthSiteChange}
-                disabled={editingRecord}
               >
                 <option value="">Select Planting Area</option>
                 {growthSites.map((site) => (
@@ -400,7 +431,7 @@ const PlantRegistration = () => {
               <select
                 value={formData.plant_name}
                 onChange={handlePlantChange}
-                disabled={!formData.growth_site || editingRecord}
+                disabled={!formData.growth_site}
               >
                 <option value="">Select Plant Name</option>
                 {plantsBySite
@@ -411,6 +442,34 @@ const PlantRegistration = () => {
                     </option>
                   ))}
               </select>
+
+              {formData.growth_site.includes('Hydroponic') && (
+                <select
+                  value={formData.location}
+                  onChange={(e) => setFormData({ ...formData, location: e.target.value })}
+                >
+                  <option value="">Select Hydroponic Location</option>
+                  {availableHydroLocations.map((location) => (
+                    <option key={location.id} value={location.name}>
+                      {location.name}
+                    </option>
+                  ))}
+                </select>
+              )}
+
+              {formData.growth_site.includes('Soil Based') && (
+                <select
+                  value={formData.location}
+                  onChange={(e) => setFormData({ ...formData, location: e.target.value })}
+                >
+                  <option value="">Select Soil Location</option>
+                  {availableSoilLocations.map((location) => (
+                    <option key={location.id} value={location.name}>
+                      {location.name}
+                    </option>
+                  ))}
+                </select>
+              )}
 
               <input
                 type="text"
@@ -467,9 +526,7 @@ const PlantRegistration = () => {
                   setFormData({ ...formData, expected_harvest_date: e.target.value })
                 }
               />
-              <button type="submit">
-                {editingRecord ? 'Update Record' : 'Add Record'}
-              </button>
+              <button type="submit">Add Record</button>
               <button type="button" onClick={() => setIsModalOpen(false)}>
                 Close
               </button>

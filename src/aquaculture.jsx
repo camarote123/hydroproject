@@ -28,9 +28,9 @@ const Aquaculture = () => {
           <div className="aqua-card">
             <div className="aqua-card-content">
               <div className="aqua-card-title">WATER TEMPERATURE</div>
-              
+              <div className="aqua-card-description"></div>
               <button
-                className="aqua-card-button"
+                className="sensor-card-button"
                 onClick={() => handleNavigation('/watertemp')}
               >
                 View Data
@@ -59,7 +59,7 @@ const Aquaculture = () => {
             <div className="aqua-card-content">
               <div className="aqua-card-title">HYDRO WATER LEVEL</div>
               <div className="aqua-card-description">
-                Tracks moisture levels in the air.
+            
               </div>
               <button
                 className="sensor-card-button"
@@ -75,7 +75,7 @@ const Aquaculture = () => {
             <div className="aqua-card-content">
               <div className="aqua-card-title">RESERVIOR</div>
               <div className="aqua-card-description">
-                Tracks moisture levels in the air.
+             
               </div>
               <button
                 className="sensor-card-button"
@@ -85,13 +85,30 @@ const Aquaculture = () => {
               </button>
             </div>
           </div>
+            
 
-          {/* Card 5 */}
+             {/* Card 5 */}
+          <div className="aqua-card">
+            <div className="aqua-card-content">
+              <div className="aqua-card-title">pH_LEVEL</div>
+              <div className="aqua-card-description">
+         
+              </div>
+              <button
+                className="sensor-card-button"
+                onClick={() => handleNavigation('/phlevel')}
+              >
+                View Data
+              </button>
+            </div>
+          </div>
+
+          {/* Card 6 */}
           <div className="aqua-card">
             <div className="aqua-card-content">
               <div className="aqua-card-title">FISH FOOD LEVEL</div>
               <div className="aqua-card-description">
-                Tracks moisture levels in the air.
+             
               </div>
               <button
                 className="sensor-card-button"

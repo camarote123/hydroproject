@@ -1,0 +1,301 @@
+/* General Dashboard Styles */
+.dashboard-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: calc(100vw - 160px); /* Subtract sidebar width */
+    margin-left: 180px; /* Offset by sidebar width */
+    background-color: #f4f4f4;
+    font-family: Arial, sans-serif;
+    transition: margin-left 0.3s ease, width 0.3s ease;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+/* Responsive adjustments for sidebar */
+@media screen and (max-width: 1024px) {
+    .dashboard-container {
+        width: calc(100vw - 80px);
+        margin-left: 80px; /* Adjust for collapsed sidebar */
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .dashboard-container {
+        width: 100vw;
+        margin-left: 0; /* No sidebar margin when hidden */
+        padding: 15px;
+    }
+}
+
+/* Dashboard Header Row - New */
+.dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    max-width: 1200px;
+    margin-bottom: 30px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+/* Dashboard Title */
+.dashboard-title {
+    font-size: 28px;
+    margin: 0;
+    padding: 10px 0;
+    text-align: left;
+}
+
+/* Environment Info - New */
+.environment-info {
+    text-align: right;
+}
+
+.environment-title {
+    font-size: 18px;
+    font-weight: bold;
+    color: #136813;
+    margin: 0 0 5px 0;
+}
+
+.environment-readings {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.environment-reading {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 8px;
+}
+
+.reading-label {
+    font-size: 14px;
+    font-weight: normal;
+    color: #333;
+}
+
+.reading-value {
+    font-size: 16px;
+    font-weight: bold;
+    color: #136813;
+}
+
+@media screen and (max-width: 768px) {
+    .dashboard-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .dashboard-title {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+    
+    .environment-info {
+        text-align: left;
+        width: 100%;
+    }
+    
+    .environment-reading {
+        justify-content: flex-start;
+    }
+}
+
+@media screen and (max-width: 576px) {
+    .dashboard-title {
+        font-size: 24px;
+    }
+}
+
+/* Section Styles */
+.dashboard-section {
+    width: 100%;
+    max-width: 1200px;
+    margin-bottom: 30px;
+}
+
+.section-title {
+    font-size: 22px;
+    font-weight: bold;
+    margin-bottom: 15px;
+    color: #136813;
+    border-left: 5px solid rgba(19, 104, 19, 0.94);
+    padding-left: 10px;
+}
+
+/* Cards Section */
+.dashboard-card-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    width: 100%;
+    background: white;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    box-sizing: border-box;
+}
+
+@media screen and (max-width: 1024px) {
+    .dashboard-card-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .dashboard-card-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media screen and (max-width: 576px) {
+    .dashboard-card-grid {
+        grid-template-columns: 1fr;
+        padding: 15px;
+        gap: 15px;
+    }
+}
+
+/* Individual Cards */
+.dashboard-card {
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    overflow: hidden; /* Ensures content stays within rounded corners */
+}
+
+.dashboard-card-content {
+    background: rgba(19, 104, 19, 0.94);
+    color: white;
+    padding: 20px;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    box-sizing: border-box;
+}
+
+@media screen and (max-width: 576px) {
+    .dashboard-card-content {
+        padding: 15px;
+    }
+}
+
+/* Titles and Text Inside Cards */
+.dashboard-card-title {
+    font-size: 16px;
+    margin-bottom: 10px;
+}
+
+.dashboard-card-description {
+    font-size: 30px;
+    margin-top: 10px;
+    font-weight: bold;
+}
+
+@media screen and (max-width: 576px) {
+    .dashboard-card-description {
+        font-size: 24px;
+    }
+}
+
+/* Charts Section Wrapper */
+.dashboard-chart-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start;
+    width: 100%;
+    max-width: 1200px;
+    gap: 20px;
+    margin-top: 20px;
+}
+
+/* Chart Backgrounds */
+.chart-wrapper {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+    max-width: 1200px;
+    gap: 20px;
+    box-sizing: border-box;
+}
+
+@media screen and (max-width: 768px) {
+    .chart-wrapper {
+        flex-direction: column;
+        align-items: center;
+        padding: 15px;
+        gap: 15px;
+    }
+}
+
+/* Pie Chart Section */
+.piechart-container {
+    flex: 1;
+    max-width: 350px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    box-sizing: border-box;
+}
+
+/* Bar Chart Section */
+.barchart-container {
+    flex: 1;
+    max-width: 55%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    padding: 20px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    box-sizing: border-box;
+}
+
+/* Ensure Charts Fit Well */
+.piechart-container canvas,
+.barchart-container canvas {
+    max-width: 100%;
+    height: auto !important; /* Override any inline height */
+    width: 100% !important; /* Make sure canvas stretches to container */
+}
+
+/* Responsive Design for Charts */
+@media (max-width: 768px) {
+    .dashboard-chart-container {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .piechart-container, 
+    .barchart-container {
+        max-width: 100%;
+        width: 100%;
+    }
+}
+
+@media screen and (max-width: 576px) {
+    .piechart-container, 
+    .barchart-container {
+        padding: 15px;
+    }
+}

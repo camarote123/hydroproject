@@ -48,7 +48,7 @@ const Hydro = () => {
         .select('*', { count: 'exact' })
         .eq('growth_site', 'Hydroponics')
         .range((currentPage - 1) * pageSize, currentPage * pageSize - 1);
-        
+
       if (error) {
         console.error('Error fetching plants:', error.message);
       } else {
@@ -104,7 +104,7 @@ const Hydro = () => {
       phosphorus_measurement: '',
       potassium_measurement: '',
       ph_level: '',
-  
+
       temperature: '',
       humidity: '',
       pesticide: '',
@@ -157,7 +157,7 @@ const Hydro = () => {
       phosphorus_measurement: '',
       potassium_measurement: '',
       ph_level: '',
- 
+
       temperature: '',
       humidity: '',
       pesticide: '',
@@ -179,85 +179,85 @@ const Hydro = () => {
 
   return (
     <div>
-    <Navbar />
-    <h1>Hydroponics Plant Data</h1>
-  
-    {/* Button to open the Add New Plant modal */}
-    <button onClick={openAddNewPlantModal}>Add New Plant</button>
-  
-    {/* Modal for adding or updating a plant */}
-    {isModalOpen && (
-      <div className="modal-overlay">
-        <div className="modal-content2">
-          <h2>{editingRecord ? 'Edit Plant' : 'Add New Plant'}</h2>
-          <form onSubmit={handleSubmit}>
-            <label>Growth Site</label>
-            <input 
-              type="text"
-              placeholder="growth site"
-              value={formData.growth_site || ''}
-              onChange={(e) => setFormData({...formData, growth_site: e.target.value})}
-              disabled={true}
-              required
-              
-            />
-            <label>Plant Name</label>
-            <input
-              type="text"
-              placeholder="Plant Name"
-              value={formData.plant_name || ''}
-              onChange={(e) => setFormData({ ...formData, plant_name: e.target.value })}
-              required
-              title="Plant Name is required"
-             
-            />
-            <label>pH Level</label>
-            <input
-              type="text"
-              placeholder="pH Level"
-              value={formData.ph_level || ''}
-              onChange={(e) => setFormData({ ...formData, ph_level: e.target.value })}
-              required
-              title="Format. 00.00 - 00.00"
-              pattern="^\d{2}\.\d{2} - \d{2}\.\d{2}$"
-            />
-  
-            <label>Temperature</label>
-            <input
-              type="text"
-              placeholder="Temperature"
-              value={formData.temperature || ''}
-              onChange={(e) => setFormData({ ...formData, temperature: e.target.value })}
-              required
-              title="Format. 00.00 - 00.00"
-               pattern="^\d{2}\.\d{2} - \d{2}\.\d{2}$"
-            />
-            <label>Humidity</label>
-            <input
-              type="text"
-              placeholder="Humidity"
-              value={formData.humidity || ''}
-              onChange={(e) => setFormData({ ...formData, humidity: e.target.value })}
-              required
-              title="Format. 00.00 - 00.00"
-               pattern="^\d{2}\.\d{2} - \d{2}\.\d{2}$"
-            />
-  
-            <label>Harvest Duration</label>
-            <input
-              type="number"
-              placeholder="Harvest Duration (Days)"
-              value={formData.harvest_duration || ''}
-              onChange={(e) => setFormData({ ...formData, harvest_duration: e.target.value })}
-              required
-              title="Harvest Duration is required"
-            />
-            <button type="submit">{editingRecord ? 'Update' : 'Add Record'}</button>
-            <button type="button1" onClick={resetForm}>Close</button>
-          </form>
+      <Navbar />
+      <h1>Hydroponics Plant Data</h1>
+
+      {/* Button to open the Register Plant modal */}
+      <button onClick={openAddNewPlantModal}>Register Plant</button>
+
+      {/* Modal for adding or updating a plant */}
+      {isModalOpen && (
+        <div className="modal-overlay">
+          <div className="modal-content2">
+            <h2>{editingRecord ? 'Edit Plant' : 'Register Plant'}</h2>
+            <form onSubmit={handleSubmit}>
+              <label>Growth Site</label>
+              <input
+                type="text"
+                placeholder="growth site"
+                value={formData.growth_site || ''}
+                onChange={(e) => setFormData({ ...formData, growth_site: e.target.value })}
+                disabled={true}
+                required
+
+              />
+              <label>Plant Name</label>
+              <input
+                type="text"
+                placeholder="Plant Name"
+                value={formData.plant_name || ''}
+                onChange={(e) => setFormData({ ...formData, plant_name: e.target.value })}
+                required
+                title="Plant Name is required"
+
+              />
+              <label>pH Level</label>
+              <input
+                type="text"
+                placeholder="pH Level"
+                value={formData.ph_level || ''}
+                onChange={(e) => setFormData({ ...formData, ph_level: e.target.value })}
+                required
+                title="Format. 00.00 - 00.00"
+                pattern="^\d{2}\.\d{2} - \d{2}\.\d{2}$"
+              />
+
+              <label>Temperature</label>
+              <input
+                type="text"
+                placeholder="Temperature"
+                value={formData.temperature || ''}
+                onChange={(e) => setFormData({ ...formData, temperature: e.target.value })}
+                required
+                title="Format. 00.00 - 00.00"
+                pattern="^\d{2}\.\d{2} - \d{2}\.\d{2}$"
+              />
+              <label>Humidity</label>
+              <input
+                type="text"
+                placeholder="Humidity"
+                value={formData.humidity || ''}
+                onChange={(e) => setFormData({ ...formData, humidity: e.target.value })}
+                required
+                title="Format. 00.00 - 00.00"
+                pattern="^\d{2}\.\d{2} - \d{2}\.\d{2}$"
+              />
+
+              <label>Harvest Duration</label>
+              <input
+                type="number"
+                placeholder="Harvest Duration (Days)"
+                value={formData.harvest_duration || ''}
+                onChange={(e) => setFormData({ ...formData, harvest_duration: e.target.value })}
+                required
+                title="Harvest Duration is required"
+              />
+              <button type="submit">{editingRecord ? 'Update' : 'Add Record'}</button>
+              <button type="button1" onClick={resetForm}>Close</button>
+            </form>
+          </div>
         </div>
-      </div>
-    )}
+      )}
 
       {/* Modal for confirming deletion */}
       {isDeleteModalOpen && (
@@ -275,7 +275,7 @@ const Hydro = () => {
       )}
 
       {/* Table displaying plants data */}
-      <div >
+      <div className='container3' >
         <table border="1" style={{ width: '100%', borderCollapse: 'collapse' }}>
           <thead>
             <tr>
@@ -296,7 +296,7 @@ const Hydro = () => {
                 <td>{plant.humidity}</td>
                 <td>{plant.harvest_duration}</td>
                 <td>
-                  <div className="action-buttons1">
+                  <div className="action-buttons">
                     <button onClick={() => editPlant(plant)}><FaEdit /></button>
                     <button onClick={() => openDeleteModal(plant)}><FaTrashAlt /></button>
                   </div>
@@ -309,15 +309,15 @@ const Hydro = () => {
 
       {/* Pagination Controls */}
       <div className="pagination">
-        <button 
-          onClick={() => goToPage(currentPage - 1)} 
+        <button
+          onClick={() => goToPage(currentPage - 1)}
           disabled={currentPage === 1}
         >
           Previous
         </button>
         <span>Page {currentPage} of {totalPages}</span>
-        <button 
-          onClick={() => goToPage(currentPage + 1)} 
+        <button
+          onClick={() => goToPage(currentPage + 1)}
           disabled={currentPage === totalPages}
         >
           Next

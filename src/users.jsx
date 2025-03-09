@@ -1,11 +1,10 @@
-import bcrypt from "bcryptjs"; // Import bcrypt for password hashing
-import emailjs from "emailjs-com"; // Import EmailJS
+import bcrypt from "bcryptjs";
+import emailjs from "emailjs-com";
 import React, { useEffect, useState } from "react";
-import { FaEdit, FaTrashAlt } from 'react-icons/fa'; // Importing the Edit and Trash icons
-import { supabase } from "./createClient"; // Assuming you have your Supabase client set up
-import Navbar from './navbar'; // Adjust the path as needed
+import { FaEdit, FaTrashAlt } from 'react-icons/fa';
+import { supabase } from "./createClient";
+import Navbar from './navbar';
 import "./users.css";
-
 
 // Function to generate a random password
 function generateRandomPassword(length = 8) {
@@ -21,14 +20,14 @@ const Users = () => {
   const [users, setUsers] = useState([]);
   const [user, setUser] = useState({ name: "", email: "", position: "", password: "" });
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isEdit, setIsEdit] = useState(false); // Tracks whether we are editing
-  const [editingUserId, setEditingUserId] = useState(null); // ID of the user being edited
+  const [isEdit, setIsEdit] = useState(false);
+  const [editingUserId, setEditingUserId] = useState(null);
   const [passwordVisible, setPasswordVisible] = useState(false);
-  const [loading, setLoading] = useState(false); // Add loading state
-  const [error, setError] = useState(""); // Add error state
-  const [deleteUserId, setDeleteUserId] = useState(null); // Track the user being deleted for confirmation
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [deleteUserId, setDeleteUserId] = useState(null);
 
-  const protectedEmail = "emmancamarote02@gmail.com"; // The email you want to protect
+  const protectedEmail = "emmancamarote02@gmail.com";
 
   useEffect(() => {
     fetchUsers();
@@ -85,7 +84,7 @@ const Users = () => {
     }
 
     setLoading(true);
-    setError(""); // Reset any previous error
+    setError("");
 
     try {
       // Hash the password before saving it to Supabase
@@ -103,7 +102,7 @@ const Users = () => {
       }
 
       // Define the local link to include in the email
-      const userLink = `http://localhost:3000/resetpassword/${email}`;
+     
 
       // Send email using EmailJS to the new user
       const emailParams = {
@@ -111,15 +110,15 @@ const Users = () => {
         email,
         password,
         position,
-        userLink,
+    
       };
 
       emailjs
         .send(
-          "service_cnx0pcx", // Your EmailJS Service ID
-          "template_uw9frtx", // Your EmailJS Template ID
+          "service_cnx0pcx",
+          "template_uw9frtx",
           emailParams,
-          "HLKtzdj8WdjaQRRuh" // Your EmailJS Public Key
+          "HLKtzdj8WdjaQRRuh"
         )
         .then(
           (response) => {
@@ -152,7 +151,7 @@ const Users = () => {
     }
 
     setLoading(true);
-    setError(""); // Reset any previous error
+    setError("");
 
     const { error } = await supabase
       .from("users")
@@ -176,7 +175,7 @@ const Users = () => {
 
     if (userToDelete && userToDelete.email === protectedEmail) {
       alert("You cannot delete this user as their email is protected.");
-      setDeleteUserId(null); // Reset the delete confirmation
+      setDeleteUserId(null);
       return;
     }
 
@@ -189,7 +188,7 @@ const Users = () => {
       fetchUsers();
     }
     setLoading(false);
-    setDeleteUserId(null); // Reset delete confirmation
+    setDeleteUserId(null);
   }
 
   // Open the modal for editing an existing user
@@ -214,12 +213,17 @@ const Users = () => {
   }
 
   return (
-    <div >
+    <div>
       <Navbar />
       <h1>User Management</h1>
 
       {/* Create User Button */}
-      <button onClick={() => { resetModal(); setIsModalOpen(true); }}>Create User</button>
+      <button 
+        onClick={() => { resetModal(); setIsModalOpen(true); }}
+        className="create-user-btn"
+      >
+        Create User
+      </button>
 
       {/* Modal */}
       {isModalOpen && (
@@ -227,61 +231,77 @@ const Users = () => {
           <div className="modal-content">
             <h2>{isEdit ? "Edit User" : "Create User"}</h2>
             <form onSubmit={isEdit ? updateUser : createUser}>
-              <input
-                type="text"
-                placeholder="Name"
-                name="name"
-                value={user.name}
-                onChange={handleChange}
-                required
-              />
-              <input
-                type="email"
-                placeholder="Email"
-                name="email"
-                value={user.email}
-                onChange={handleChange}
-                required
-              />
+              <div className="input-group">
+                <input
+                  type="text"
+                  placeholder="Name"
+                  name="name"
+                  value={user.name}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
 
-              {/* Position Dropdown */}
-              <select name="position" value={user.position} onChange={handleChange}>
-                <option value="">Select Position</option>
-                <option value="admin">Admin</option>
-                <option value="staff">Staff</option>
-              </select>
+              <div className="input-group">
+                <input
+                  type="email"
+                  placeholder="Email"
+                  name="email"
+                  value={user.email}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+
+              <div className="input-group">
+                <select 
+                  name="position" 
+                  value={user.position} 
+                  onChange={handleChange}
+                >
+                  <option value="">Select Position</option>
+                  <option value="admin">Admin</option>
+                  <option value="staff">Staff</option>
+                </select>
+              </div>
 
               {!isEdit && (
-                <div style={{ display: "flex", alignItems: "center" }}>
+                <div className="password-group">
                   <input
                     type={passwordVisible ? "text" : "password"}
                     placeholder="Password"
                     name="password"
                     value={user.password}
                     onChange={handleChange}
-                    style={{ flex: 1 }}
                   />
-
-                  {/* Generate Password Button */}
                   <button
-                    type="button1"
+                    type="button"
+                    className="generate-password-btn"
                     onClick={handleGeneratePassword}
-                    style={{ marginLeft: "8px" }}
                   >
                     Generate Password
                   </button>
                 </div>
               )}
 
-              <button type="submit" disabled={loading}>
-                {isEdit ? "Update" : "Create"} {loading && "Loading..."}
-              </button>
-      
-              <button type="button1" onClick={resetModal}>
-                Cancel
-              </button>
+              <div className="button-group">
+                <button 
+                  type="button" 
+                  className="cancel-btn" 
+                  onClick={resetModal}
+                >
+                  Cancel
+                </button>
+                <button 
+                  type="submit" 
+                  className="create-btn" 
+                  disabled={loading}
+                >
+                  {isEdit ? "Update" : "Create"}
+                </button>
+              </div>
             </form>
-            {error && <p style={{ color: "red" }}>{error}</p>}
+            {error && <p className="error-message">{error}</p>}
           </div>
         </div>
       )}
@@ -289,10 +309,12 @@ const Users = () => {
       {/* Delete Confirmation Modal */}
       {deleteUserId && (
         <div className="modal">
-          <div className="modal-content1">
+          <div className="modal-content-delete">
             <h3>Are you sure you want to delete this user?</h3>
-            <button onClick={() => deleteUser(deleteUserId)}>Yes</button>
-            <button onClick={() => setDeleteUserId(null)}>No</button>
+            <div className="button-group">
+              <button onClick={() => setDeleteUserId(null)}>No</button>
+              <button onClick={() => deleteUser(deleteUserId)}>Yes</button>
+            </div>
           </div>
         </div>
       )}
@@ -305,7 +327,7 @@ const Users = () => {
             <th>Name</th>
             <th>Email</th>
             <th>Position</th>
-            <th>Actions</th>
+            <th>Action</th>
           </tr>
         </thead>
         <tbody>
@@ -315,9 +337,9 @@ const Users = () => {
               <td>{user.name}</td>
               <td>{user.email}</td>
               <td>{user.position}</td>
-              <td>
-                <button onClick={() => openEditModal(user)}><FaEdit /> </button>
-                <button onClick={() => openDeleteConfirmation(user.id)}><FaTrashAlt /> </button>
+              <td className="action-buttons">
+                <button onClick={() => openEditModal(user)}><FaEdit /></button>
+                <button onClick={() => openDeleteConfirmation(user.id)}><FaTrashAlt /></button>
               </td>
             </tr>
           ))}

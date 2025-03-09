@@ -25,6 +25,7 @@ const supabaseUrl = 'https://blxxjmoszhndbfgqrprb.supabase.co';
 const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJseHhqbW9zemhuZGJmZ3FycHJiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzIwMzkyMjEsImV4cCI6MjA0NzYxNTIyMX0._WjnfmgLYBaJP6g64fiCM__a7JWbXPDaZBK_j2yIvV8';
 const supabase = createClient(supabaseUrl, supabaseKey);
 
+
 // Register Chart.js components + zoom plugin
 ChartJS.register(
   CategoryScale,
@@ -38,112 +39,139 @@ ChartJS.register(
   zoomPlugin // Register zoom plugin
 );
 
-const Humidity = () => {
-  const [latestData, setLatestData] = useState(null); // State for real-time data (Card Grid)
-  const [humidityData, setHumidityData] = useState([]); // State for historical data (Graph & History)
+const Npk = () => {
+  const [latestData, setLatestData] = useState(null);
+  const [npkData, setNPKData] = useState([]);
   const [selectedDate, setSelectedDate] = useState(null);
   const [isHistoryModalOpen, setIsHistoryModalOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 16;
+  const itemsPerPage = 16; // Number of records per page
   const navigate = useNavigate();
   const totalRecordsRef = useRef(0);
   const allDataRef = useRef([]);
   const [loading, setLoading] = useState(false);
 
-  // Fetch latest real-time data (only the most recent entry)
+  // ✅ Fetch Latest Data for Card Grid
   const fetchLatestData = async () => {
     try {
       let { data, error } = await supabase
-        .from('humidity')
+        .from('npk')
         .select('*')
         .order('timestamp', { ascending: false })
-        .limit(1); // Get the latest record
+        .limit(1);
 
       if (error) throw error;
       if (data.length > 0) {
-        setLatestData(data[0]); // Store the latest data
+        setLatestData(data[0]);
       }
     } catch (error) {
-      console.error('Error fetching latest humidity data:', error);
+      console.error('Error fetching latest NPK data:', error);
     }
   };
 
-  // Fetch historical data based on selected date
+  // ✅ Fetch Historical Data
   const fetchHistoricalData = async (date, from = 0, to = 1000) => {
     setLoading(true);
     try {
       let query = supabase
-        .from('humidity')
-        .select('*', { count: 'exact' })
+        .from('npk')
+        .select('*', { count: 'exact' }) // ✅ Ensure count is retrieved
         .order('timestamp', { ascending: true })
         .range(from, to);
 
       if (date) {
         const startOfDay = new Date(date);
         startOfDay.setHours(0, 0, 0, 0);
-
         const endOfDay = new Date(date);
         endOfDay.setHours(23, 59, 59, 999);
 
-        query = query
-          .gte('timestamp', startOfDay.toISOString())
-          .lte('timestamp', endOfDay.toISOString());
+        query = query.gte('timestamp', startOfDay.toISOString()).lte('timestamp', endOfDay.toISOString());
       }
 
       let { data, error, count } = await query;
       if (error) throw error;
 
-      // Convert timestamps to UTC+8
+      // ✅ Convert timestamps to UTC+8
       const adjustedData = data.map(item => ({
         ...item,
         timestamp: new Date(new Date(item.timestamp).getTime() + 8 * 60 * 60 * 1000),
       }));
 
       if (from === 0) {
-        setHumidityData(adjustedData);
+        setNPKData(adjustedData);
       } else {
-        setHumidityData(prevData => [...prevData, ...adjustedData]);
+        setNPKData(prevData => [...prevData, ...adjustedData]);
       }
 
       allDataRef.current = [...allDataRef.current, ...adjustedData];
-      if (count !== null) totalRecordsRef.current = count;
+      if (count !== null) totalRecordsRef.current = count; // ✅ Ensure count is updated
 
     } catch (error) {
-      console.error('Error fetching humidity data:', error);
+      console.error('Error fetching NPK data:', error);
     }
     setLoading(false);
   };
 
-  // Chart Data Preparation
+  // ✅ Paginate Data
+  const paginatedData = npkData.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
+  // ✅ Pagination Controls
+  const handlePrevPage = () => {
+    if (currentPage > 1) setCurrentPage(currentPage - 1);
+  };
+
+  const handleNextPage = async () => {
+    if ((currentPage * itemsPerPage) < totalRecordsRef.current) {
+      const newPage = currentPage + 1;
+      await fetchHistoricalData(selectedDate, (newPage - 1) * itemsPerPage, newPage * itemsPerPage);
+      setCurrentPage(newPage);
+    }
+  };
+
+  // ✅ Chart Data
   const chartData = {
-    labels: humidityData.map((item) => new Date(item.timestamp)),
+    labels: npkData.map(item => new Date(item.timestamp)), // Already adjusted in fetchHistoricalData
     datasets: [
       {
-        label: 'Humidity (%)',
-        data: humidityData.map((item) => ({
+        label: 'Nitrogen (N)',
+        data: npkData.map(item => ({
           x: new Date(item.timestamp),
-          y: item.humidity,
+          y: item.nitrogen,
         })),
-        borderColor: 'rgba(75, 192, 192, 1)',
-        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+        borderColor: 'rgba(214, 166, 7, 0.81)',
+        backgroundColor: 'rgba(214, 166, 7, 0.81)',
         fill: true,
-        pointRadius: 0,
+        pointRadius: 0, // Remove dots on the graph
       },
       {
-        label: 'Temperature (°C)',
-        data: humidityData.map((item) => ({
+        label: 'Phosphorus (P)',
+        data: npkData.map(item => ({
           x: new Date(item.timestamp),
-          y: item.temperature,
+          y: item.phosphorus,
         })),
-        borderColor: 'rgba(255, 99, 132, 1)',
-        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+        borderColor: 'rgb(38, 226, 79)',
+        backgroundColor: 'rgb(38, 226, 79)',
         fill: true,
-        pointRadius: 0,
+        pointRadius: 0, // Remove dots on the graph
+      },
+      {
+        label: 'Potassium (K)',
+        data: npkData.map(item => ({
+          x: new Date(item.timestamp),
+          y: item.potassium,
+        })),
+        borderColor: 'rgba(255, 159, 64, 1)',
+        backgroundColor: 'rgba(255, 159, 64, 0.2)',
+        fill: true,
+        pointRadius: 0, // Remove dots on the graph
       },
     ],
   };
 
-  // Chart Options (with Scroll Zoom & Pan)
+  // ✅ Chart Options (with Scroll Zoom & Pan)
   const chartOptions = {
     responsive: true,
     maintainAspectRatio: false,
@@ -170,7 +198,7 @@ const Humidity = () => {
       y: {
         title: {
           display: true,
-          text: 'Humidity (%) / Temperature (°C)',
+          text: 'NPK Levels',
         },
       },
     },
@@ -180,7 +208,7 @@ const Humidity = () => {
       },
       title: {
         display: true,
-        text: 'Humidity and Temperature Trends',
+        text: 'NPK Levels Trends',
       },
       zoom: {
         pan: {
@@ -196,10 +224,10 @@ const Humidity = () => {
           },
           mode: 'x',
           onZoomComplete({ chart }) {
-            // Dynamically adjust X-axis when zooming
+            // 🔥 Dynamically adjust X-axis when zooming
             const xScale = chart.scales.x;
             const dataPoints = xScale.ticks.length;
-
+  
             if (dataPoints > 50) {
               xScale.options.time.unit = 'hour';
             } else if (dataPoints > 10) {
@@ -207,7 +235,7 @@ const Humidity = () => {
             } else {
               xScale.options.time.unit = 'week';
             }
-
+  
             chart.update('none');
           },
         },
@@ -215,79 +243,68 @@ const Humidity = () => {
     },
   };
 
-  // Pagination logic
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = humidityData.slice(indexOfFirstItem, indexOfLastItem);
-
-  const nextPage = async () => {
-    if ((currentPage * itemsPerPage) < totalRecordsRef.current) {
-      const newPage = currentPage + 1;
-      await fetchHistoricalData(selectedDate, (newPage - 1) * itemsPerPage, newPage * itemsPerPage);
-      setCurrentPage(newPage);
-    }
-  };
-
-  const prevPage = () => {
-    if (currentPage > 1) {
-      setCurrentPage(currentPage - 1);
-    }
-  };
-
-  const openHistoryModal = () => setIsHistoryModalOpen(true);
-  const closeHistoryModal = () => setIsHistoryModalOpen(false);
-
   useEffect(() => {
     const fetchData = async () => {
       await fetchLatestData();
       await fetchHistoricalData(selectedDate);
     };
-
-    fetchData(); // Fetch initial data
-
-    // Subscribe to real-time updates on 'humidity' table
-    const humiditySubscription = supabase
-      .channel('realtime:humidity') // Create a channel for real-time updates
+  
+    fetchData(); // Initial fetch
+  
+    // Subscribe to changes in the 'npk' table
+    const npkSubscription = supabase
+      .channel('realtime:npk') // Create a channel for real-time updates
       .on(
         'postgres_changes',
-        { event: 'INSERT', schema: 'public', table: 'humidity' },
+        { event: 'INSERT', schema: 'public', table: 'npk' }, 
         (payload) => {
           const newRecord = {
             ...payload.new,
             timestamp: new Date(new Date(payload.new.timestamp).getTime() + 8 * 60 * 60 * 1000), // UTC+8 conversion
           };
-          setHumidityData((prevData) => [...prevData, newRecord]); // Append new record
+          setNPKData((prevData) => [...prevData, newRecord]); // Append new record
           allDataRef.current = [...allDataRef.current, newRecord];
           setLatestData(newRecord); // Update latest data
         }
       )
       .subscribe();
-
+  
     return () => {
-      supabase.removeChannel(humiditySubscription); // Cleanup subscription on unmount
+      supabase.removeChannel(npkSubscription); // Cleanup subscription on unmount
     };
-  }, [selectedDate]); // Fetch historical data on date change
+  }, [selectedDate]);
+  
 
   return (
     <div className="humidity-container">
       <Navbar />
       <div className="humidity-content">
-        <h1 className="humidity-title1">Humidity and Temperature Data</h1>
+        <h1 className="humidity-title">NPK Data</h1>
+
+        {/* Card Grid (Latest Data) */}
         <div className="humiditycontainer">
           <div className="card-grid">
             <div className="humidity-card">
               <div className="humidity-card-content">
-                <div className="humidity-card-title">HUMIDITY</div>
+                <div className="humidity-card-title">NITROGEN (N)</div>
                 <div className="humidity-card-description">
-                  {latestData ? `${latestData.humidity}%` : 'Loading...'}
+                  {latestData ? `${latestData.nitrogen}` : 'Loading...'}
                 </div>
               </div>
             </div>
             <div className="humidity-card">
               <div className="humidity-card-content">
-                <div className="humidity-card-title">TEMPERATURE</div>
+                <div className="humidity-card-title">PHOSPHORUS (P)</div>
                 <div className="humidity-card-description">
-                  {latestData ? `${latestData.temperature}°C` : 'Loading...'}
+                  {latestData ? `${latestData.phosphorus}` : 'Loading...'}
+                </div>
+              </div>
+            </div>
+            <div className="humidity-card">
+              <div className="humidity-card-content">
+                <div className="humidity-card-title">POTASSIUM (K)</div>
+                <div className="humidity-card-description">
+                  {latestData ? `${latestData.potassium}` : 'Loading...'}
                 </div>
               </div>
             </div>
@@ -310,55 +327,51 @@ const Humidity = () => {
           />
         </div>
 
-        {/* Graph */}
+        {/* Graph with Scroll Zoom & Pan */}
         <div className="graph-container" style={{ height: '400px', marginTop: '20px' }}>
           <Line data={chartData} options={chartOptions} />
         </div>
 
-        {/* Button to open history modal */}
-        <button className="history-button" onClick={openHistoryModal}>View History</button>
+        {/* Button to open the history modal */}
+        <button className="history-button" onClick={() => setIsHistoryModalOpen(true)}>View History</button>
 
         <div>
           <br></br>
           <button onClick={() => navigate('/pesticide')}>BACK</button>
         </div>
 
-        {/* Modal for history logs */}
+        {/* Modal for displaying history logs */}
         {isHistoryModalOpen && (
           <div className="modal-overlay">
             <div className="modal-content">
               <h2>History Logs</h2>
-              <button className="close-modal-btn" onClick={closeHistoryModal}>Close</button>
-
-              <table className="humidity-table">
+              <button className="close-modal-btn" onClick={() => setIsHistoryModalOpen(false)}>Close</button>
+              <table className="soil-moisture-table">
                 <thead>
                   <tr>
-                    <th>Temperature</th>
-                    <th>Humidity</th>
+                    <th>Nitrogen (N)</th>
+                    <th>Phosphorus (P)</th>
+                    <th>Potassium (K)</th>
                     <th>Timestamp</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {currentItems.length === 0 ? (
-                    <tr>
-                      <td colSpan="3">No data available</td>
+                  {paginatedData.map((item) => (
+                    <tr key={item.id}>
+                      <td>{item.nitrogen}</td>
+                      <td>{item.phosphorus}</td>
+                      <td>{item.potassium}</td>
+                      <td>{new Date(item.timestamp).toLocaleString('en-PH', { timeZone: 'Asia/Manila' })}</td>
                     </tr>
-                  ) : (
-                    currentItems.map((item) => (
-                      <tr key={item.id}>
-                        <td>{item.temperature}°C</td>
-                        <td>{item.humidity}%</td>
-                        <td>{new Date(item.timestamp).toLocaleString('en-PH', { timeZone: 'Asia/Manila' })}</td>
-                      </tr>
-                    ))
-                  )}
+                  ))}
                 </tbody>
               </table>
 
+              {/* Pagination Controls */}
               <div className="pagination">
-                <button onClick={prevPage} disabled={currentPage === 1}>Previous</button>
+                <button onClick={handlePrevPage} disabled={currentPage === 1}>Previous</button>
                 <span>Page {currentPage}</span>
-                <button onClick={nextPage} enabled={(currentPage * itemsPerPage) >= totalRecordsRef.current}>Next</button>
+                <button onClick={handleNextPage} enabled={(currentPage * itemsPerPage) >= totalRecordsRef.current}>Next</button>
                 {loading && <span>Loading...</span>}
               </div>
             </div>
@@ -369,4 +382,4 @@ const Humidity = () => {
   );
 };
 
-export default Humidity;
+export default Npk;

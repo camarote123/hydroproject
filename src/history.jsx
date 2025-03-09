@@ -98,21 +98,21 @@ const History = () => {
 
       {/* Filters */}
       <div className='filter-section'>
-        
-
-        <label>Start    Date:
-        <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} /></label>
+        <label>Start Date:
+          <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
+        </label>
 
         <label>End Date:
-        <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} /></label>
+          <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} />
+        </label>
 
-
-      <label>
-        <select onChange={(e) => setGrowthSiteFilter(e.target.value)} value={growthSiteFilter}>
-          <option value="">All</option>
-          <option value="Hydroponics">Hydroponics</option>
-          <option value="Soil based">Soil Based</option>
-        </select>
+        <label>
+          Growth Site:
+          <select onChange={(e) => setGrowthSiteFilter(e.target.value)} value={growthSiteFilter}>
+            <option value="">All</option>
+            <option value="Hydroponics">Hydroponics</option>
+            <option value="Soil based">Soil Based</option>
+          </select>
         </label>
       </div>
 
@@ -122,6 +122,7 @@ const History = () => {
           <tr>
             <th>Plant Name</th>
             <th>PLANT ID</th>
+            <th>Location</th>
             <th>Growth Site</th>
             <th>Harvest Duration (Days)</th>
             <th>Date Created</th>
@@ -131,17 +132,18 @@ const History = () => {
         <tbody>
           {loading ? (
             <tr>
-              <td colSpan="6">Loading...</td>
+              <td colSpan="7">Loading...</td>
             </tr>
           ) : currentRows.length === 0 ? (
             <tr>
-              <td colSpan="6">No matching records found.</td>
+              <td colSpan="7">No matching records found.</td>
             </tr>
           ) : (
             currentRows.map((record) => (
               <tr key={record.id}>
                 <td>{record.plant_name}</td>
                 <td>{record.registration_id}</td>
+                <td>{record.location}</td>
                 <td>{record.growth_site}</td>
                 <td>{record.harvest_duration}</td>
                 <td>{formatDate(record.date_created)}</td>
