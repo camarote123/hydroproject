@@ -257,6 +257,7 @@ const Soilmonitoring = () => {
           };
           setSoilMoistureData((prevData) => [...prevData, newRecord]); // Append new record
           allDataRef.current = [...allDataRef.current, newRecord];
+          setLatestData(newRecord); // Update latest data
         }
       )
       .subscribe();
