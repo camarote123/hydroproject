@@ -271,7 +271,13 @@ const Soil = () => {
               <input
                 type="number"
                 value={formData.harvest_duration || ''}
-                onChange={(e) => setFormData({ ...formData, harvest_duration: e.target.value })}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  if (value === '' || (Number(value) >= 1 && /^\d*$/.test(value))) {
+                    setFormData({ ...formData, harvest_duration: value });
+                  }
+                }}
+                min="0"
                 required
                 title="Input harvest_duration Details"
               />
@@ -280,11 +286,11 @@ const Soil = () => {
             </form>
           </div>
         </div>
-        
-        
+
+
       )}
 
-      
+
 
       {/* Modal for confirming deletion */}
       {isDeleteModalOpen && (

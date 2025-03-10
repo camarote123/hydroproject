@@ -1,13 +1,17 @@
+
 import React, { useEffect, useState } from "react";
 import { FaBars, FaCogs, FaHome, FaLeaf, FaSignOutAlt, FaTimes, FaUsers, FaWarehouse, FaWater } from "react-icons/fa";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import "./Navbar.css";
+import { supabase } from './createClient'; // Ensure Supabase is correctly configured
+import logo from "/src/assets/logo.png";
 
 const Navbar = () => {
   const [plantsDropdown, setPlantsDropdown] = useState(false);
   const [registrationDropdown, setRegistrationDropdown] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
 
   const togglePlantsDropdown = () => setPlantsDropdown(!plantsDropdown);
   const toggleRegistrationDropdown = () => setRegistrationDropdown(!registrationDropdown);
@@ -50,6 +54,12 @@ const Navbar = () => {
     return location.pathname === path ? "active" : "";
   };
 
+  const handleLogout = async () => {
+    await supabase.auth.signOut(); // Clears session
+    localStorage.removeItem("userSession"); // Remove any stored user data (optional)
+    navigate("/login"); // Redirect to login
+  };
+
   return (
     <>
       {/* Sidebar Toggle Button (Mobile) */}
@@ -59,7 +69,7 @@ const Navbar = () => {
 
       <div className={`sidebar ${sidebarOpen ? "open" : ""}`}>
         <div className="logo">
-          <img src="/logo.png" alt="Logo" className="logo-img" />
+        <img src={logo} alt="Logo" className="logo-img" />
         </div>
 
         <ul>
@@ -148,7 +158,7 @@ const Navbar = () => {
 
          <div className="logout">
           <li>
-            <Link to="/login" className={isActive("/login")} onClick={toggleSidebar}>
+            <Link to="/login" className={isActive("/login")} onClick={handleLogout}>
               <FaSignOutAlt className="icon" /> <span>Log out </span>
             </Link>
           </li>

@@ -20,6 +20,7 @@ import Phlevel from './phlevel';
 import PlantRegistration from './plantregistration';
 import Plants from './plants';
 import Profile from './profile';
+import ProtectedRoute from './ProtectedRoute';
 import RequestPasswordReset from './requestpasswordreset';
 import Reservior from './reservior';
 import ResetPassword from './resetpassword';
@@ -52,42 +53,42 @@ const AppContent = () => {
 
       <Routes>
         {/* Redirect root ("/") to login */}
-        <Route path="/" element={<Navigate replace to = "/login" />} />
-        <Route path = "/login" element = {<Login/>} />
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/users" element={<Users />} />
-        <Route path="/sensors" element={<Sensors />} />
-        <Route path="/profile" element={<Profile />} />
-        <Route path="/plantregistration" element={<PlantRegistration />} />
-        <Route path="/plants" element={<Plants />} />
-        <Route path="/hydro" element={<Hydro />} />
-        <Route path="/soil" element={<Soil />} />
-        <Route path="/rhydro" element={<Rhydro />} />
-        <Route path="/rsoil" element={<Rsoil />} />
-        <Route path="/harvest" element={<Harvest />} />
-        <Route path="/humidity" element={<Humidity />} />
-        <Route path="/aquaculture" element={<Aquaculture />} />
-        <Route path="/watertemp" element={<Watertemp />} />
-        <Route path="/do" element={<Do />} />
-        <Route path="/soilbased" element={<Soilbased />} />
-        <Route path="/soilmonitoring" element={<Soilmonitoring />} />
-        <Route path="/soilmonitoring2" element={<Soilmonitoring2 />} />
-        <Route path="/hydrowaterlevel" element={<Hydrowaterlevel />} />
-        <Route path="/reservior" element={<Reservior />} />
-        <Route path="/food" element={<Food />} />
-        <Route path="/pesticide" element={<Pesticide />} />
-        <Route path="/history" element={<History />} />
-        <Route path="/phlevel" element={<Phlevel />} />
-        <Route path="/npk" element={<Npk />} />
-        <Route path="/location" element={<Location />} />
+        <Route path="/" element={<Navigate replace to="/login" />} />
+        <Route path="/login" element={<Login />} />
         
+        {/* Protected Routes */}
+        <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+        <Route path="/users" element={<ProtectedRoute><Users /></ProtectedRoute>} />
+        <Route path="/sensors" element={<ProtectedRoute><Sensors /></ProtectedRoute>} />
+        <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+        <Route path="/plantregistration" element={<ProtectedRoute><PlantRegistration /></ProtectedRoute>} />
+        <Route path="/plants" element={<ProtectedRoute><Plants /></ProtectedRoute>} />
+        <Route path="/hydro" element={<ProtectedRoute><Hydro /></ProtectedRoute>} />
+        <Route path="/soil" element={<ProtectedRoute><Soil /></ProtectedRoute>} />
+        <Route path="/rhydro" element={<ProtectedRoute><Rhydro /></ProtectedRoute>} />
+        <Route path="/rsoil" element={<ProtectedRoute><Rsoil /></ProtectedRoute>} />
+        <Route path="/harvest" element={<ProtectedRoute><Harvest /></ProtectedRoute>} />
+        <Route path="/humidity" element={<ProtectedRoute><Humidity /></ProtectedRoute>} />
+        <Route path="/aquaculture" element={<ProtectedRoute><Aquaculture /></ProtectedRoute>} />
+        <Route path="/watertemp" element={<ProtectedRoute><Watertemp /></ProtectedRoute>} />
+        <Route path="/do" element={<ProtectedRoute><Do /></ProtectedRoute>} />
+        <Route path="/soilbased" element={<ProtectedRoute><Soilbased /></ProtectedRoute>} />
+        <Route path="/soilmonitoring" element={<ProtectedRoute><Soilmonitoring /></ProtectedRoute>} />
+        <Route path="/soilmonitoring2" element={<ProtectedRoute><Soilmonitoring2 /></ProtectedRoute>} />
+        <Route path="/hydrowaterlevel" element={<ProtectedRoute><Hydrowaterlevel /></ProtectedRoute>} />
+        <Route path="/reservior" element={<ProtectedRoute><Reservior /></ProtectedRoute>} />
+        <Route path="/food" element={<ProtectedRoute><Food /></ProtectedRoute>} />
+        <Route path="/pesticide" element={<ProtectedRoute><Pesticide /></ProtectedRoute>} />
+        <Route path="/history" element={<ProtectedRoute><History /></ProtectedRoute>} />
+        <Route path="/phlevel" element={<ProtectedRoute><Phlevel /></ProtectedRoute>} />
+        <Route path="/npk" element={<ProtectedRoute><Npk /></ProtectedRoute>} />
+        <Route path="/location" element={<ProtectedRoute><Location /></ProtectedRoute>} />
 
         {/* Routes without Navbar */}
         <Route path="/resetpassword" element={<ResetPassword />} />
         <Route path="/requestpasswordreset" element={<RequestPasswordReset />} />
         <Route path="/entercurrentpassword" element={<EnterCurrentPassword />} />
         <Route path="/passwordchanged" element={<PasswordChanged />} />
-        <Route path="/login" element={<Login />} />
       </Routes>
     </>
   );

@@ -3,6 +3,8 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './aqua.css';
 import { supabase } from './createClient'; // Ensure Supabase is correctly configured
+import logo from "/src/assets/logo.png";
+
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -23,7 +25,7 @@ const Login = () => {
       // Fetch user data from Supabase based on email
       const { data, error: userError } = await supabase
         .from('users')
-        .select('email, password, position') // Select email, password, and position fields
+        .select('email, password, position')
         .eq('email', email)
         .single();
 
@@ -46,10 +48,13 @@ const Login = () => {
       }
 
       setSuccess('Login successful! Redirecting to the Dashboard...');
-      
+
+      // Store session in localStorage
+      localStorage.setItem('userSession', JSON.stringify({ email: data.email, position: data.position }));
+
       // Redirect to the Dashboard after successful login
       setTimeout(() => {
-        navigate('/dashboard'); // Redirect to dashboard
+        navigate('/dashboard');
       }, 1000);
 
     } catch (error) {
@@ -59,7 +64,8 @@ const Login = () => {
 
   return (
     <div className="container">
-      <img src="/logo.png" alt="Logo" className="logo-img1" />
+ 
+ <img src={logo} alt="Logo" className="logo-img1" />
       <h2>Login</h2>
       <form onSubmit={handleSubmit}>
         <div>
@@ -73,7 +79,7 @@ const Login = () => {
           />
         </div>
 
-        <div >
+        <div>
           <label htmlFor="password">Password</label>
           <br />
           <input

@@ -246,11 +246,16 @@ const Hydro = () => {
               <label>Harvest Duration</label>
               <input
                 type="number"
-                placeholder="Harvest Duration (Days)"
                 value={formData.harvest_duration || ''}
-                onChange={(e) => setFormData({ ...formData, harvest_duration: e.target.value })}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  if (value === '' || (Number(value) >= 1 && /^\d*$/.test(value))) {
+                    setFormData({ ...formData, harvest_duration: value });
+                  }
+                }}
+                min="0"
                 required
-                title="Harvest Duration is required"
+                title="Input harvest_duration Details"
               />
               <button type="submit">{editingRecord ? 'Update' : 'Add Record'}</button>
               <button type="button1" onClick={resetForm}>Close</button>

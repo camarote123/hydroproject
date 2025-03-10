@@ -3,6 +3,8 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './aqua.css';
 import { supabase } from './createClient'; // Assuming supabase is set up
+import logo from "/src/assets/logo.png";
+
 
 const RequestPasswordResetPage = () => {
   const [email, setEmail] = useState('');
@@ -56,9 +58,9 @@ const RequestPasswordResetPage = () => {
   };
 
   return (
-    
-    <div class = "container">
-      <img src="/logo.png" alt="Logo" className="logo-img2" />
+
+    <div class="container">
+      <img src={logo} alt="Logo" className="logo-img2" />
       <h2>Request Password Reset</h2>
       <form onSubmit={handlePasswordResetRequest}>
         <div>
