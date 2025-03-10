@@ -1,6 +1,5 @@
 import React from 'react';
-import { Navigate, Route, BrowserRouter as Router, Routes, useLocation } from 'react-router-dom';
-
+import { Navigate, Route, HashRouter as Router, Routes, useLocation } from 'react-router-dom';
 import Aquaculture from './aquaculture';
 import Dashboard from './dashboard';
 import Do from './do';
@@ -53,7 +52,8 @@ const AppContent = () => {
 
       <Routes>
         {/* Redirect root ("/") to login */}
-        <Route path="/" element={<Navigate replace to="/login" />} />
+        <Route path="/" element={<Navigate replace to = "/login" />} />
+        <Route path = "/login" element = {<Login/>} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/users" element={<Users />} />
         <Route path="/sensors" element={<Sensors />} />
