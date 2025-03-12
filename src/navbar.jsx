@@ -1,6 +1,5 @@
-
 import React, { useEffect, useState } from "react";
-import { FaBars, FaCogs, FaHome, FaLeaf, FaSignOutAlt, FaTimes, FaUsers, FaWarehouse, FaWater } from "react-icons/fa";
+import { FaBars, FaClipboardList, FaCogs, FaHome, FaLeaf, FaMicrochip, FaSeedling, FaSignOutAlt, FaTimes, FaUsers, FaWarehouse, FaWater } from "react-icons/fa";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import "./Navbar.css";
 import { supabase } from './createClient'; // Ensure Supabase is correctly configured
@@ -60,6 +59,11 @@ const Navbar = () => {
     navigate("/login"); // Redirect to login
   };
 
+  const handleLinkClick = (path) => {
+    navigate(path);
+    setSidebarOpen(false); // Close the sidebar after navigating
+  };
+
   return (
     <>
       {/* Sidebar Toggle Button (Mobile) */}
@@ -69,25 +73,25 @@ const Navbar = () => {
 
       <div className={`sidebar ${sidebarOpen ? "open" : ""}`}>
         <div className="logo">
-        <img src={logo} alt="Logo" className="logo-img" />
+          <img src={logo} alt="Logo" className="logo-img" />
         </div>
 
         <ul>
           <li>
-            <Link to="/dashboard" className={isActive("/dashboard")} onClick={toggleSidebar}>
+            <Link to="/dashboard" className={isActive("/dashboard")} onClick={() => handleLinkClick("/dashboard")}>
               <FaHome className="icon" /> <span>Dashboard</span>
             </Link>
           </li>
           
           <li>
-            <Link to="/users" className={isActive("/users")} onClick={toggleSidebar}>
+            <Link to="/users" className={isActive("/users")} onClick={() => handleLinkClick("/users")}>
               <FaUsers className="icon" /> <span>Users</span>
             </Link>
           </li>
           
           <li>
-            <Link to="/sensors" className={isActive("/sensors")} onClick={toggleSidebar}>
-              <FaCogs className="icon" /> <span>Sensors</span>
+            <Link to="/sensors" className={isActive("/sensors")} onClick={() => handleLinkClick("/sensors")}>
+              <FaMicrochip className="icon" /> <span>Sensors</span>
             </Link>
           </li>
 
@@ -102,13 +106,13 @@ const Navbar = () => {
             {plantsDropdown && (
               <ul className={`dropdown ${plantsDropdown ? "show" : ""}`}>
                 <li>
-                  <Link to="/hydro" className={isActive("/hydro")} onClick={toggleSidebar}>
-                    <span>Hydroponics</span>
+                  <Link to="/hydro" className={isActive("/hydro")} onClick={() => handleLinkClick("/hydro")}>
+                    <FaWater className="dropdown-icon" /> <span>Hydroponics</span>
                   </Link>
                 </li>
                 <li>
-                  <Link to="/soil" className={isActive("/soil")} onClick={toggleSidebar}>
-                    <span>Soil Based</span>
+                  <Link to="/soil" className={isActive("/soil")} onClick={() => handleLinkClick("/soil")}>
+                    <FaLeaf className="dropdown-icon" /> <span>Soil Based</span>
                   </Link>
                 </li>
               </ul>
@@ -119,25 +123,25 @@ const Navbar = () => {
           <li>
             <button className="dropdown-btn" onClick={toggleRegistrationDropdown}>
               <div>
-                <FaWater className="icon" /> <span>Plants Registration</span>
+                <FaClipboardList className="icon" /> <span>Plants Registration</span>
               </div>
               <span>{registrationDropdown ? "▲" : "▼"}</span>
             </button>
             {registrationDropdown && (
               <ul className={`dropdown ${registrationDropdown ? "show" : ""}`}>
                 <li>
-                  <Link to="/plantregistration" className={isActive("/plantregistration")} onClick={toggleSidebar}>
-                    <span>Registration</span>
+                  <Link to="/plantregistration" className={isActive("/plantregistration")} onClick={() => handleLinkClick("/plantregistration")}>
+                    <FaCogs className="dropdown-icon" /> <span>Registration</span>
                   </Link>
                 </li>
                 <li>
-                  <Link to="/rhydro" className={isActive("/rhydro")} onClick={toggleSidebar}>
-                    <span>Hydroponics</span>
+                  <Link to="/rhydro" className={isActive("/rhydro")} onClick={() => handleLinkClick("/rhydro")}>
+                    <FaWater className="dropdown-icon" /> <span>Hydroponics</span>
                   </Link>
                 </li>
                 <li>
-                  <Link to="/rsoil" className={isActive("/rsoil")} onClick={toggleSidebar}>
-                    <span>Soil Based</span>
+                  <Link to="/rsoil" className={isActive("/rsoil")} onClick={() => handleLinkClick("/rsoil")}>
+                    <FaLeaf className="dropdown-icon" /> <span>Soil Based</span>
                   </Link>
                 </li>
               </ul>
@@ -145,25 +149,24 @@ const Navbar = () => {
           </li>
 
           <li>
-            <Link to="/harvest" className={isActive("/harvest")} onClick={toggleSidebar}>
-              <FaLeaf className="icon" /> <span>Harvested Plants</span>
+            <Link to="/harvest" className={isActive("/harvest")} onClick={() => handleLinkClick("/harvest")}>
+              <FaSeedling className="icon" /> <span>Harvested Plants</span>
             </Link>
           </li>
           
           <li>
-            <Link to="/location" className={isActive("/location")} onClick={toggleSidebar}>
+            <Link to="/location" className={isActive("/location")} onClick={() => handleLinkClick("/location")}>
               <FaWarehouse className="icon" /> <span>Location</span>
             </Link>
           </li>
 
-         <div className="logout">
-          <li>
-            <Link to="/login" className={isActive("/login")} onClick={handleLogout}>
-              <FaSignOutAlt className="icon" /> <span>Log out </span>
-            </Link>
-          </li>
+          <div className="logout">
+            <li>
+              <Link to="/login" className={isActive("/login")} onClick={handleLogout}>
+                <FaSignOutAlt className="icon" /> <span>Log out </span>
+              </Link>
+            </li>
           </div>
-
         </ul>
       </div>
     </>

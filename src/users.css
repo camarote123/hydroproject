@@ -253,3 +253,55 @@ select {
     margin-bottom: 10px;
   }
 }
+
+/* Responsive Design Updates */
+@media (max-width: 480px) {
+  .container {
+    width: 95%;
+    padding: 10px;
+  }
+
+  h1 {
+    font-size: large;
+  }
+
+  .create-user-btn {
+    width: 100%;
+    margin-bottom: 10px;
+  }
+
+  table {
+    font-size: 12px;
+  }
+
+  th, td {
+    padding: 8px;
+  }
+
+  .action-buttons button {
+    font-size: 16px;
+    margin-right: 5px;
+    padding: 4px;
+  }
+
+  input,
+  select {
+    padding: 10px;
+    font-size: 12px;
+  }
+
+  .generate-password-btn {
+    padding: 6px 10px;
+    font-size: 12px;
+  }
+
+  .button-group {
+    flex-direction: column;
+  }
+
+  .button-group button {
+    width: 100%;
+    margin-bottom: 10px;
+    padding: 8px;
+  }
+}

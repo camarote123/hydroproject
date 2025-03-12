@@ -366,23 +366,72 @@ input[type="checkbox"]:hover {
     margin-left: 0;
     padding: 1rem;
   }
-  
+
   .calendar-container {
     flex-direction: column;
     padding: 1rem;
+    max-width: 100%;
   }
-  
+
   .react-calendar__tile {
     height: 45px;
     font-size: 0.875rem;
   }
-  
+
   .react-calendar__navigation {
     font-size: 1.1rem;
   }
-  
+
   button {
     padding: 0.625rem 1.25rem;
+  }
+
+  .modal1-container {
+    width: 90%;
+    padding: 1.5rem;
+  }
+
+  .day1-table th,
+  .day1-table td {
+    padding: 0.5rem 0.75rem;
+  }
+
+  .selected-plants ul {
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  }
+}
+
+@media (max-width: 480px) {
+  h1 {
+    font-size: 1.5rem;
+  }
+
+  .react-calendar__navigation {
+    font-size: 1rem;
+  }
+
+  .react-calendar__tile {
+    height: 40px;
+    font-size: 0.75rem;
+  }
+
+  button {
+    padding: 0.5rem 1rem;
+    font-size: 0.75rem;
+  }
+
+  .modal1-container {
+    width: 100%;
+    padding: 1rem;
+  }
+
+  .day1-table th,
+  .day1-table td {
+    padding: 0.25rem 0.5rem;
+  }
+
+  .selected-plants ul {
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
   }
 }
 
