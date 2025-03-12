@@ -112,7 +112,7 @@ const Navbar = () => {
                 </li>
                 <li>
                   <Link to="/soil" className={isActive("/soil")} onClick={() => handleLinkClick("/soil")}>
-                    <FaLeaf className="dropdown-icon" /> <span>Soil Based</span>
+                    <FaCogs className="dropdown-icon" /> <span>Soil Based</span>
                   </Link>
                 </li>
               </ul>
@@ -123,7 +123,7 @@ const Navbar = () => {
           <li>
             <button className="dropdown-btn" onClick={toggleRegistrationDropdown}>
               <div>
-                <FaClipboardList className="icon" /> <span>Plants Now</span>
+                <FaClipboardList className="icon" /> <span>Plant Now</span>
               </div>
               <span>{registrationDropdown ? "▲" : "▼"}</span>
             </button>
@@ -131,7 +131,7 @@ const Navbar = () => {
               <ul className={`dropdown ${registrationDropdown ? "show" : ""}`}>
                 <li>
                   <Link to="/plantregistration" className={isActive("/plantregistration")} onClick={() => handleLinkClick("/plantregistration")}>
-                    <FaCogs className="dropdown-icon" /> <span>Add Plant</span>
+                    <FaLeaf className="dropdown-icon" /> <span>Add Plant</span>
                   </Link>
                 </li>
                 <li>
