@@ -374,9 +374,9 @@ const PlantRegistration = () => {
   return (
     <div>
       <Navbar />
-      <h1>Plant Registration</h1>
+      <h1>Add Plant</h1>
 
-      <button onClick={openAddNewPlantModal}>Register Plant</button>
+      <button onClick={openAddNewPlantModal}>Add Plant</button>
       <button onClick={() => navigate('/history')}>View History</button>
       
 
