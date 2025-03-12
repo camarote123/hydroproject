@@ -2,6 +2,7 @@ import bcrypt from "bcryptjs";
 import emailjs from "emailjs-com";
 import React, { useEffect, useState } from "react";
 import { FaEdit, FaTrashAlt } from 'react-icons/fa';
+
 import { supabase } from "./createClient";
 import Navbar from './navbar';
 import "./users.css";

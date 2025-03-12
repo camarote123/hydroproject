@@ -1,13 +1,11 @@
-import { createClient } from '@supabase/supabase-js';
 import React, { useEffect, useState } from 'react';
 import { FaEdit, FaTrashAlt } from 'react-icons/fa'; // Importing the Edit and Trash icons
+import { supabase } from './createClient';
 import Navbar from './navbar';
 import './registration.css';
 
 // Initialize Supabase client
-const supabaseUrl = 'https://gwpdficziacsggfhtsff.supabase.co';
-const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd3cGRmaWN6aWFjc2dnZmh0c2ZmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzU5MDcxNzMsImV4cCI6MjA1MTQ4MzE3M30.k251ml-KLw4M7TTtcpZyHh659qoO0HI9wCNUihwzxqM';
-const supabase = createClient(supabaseUrl, supabaseKey);
+
 
 const Soil = () => {
   const [plants, setPlants] = useState([]);

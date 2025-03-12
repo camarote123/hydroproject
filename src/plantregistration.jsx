@@ -1,4 +1,3 @@
-import { createClient } from '@supabase/supabase-js';
 import {
   BarElement,
   CategoryScale,
@@ -13,13 +12,11 @@ import { Bar } from 'react-chartjs-2';
 import DatePicker from 'react-datepicker'; // Import DatePicker
 import 'react-datepicker/dist/react-datepicker.css'; // Import DatePicker CSS
 import { useNavigate } from 'react-router-dom';
+import { supabase } from './createClient';
 import Navbar from './navbar';
 import './registration.css';
 
-// Initialize Supabase client
-const supabaseUrl = 'https://gwpdficziacsggfhtsff.supabase.co';
-const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd3cGRmaWN6aWFjc2dnZmh0c2ZmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzU5MDcxNzMsImV4cCI6MjA1MTQ4MzE3M30.k251ml-KLw4M7TTtcpZyHh659qoO0HI9wCNUihwzxqM';
-const supabase = createClient(supabaseUrl, supabaseKey);
+
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 

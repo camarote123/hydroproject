@@ -1,13 +1,10 @@
-import { createClient } from '@supabase/supabase-js';
 import React, { useEffect, useState } from 'react';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
+import { supabase } from './createClient';
 import Navbar from './navbar';
 import './rhydro.css';
 
-const supabaseUrl = 'https://gwpdficziacsggfhtsff.supabase.co';
-const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd3cGRmaWN6aWFjc2dnZmh0c2ZmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzU5MDcxNzMsImV4cCI6MjA1MTQ4MzE3M30.k251ml-KLw4M7TTtcpZyHh659qoO0HI9wCNUihwzxqM';
-const supabase = createClient(supabaseUrl, supabaseKey);
 
 const Rhydro = () => {
   const [data, setData] = useState([]);
