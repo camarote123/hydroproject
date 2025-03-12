@@ -228,8 +228,8 @@ const Soil = () => {
                 value={formData.potassium_measurement || ''}
                 onChange={(e) => setFormData({ ...formData, potassium_measurement: e.target.value })}
                 required
-                title="Format. 00.00 - 00.00"
-                pattern="^\d{2}\.\d{2} - \d{2}\.\d{2}$"
+                title="Format: 00.00 - 00.00 or 000.00 - 000.00"
+                pattern="^\d{2}\.\d{2} - \d{2}\.\d{2}$|^\d{3}\.\d{2} - \d{3}\.\d{2}$"
               />
               <label>pH Level</label>
               <input
