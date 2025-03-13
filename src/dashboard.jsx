@@ -15,6 +15,7 @@ import { Bar, Pie } from 'react-chartjs-2';
 import { supabase } from './createClient';
 import './dashboard.css';
 import Navbar from './navbar';
+import Navbar2 from './navbar2';
 
 // Register Chart.js components
 ChartJS.register(
@@ -525,6 +526,8 @@ const Dashboard = () => {
   return (
     <div className="dashboard-container">
       <Navbar />
+      <Navbar2/>
+      
 
       {/* Header Row with Title and Environment Text */}
       <div className="dashboard-header">
@@ -649,7 +652,7 @@ const Dashboard = () => {
 
       <div className="dashboard-card">
         <div className="dashboard-card-content">
-          <div className="dashboard-card-title">HYDRO WATER LEVEL</div>
+          <div className="dashboard-card-title">POND WATER LEVEL</div>
           <div className="dashboard-card-description">
             {waterLevelData.length > 0 ? `${waterLevelData[0].water_level}%` : 'Loading...'}
           </div>
@@ -658,7 +661,7 @@ const Dashboard = () => {
 
       <div className="dashboard-card">
         <div className="dashboard-card-content">
-          <div className="dashboard-card-title">WATER DISTANCE</div>
+          <div className="dashboard-card-title">RESERVIOR WATER LEVEL</div>
           <div className="dashboard-card-description">
             {waterData.length > 0 ? `${waterData[0].distance} cm` : 'Loading...'}
           </div>

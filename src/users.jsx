@@ -214,7 +214,7 @@ const Users = () => {
   }
 
   return (
-    <div>
+    <div className="container">
       <Navbar />
       <h1>User Management</h1>
 

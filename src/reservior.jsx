@@ -249,14 +249,14 @@ const Reservior = () => {
     <div className="humidity-container">
       <Navbar />
       <div className="humidity-content">
-        <h1 className="humidity-title">Water Distance Data</h1>
+        <h1 className="humidity-title">Water Level Data</h1>
 
         {/* ✅ Card Grid (Latest Data) */}
         <div className="humiditycontainer">
           <div className="card-grid">
             <div className="humidity-card">
               <div className="humidity-card-content">
-                <div className="humidity-card-title">WATER DISTANCE</div>
+                <div className="humidity-card-title">WATER LEVEL</div>
                 <div className="humidity-card-description">
                   {latestWaterData ? `${latestWaterData.distance} cm` : 'Loading...'}
                 </div>

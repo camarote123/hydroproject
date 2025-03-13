@@ -1,0 +1,108 @@
+
+.notification-container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 20px auto;
+    border-radius: 8px;
+    background: #fff;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin-top: 100px;
+
+  
+  }
+  
+  .tab-container {
+    display: flex;
+    background-color: #f1f3f4;
+    border-bottom: 1px solid #ddd;
+    
+   
+  }
+  
+  .tab-item {
+    flex: 1;
+    text-align: center;
+    padding: 14px;
+    font-size: 16px;
+    font-weight: 500;
+    color: #095a2d;
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+  }
+  
+  .tab-item.active {
+    color: #1a73e8;
+    border-bottom-color: #1a73e8;
+    background-color: rgba(26, 115, 232, 0.08);
+  }
+  
+  .tab-count {
+    background-color: #1a73e8;
+    color: white;
+    font-size: 12px;
+    padding: 3px 6px;
+    border-radius: 12px;
+    margin-left: 8px;
+  }
+  
+  .notification-content {
+    max-height: 600px;
+    overflow-y: auto;
+  }
+  
+  .notification-table-container {
+    width: 100%;
+    overflow-x: auto;
+    min-height: 600px; /* Ensure the table container maintains a minimum height */
+    display: flex;
+    flex-direction: column; /* Ensure flex direction is column */
+  }
+  
+  .notification-table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed; /* Ensures uniform column width */
+  }
+  
+  .notification-table th,
+  .notification-table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap; /* Prevents text wrapping */
+  }
+  
+  .notification-table .date-column {
+    width: 25%; /* Adjust based on preference */
+    min-width: 120px;
+  }
+  
+  .notification-table td {
+    height: 20px; /* Sets a fixed height for rows */
+  }
+  
+  .notification-table tbody tr {
+    height: 50px; /* Keeps row height consistent */
+  }
+  
+  .notification-table tbody tr:hover {
+    background-color: #f5f5f5;
+  }
+  
+  .no-notifications {
+    text-align: center;
+    padding: 15px;
+    font-style: italic;
+    color: #888;
+  }
+  .notification-row, .empty-row {
+    height: 40px; /* Set a fixed height for all rows */
+  }
+  
+  .no-notifications, .loading-message {
+    padding: 20px;
+    text-align: center;
+    color: #5f6368;
+  }

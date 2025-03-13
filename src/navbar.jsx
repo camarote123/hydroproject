@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { FaBars, FaClipboardList, FaCogs, FaHome, FaLeaf, FaMicrochip, FaSeedling, FaSignOutAlt, FaTimes, FaUsers, FaWarehouse, FaWater } from "react-icons/fa";
+import { FaBars, FaClipboardList, FaHome, FaLeaf, FaMicrochip, FaSeedling, FaTimes, FaUsers, FaWarehouse, FaWater } from "react-icons/fa";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import "./Navbar.css";
 import { supabase } from './createClient'; // Ensure Supabase is correctly configured
@@ -60,8 +60,8 @@ const Navbar = () => {
   };
 
   const handleLinkClick = (path) => {
-    navigate(path);
-    setSidebarOpen(false); // Close the sidebar after navigating
+    setSidebarOpen(false); // Close the sidebar before navigating
+    navigate(path); // Navigate to the new path
   };
 
   return (
@@ -99,7 +99,7 @@ const Navbar = () => {
           <li>
             <button className="dropdown-btn" onClick={togglePlantsDropdown}>
               <div>
-                <FaLeaf className="icon" /> <span>Registration</span>
+                <FaClipboardList className="icon" /> <span>Registration</span>
               </div>
               <span>{plantsDropdown ? "▲" : "▼"}</span>
             </button>
@@ -112,7 +112,7 @@ const Navbar = () => {
                 </li>
                 <li>
                   <Link to="/soil" className={isActive("/soil")} onClick={() => handleLinkClick("/soil")}>
-                    <FaCogs className="dropdown-icon" /> <span>Soil Based</span>
+                    <FaSeedling className="dropdown-icon" /> <span>Soil Based</span>
                   </Link>
                 </li>
               </ul>
@@ -123,7 +123,7 @@ const Navbar = () => {
           <li>
             <button className="dropdown-btn" onClick={toggleRegistrationDropdown}>
               <div>
-                <FaClipboardList className="icon" /> <span>Plant Now</span>
+                <FaLeaf className="icon" /> <span>Plant Now</span>
               </div>
               <span>{registrationDropdown ? "▲" : "▼"}</span>
             </button>
@@ -155,18 +155,12 @@ const Navbar = () => {
           </li>
           
           <li>
-            <Link to="/location" className={isActive("/location")} onClick={() => handleLinkClick("/location")}>
+          <Link to="/location" className={isActive("/location")} onClick={() => handleLinkClick("/location")}>
               <FaWarehouse className="icon" /> <span>Location</span>
             </Link>
           </li>
 
-          <div className="logout">
-            <li>
-              <Link to="/login" className={isActive("/login")} onClick={handleLogout}>
-                <FaSignOutAlt className="icon" /> <span>Log out </span>
-              </Link>
-            </li>
-          </div>
+          
         </ul>
       </div>
     </>

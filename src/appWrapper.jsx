@@ -13,6 +13,9 @@ import Hydrowaterlevel from './hydrowaterlevel';
 import Location from './location';
 import Login from './login';
 import Navbar from './navbar';
+import Navbar2 from './navbar2';
+
+import Notifications from './notification';
 import Npk from './npk';
 import PasswordChanged from './passwordchanged';
 import Pesticide from './pesticide';
@@ -46,10 +49,20 @@ const AppContent = () => {
     '/login'
   ];
 
+  const noNavbar2Routes = [
+    '/resetpassword',
+    '/requestpasswordreset',
+    '/entercurrentpassword',
+    '/passwordchanged',
+    '/login'
+  ];
+
   return (
     <>
       {/* Render Navbar conditionally based on current route */}
       {!noNavbarRoutes.includes(location.pathname) && <Navbar />}
+      {!noNavbar2Routes.includes(location.pathname) && <Navbar2 />}
+
 
       <Routes>
         {/* Redirect root ("/") to login */}
@@ -83,6 +96,8 @@ const AppContent = () => {
         <Route path="/phlevel" element={<ProtectedRoute><Phlevel /></ProtectedRoute>} />
         <Route path="/npk" element={<ProtectedRoute><Npk /></ProtectedRoute>} />
         <Route path="/location" element={<ProtectedRoute><Location /></ProtectedRoute>} />
+        <Route path="/notification" element={<ProtectedRoute><Notifications /></ProtectedRoute>} />
+   
 
         {/* Routes without Navbar */}
         <Route path="/resetpassword" element={<ResetPassword />} />

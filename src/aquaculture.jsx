@@ -57,7 +57,7 @@ const Aquaculture = () => {
            {/* Card 3 */}
           <div className="aqua-card">
             <div className="aqua-card-content">
-              <div className="aqua-card-title">HYDRO WATER LEVEL</div>
+              <div className="aqua-card-title">POND WATER LEVEL</div>
               <div className="aqua-card-description">
             
               </div>

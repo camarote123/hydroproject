@@ -257,9 +257,7 @@ const Rsoil = () => {
                       )}
                     </div>
                     <div>
-                      <button onClick={closeModal} style={{ backgroundColor: '#64748b', marginRight: '0.75rem' }}>
-                        Cancel
-                      </button>
+                    
                       <button 
                         className="transfer-button" 
                         onClick={handleTransfer} 
