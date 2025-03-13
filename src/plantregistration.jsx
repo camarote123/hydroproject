@@ -410,7 +410,7 @@ const PlantRegistration = () => {
 
       {isModalOpen && (
         <div className="modal-overlay">
-          <div className="modal-content">
+          <div className="modal-content2">
             <h2>Add New Plant</h2>
             <form onSubmit={handleSubmit}>
               <select
