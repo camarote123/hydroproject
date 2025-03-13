@@ -1,5 +1,6 @@
 import bcrypt from 'bcryptjs'; // For password comparison
 import React, { useState } from 'react';
+import { FaEye, FaEyeSlash } from "react-icons/fa"; // Install react-icons if needed
 import { useNavigate } from 'react-router-dom';
 import './aqua.css';
 import { supabase } from './createClient'; // Ensure Supabase is correctly configured
@@ -12,6 +13,8 @@ const Login = () => {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const navigate = useNavigate();
+
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -79,19 +82,35 @@ const Login = () => {
           />
         </div>
 
-        <div>
-          <label htmlFor="password">Password</label>
-          <br />
-          <input
-            type="password"
-            id="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-        </div>
+        <div style={{ position: "relative", display: "inline-block" }}>
+      <label htmlFor="password">Password</label>
+      <br />
+      <input
+        type={showPassword ? "text" : "password"}
+        id="password"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+        required
+        style={{ paddingRight: "30px" }} // Space for the icon
+      />
+      <span
+        onClick={() => setShowPassword(!showPassword)}
+        style={{
+          position: "absolute",
+          right: "20px",
+          top: "60%",
+          transform: "translateY(-50%)",
+          cursor: "pointer",
+        }}
+      >
+        {showPassword ? <FaEyeSlash /> : <FaEye />}
+      </span>
+    </div>
+    <div>
 
-        <button type="submit">Login</button>
+    <button type="submit">Login</button>
+    </div>
+      
       </form>
 
       {error && <p style={{ color: 'red' }}>{error}</p>}
