@@ -230,7 +230,7 @@ const Users = () => {
   <div className="modal">
     <div className="modal-content">
       {/* Close Button */}
-      <button className="button2" onClick={resetModal}>
+      <button className="modal-close" onClick={resetModal}>
         &times;
       </button>
       

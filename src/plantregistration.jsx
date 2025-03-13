@@ -411,8 +411,8 @@ const PlantRegistration = () => {
       {isModalOpen && (
         <div className="modal-overlay">
           <div className="modal-content2">
-          <button type="button"  className="button2" onClick={() => setIsModalOpen(false)}>
-                x
+          <button type="button"  className="modal-close" onClick={() => setIsModalOpen(false)}>
+          &times;
               </button>
             <h2>Add New Plant</h2>
             <form onSubmit={handleSubmit}>

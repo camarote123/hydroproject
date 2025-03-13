@@ -328,7 +328,7 @@ const Humidity = () => {
           <div className="modal-overlay">
             <div className="modal-content">
               <h2>History Logs</h2>
-              <button className="close-modal-btn" onClick={closeHistoryModal}>Close</button>
+              <button className="modal-close" onClick={() => setIsHistoryModalOpen(false)}>&times;</button>
 
               <table className="humidity-table">
                 <thead>

@@ -274,7 +274,7 @@ const Do = () => {
           <div className="modal-overlay">
             <div className="modal-content">
               <h2>DO Logs</h2>
-              <button className="close-modal-btn" onClick={() => setIsHistoryModalOpen(false)}>Close</button>
+              <button className="modal-close" onClick={() => setIsHistoryModalOpen(false)}>&times;</button>
               
               <div className="table-container">
                 <table className="do-table">

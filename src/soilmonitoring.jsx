@@ -329,7 +329,7 @@ const Soilmonitoring = () => {
           <div className="modal-overlay">
             <div className="modal-content">
               <h2>History Logs</h2>
-              <button className="close-modal-btn" onClick={() => setIsHistoryModalOpen(false)}>Close</button>
+              <button className="modal-close" onClick={() => setIsHistoryModalOpen(false)}>&times;</button>
               <table className="soil-moisture-table">
                 <thead>
                   <tr>

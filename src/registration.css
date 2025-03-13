@@ -297,4 +297,36 @@ table {
 }
 }
 
+/* X button for modal close - Chrome style */
+.modal-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: transparent;
+  border: none;
+  font-size: 20px;
+  line-height: 20px;
+  color: #ee1414;
+  cursor: pointer;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  padding: 0;
+  margin: 0;
+  transition: background-color 0.2s;
+}
+
+.modal-close:hover {
+  background-color: rgba(0, 0, 0, 0.08);
+  color: #000;
+}
+
+/* Adjust the modal-content to accommodate the absolute positioning */
+.modal-content, .modal-content2 {
+  position: relative;
+  /* keep your other existing properties */
+}
 

@@ -271,7 +271,7 @@ const Watertemp = () => {
           <div className="modal-overlay">
             <div className="modal-content">
               <h2>Temperature Logs</h2>
-              <button className="close-modal-btn" onClick={() => setIsHistoryModalOpen(false)}>Close</button>
+              <button className="modal-close" onClick={() => setIsHistoryModalOpen(false)}>&times;</button>
               
               <div className="table-container">
                 <table className="temperature-table">

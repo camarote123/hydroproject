@@ -280,7 +280,7 @@ const Phlevel = () => {
           <div className="modal-overlay">
             <div className="modal-content">
               <h2>pH Level Logs</h2>
-              <button className="close-modal-btn" onClick={() => setIsHistoryModalOpen(false)}>Close</button>
+              <button className="modal-close" onClick={() => setIsHistoryModalOpen(false)}>&times;</button>
               
               <div className="table-container">
                 <table className="temperature-table">

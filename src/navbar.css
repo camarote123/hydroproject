@@ -10,10 +10,8 @@
   font-family: Georgia, 'Times New Roman', Times, serif;
   transition: width 0.3s ease;
   color: #333; /* Changed text color for better visibility on white background */
-  display: block;
   z-index: 1000;
   box-shadow: 0 0 10px rgba(0,0,0,0.1); /* Added subtle shadow for depth */
-  
 
 }
 
@@ -251,7 +249,7 @@
   }
 
   .sidebar-toggle {
-    display: block;
+    display:flex;
   }
 }
 

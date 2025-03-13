@@ -53,9 +53,9 @@ const Pesticide = () => {
   const fetchLatestData = async () => {
     try {
       let { data, error } = await supabase
-        .from('pumpschedule')
+        .from('pesticide_distance')
         .select('*')
-        .order('schedule_date', { ascending: false })
+        .order('created_at', { ascending: false })
         .limit(1);
 
       if (error) throw error;
@@ -63,7 +63,7 @@ const Pesticide = () => {
         setLatestData(data[0]);
       }
     } catch (error) {
-      console.error('Error fetching latest pump schedule data:', error);
+      console.error('Error fetching latest pesticide distance data:', error);
     }
   };
 
@@ -72,9 +72,9 @@ const Pesticide = () => {
     setLoading(true);
     try {
       let query = supabase
-        .from('pumpschedule')
+        .from('pesticide_distance')
         .select('*', { count: 'exact' }) // ✅ Ensure count is retrieved
-        .order('schedule_date', { ascending: true })
+        .order('created_at', { ascending: true })
         .range(from, to);
 
       if (date) {
@@ -83,7 +83,7 @@ const Pesticide = () => {
         const endOfDay = new Date(date);
         endOfDay.setHours(23, 59, 59, 999);
 
-        query = query.gte('schedule_date', startOfDay.toISOString()).lte('schedule_date', endOfDay.toISOString());
+        query = query.gte('created_at', startOfDay.toISOString()).lte('created_at', endOfDay.toISOString());
       }
 
       let { data, error, count } = await query;
@@ -92,7 +92,7 @@ const Pesticide = () => {
       // ✅ Convert timestamps to UTC+8
       const adjustedData = data.map(item => ({
         ...item,
-        schedule_date: new Date(new Date(item.schedule_date).getTime() + 8 * 60 * 60 * 1000),
+        created_at: new Date(new Date(item.created_at).getTime() + 8 * 60 * 60 * 1000),
       }));
 
       if (from === 0) {
@@ -105,7 +105,7 @@ const Pesticide = () => {
       if (count !== null) totalRecordsRef.current = count; // ✅ Ensure count is updated
 
     } catch (error) {
-      console.error('Error fetching pump schedule data:', error);
+      console.error('Error fetching pesticide distance data:', error);
     }
     setLoading(false);
   };
@@ -131,13 +131,13 @@ const Pesticide = () => {
 
   // ✅ Chart Data
   const chartData = {
-    labels: pumpScheduleData.map(item => new Date(item.schedule_date)), // Already adjusted in fetchHistoricalData
+    labels: pumpScheduleData.map(item => new Date(item.created_at)), // Already adjusted in fetchHistoricalData
     datasets: [
       {
-        label: 'Duration (minutes)',
+        label: 'Distance',
         data: pumpScheduleData.map(item => ({
-          x: new Date(item.schedule_date),
-          y: item.duration_minutes,
+          x: new Date(item.created_at),
+          y: item.distance,
         })),
         borderColor: 'rgba(19, 104, 19, 0.94)',
         backgroundColor: 'rgba(19, 104, 19, 0.94)',
@@ -174,7 +174,7 @@ const Pesticide = () => {
       y: {
         title: {
           display: true,
-          text: 'Duration (minutes)',
+          text: 'Distance',
         },
       },
     },
@@ -184,7 +184,7 @@ const Pesticide = () => {
       },
       title: {
         display: true,
-        text: 'Pump Schedule Trends',
+        text: 'Pesticide Distance Trends',
       },
     },
   };
@@ -197,16 +197,16 @@ const Pesticide = () => {
   
     fetchData(); // Initial fetch
   
-    // Subscribe to changes in the 'pumpschedule' table
+    // Subscribe to changes in the 'pesticide_distance' table
     const pumpScheduleSubscription = supabase
-      .channel('realtime:pumpschedule')
+      .channel('realtime:pesticide_distance')
       .on(
         'postgres_changes',
-        { event: 'INSERT', schema: 'public', table: 'pumpschedule' }, 
+        { event: 'INSERT', schema: 'public', table: 'pesticide_distance' }, 
         (payload) => {
           const newRecord = {
             ...payload.new,
-            schedule_date: new Date(new Date(payload.new.schedule_date).getTime() + 8 * 60 * 60 * 1000), // UTC+8 conversion
+            created_at: new Date(new Date(payload.new.created_at).getTime() + 8 * 60 * 60 * 1000), // UTC+8 conversion
           };
           setPumpScheduleData((prevData) => [...prevData, newRecord]); // Append new record
           allDataRef.current = [...allDataRef.current, newRecord];
@@ -224,16 +224,16 @@ const Pesticide = () => {
     <div className="humidity-container">
       <Navbar />
       <div className="humidity-content">
-        <h1 className="humidity-title">Pump Schedule Data</h1>
+        <h1 className="humidity-title">Pesticide Distance Data</h1>
         <div className="humiditycontainer">
           {/* Card Grid */}
           <div className="card-grid">
-            {/* Card - PUMP SCHEDULE */}
+            {/* Card - PESTICIDE DISTANCE */}
             <div className="humidity-card">
               <div className="humidity-card-content">
-                <div className="humidity-card-title">WATER PUMP DATA</div>
+                <div className="humidity-card-title">PESTICIDE DISTANCE DATA</div>
                 <div className="humidity-card-description">
-                  {latestData ? `${latestData.duration_minutes} minutes` : 'Loading...'}
+                  {latestData ? `${latestData.distance} ` : 'Loading...'}
                 </div>
               </div>
             </div>
@@ -269,22 +269,22 @@ const Pesticide = () => {
         {isHistoryModalOpen && (
           <div className="modal-overlay">
             <div className="modal-content">
-              <h2>Pump Schedule Logs</h2>
+              <h2>Pesticide Distance Logs</h2>
               <button className="close-modal-btn" onClick={() => setIsHistoryModalOpen(false)}>Close</button>
 
               {/* ✅ History Table */}
               <table className="pump-schedule-table">
                 <thead>
                   <tr>
-                    <th>Duration (minutes)</th>
+                    <th>Distance</th>
                     <th>Timestamp</th>
                   </tr>
                 </thead>
                 <tbody>
                   {paginatedData.map((item) => (
                     <tr key={item.id}>
-                      <td>{item.duration_minutes} minutes</td>
-                      <td>{new Date(item.schedule_date).toLocaleString('en-PH', { timeZone: 'Asia/Manila' })}</td>
+                      <td>{item.distance} units</td>
+                      <td>{new Date(item.created_at).toLocaleString('en-PH', { timeZone: 'Asia/Manila' })}</td>
                     </tr>
                   ))}
                 </tbody>

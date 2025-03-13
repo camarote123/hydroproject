@@ -187,9 +187,9 @@ const Soil = () => {
         <div className="modal-overlay">
           <div className="modal-content2">
        
-          <button type="button" className="button2" onClick={resetForm}>
-  &times;
-</button>
+          <button type="button" className="modal-close" onClick={resetForm}>
+        &times;
+      </button>
 
       
             <h2>{editingRecord ? 'Edit Plant' : 'Register Plant'}</h2>
