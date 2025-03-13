@@ -62,6 +62,7 @@
     width: 100%;
     border-collapse: collapse;
     table-layout: fixed; /* Ensures uniform column width */
+    
   }
   
   .notification-table th,

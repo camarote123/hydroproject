@@ -226,86 +226,78 @@ const Users = () => {
         Create User
       </button>
 
-      {/* Modal */}
       {isModalOpen && (
-        <div className="modal">
-          <div className="modal-content">
-            <h2>{isEdit ? "Edit User" : "Create User"}</h2>
-            <form onSubmit={isEdit ? updateUser : createUser}>
-              <div className="input-group">
-                <input
-                  type="text"
-                  placeholder="Name"
-                  name="name"
-                  value={user.name}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
+  <div className="modal">
+    <div className="modal-content">
+      {/* Close Button */}
+      <button className="button2" onClick={resetModal}>
+        &times;
+      </button>
+      
 
-              <div className="input-group">
-                <input
-                  type="email"
-                  placeholder="Email"
-                  name="email"
-                  value={user.email}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-
-              <div className="input-group">
-                <select 
-                  name="position" 
-                  value={user.position} 
-                  onChange={handleChange}
-                >
-                  <option value="">Select Position</option>
-                  <option value="admin">Admin</option>
-                  <option value="staff">Staff</option>
-                </select>
-              </div>
-
-              {!isEdit && (
-                <div className="password-group">
-                  <input
-                    type={passwordVisible ? "text" : "password"}
-                    placeholder="Password"
-                    name="password"
-                    value={user.password}
-                    onChange={handleChange}
-                  />
-                  <button
-                    type="button"
-                    className="generate-password-btn"
-                    onClick={handleGeneratePassword}
-                  >
-                    Generate Password
-                  </button>
-                </div>
-              )}
-
-              <div className="button-group">
-                <button 
-                  type="button" 
-                  className="cancel-btn" 
-                  onClick={resetModal}
-                >
-                  Cancel
-                </button>
-                <button 
-                  type="submit" 
-                  className="create-btn" 
-                  disabled={loading}
-                >
-                  {isEdit ? "Update" : "Create"}
-                </button>
-              </div>
-            </form>
-            {error && <p className="error-message">{error}</p>}
-          </div>
+      <h2>{isEdit ? "Edit User" : "Create User"}</h2>
+      <form onSubmit={isEdit ? updateUser : createUser}>
+        <div className="input-group">
+          <input
+            type="text"
+            placeholder="Name"
+            name="name"
+            value={user.name}
+            onChange={handleChange}
+            required
+          />
         </div>
-      )}
+
+        <div className="input-group">
+          <input
+            type="email"
+            placeholder="Email"
+            name="email"
+            value={user.email}
+            onChange={handleChange}
+            required
+          />
+        </div>
+
+        <div className="input-group">
+          <select name="position" value={user.position} onChange={handleChange}>
+            <option value="">Select Position</option>
+            <option value="admin">Admin</option>
+            <option value="staff">Staff</option>
+          </select>
+        </div>
+
+        {!isEdit && (
+          <div className="password-group">
+            <input
+              type={passwordVisible ? "text" : "password"}
+              placeholder="Password"
+              name="password"
+              value={user.password}
+              onChange={handleChange}
+            />
+            <button
+              type="button"
+              className="generate-password-btn"
+              onClick={handleGeneratePassword}
+            >
+              Generate Password
+            </button>
+          </div>
+        )}
+
+        <div className="button-group">
+          
+          <button type="submit" className="create-btn" disabled={loading}>
+            {isEdit ? "Update" : "Create"}
+          </button>
+        </div>
+      </form>
+      {error && <p className="error-message">{error}</p>}
+    </div>
+  </div>
+)}
+
 
       {/* Delete Confirmation Modal */}
       {deleteUserId && (

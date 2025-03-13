@@ -187,8 +187,14 @@ const Hydro = () => {
       {isModalOpen && (
         <div className="modal-overlay">
           <div className="modal-content2">
+          <button type="button" className="button2" onClick={resetForm}>
+  &times;
+</button>
+
+    
             <h2>{editingRecord ? 'Edit Plant' : 'Register Plant'}</h2>
             <form onSubmit={handleSubmit}>
+
               <label>Growth Site</label>
               <input
                 type="text"
@@ -256,7 +262,7 @@ const Hydro = () => {
                 title="Input harvest_duration Details"
               />
               <button type="submit">{editingRecord ? 'Update' : 'Add Record'}</button>
-              <button type="button1" onClick={resetForm}>Close</button>
+             
             </form>
           </div>
         </div>

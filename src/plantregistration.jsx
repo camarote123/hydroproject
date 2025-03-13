@@ -411,6 +411,9 @@ const PlantRegistration = () => {
       {isModalOpen && (
         <div className="modal-overlay">
           <div className="modal-content2">
+          <button type="button"  className="button2" onClick={() => setIsModalOpen(false)}>
+                x
+              </button>
             <h2>Add New Plant</h2>
             <form onSubmit={handleSubmit}>
               <select
@@ -524,9 +527,7 @@ const PlantRegistration = () => {
                 }
               />
               <button type="submit">Add Record</button>
-              <button type="button" onClick={() => setIsModalOpen(false)}>
-                Close
-              </button>
+           
             </form>
           </div>
         </div>

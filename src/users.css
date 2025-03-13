@@ -24,7 +24,7 @@ h1 {
 
 
 /* Button Styles */
-button {
+.button {
   padding: 10px 20px;
   border: none;
   cursor: pointer;
@@ -155,8 +155,7 @@ td {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
   width: 100%;
   max-width: 400px;
-  position: relative;
-  height: fit-content;
+  position: relative
 }
 
 .modal-content-delete {
@@ -313,3 +312,4 @@ select {
     padding: 8px;
   }
 }
+

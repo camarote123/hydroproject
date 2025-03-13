@@ -180,12 +180,18 @@ const Soil = () => {
       <h1>Soil-Based Plant Data</h1>
 
       {/* Button to open Register Plant modal */}
-      <button onClick={openAddNewPlantModal}>Register Plant</button>
+      <button className='button1' onClick={openAddNewPlantModal}>Register Plant</button>
 
       {/* Modal for adding or updating a plant */}
       {isModalOpen && (
         <div className="modal-overlay">
           <div className="modal-content2">
+       
+          <button type="button" className="button2" onClick={resetForm}>
+  &times;
+</button>
+
+      
             <h2>{editingRecord ? 'Edit Plant' : 'Register Plant'}</h2>
             <form onSubmit={handleSubmit}>
               <label>Growth Site</label>
@@ -281,7 +287,7 @@ const Soil = () => {
                 title="Input harvest_duration Details"
               />
               <button type="submit">{editingRecord ? 'Update Record' : 'Add Plant'}</button>
-              <button type="button1" onClick={resetForm}>Close</button>
+     
             </form>
           </div>
         </div>
@@ -295,6 +301,7 @@ const Soil = () => {
       {isDeleteModalOpen && (
         <div className="modal-overlay">
           <div className="modal-content1">
+            
             <h2>Confirm Deletion</h2>
             <p>
               Are you sure you want to delete the plant record for <strong>{recordToDelete?.plant_name}</strong>?
