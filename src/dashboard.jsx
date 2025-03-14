@@ -661,7 +661,7 @@ const Dashboard = () => {
 
       <div className="dashboard-card">
         <div className="dashboard-card-content">
-          <div className="dashboard-card-title">RESERVIOR WATER LEVEL</div>
+          <div className="dashboard-card-title">RESERVOIR WATER LEVEL</div>
           <div className="dashboard-card-description">
             {waterData.length > 0 ? `${waterData[0].distance} cm` : 'Loading...'}
           </div>

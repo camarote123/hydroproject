@@ -73,7 +73,7 @@ const Aquaculture = () => {
            {/* Card 4 */}
           <div className="aqua-card">
             <div className="aqua-card-content">
-              <div className="aqua-card-title">RESERVIOR</div>
+              <div className="aqua-card-title">RESERVOIR</div>
               <div className="aqua-card-description">
              
               </div>

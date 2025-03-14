@@ -45,7 +45,7 @@ const Login = () => {
       }
 
       // Check if the user is an admin (Optional)
-      if (data.position !== 'admin') {
+      if (data.position !== 'admin' ) {
         setError('You do not have admin privileges.');
         return;
       }

@@ -5,7 +5,6 @@ import { FaEdit, FaTrashAlt } from 'react-icons/fa';
 
 import { supabase } from "./createClient";
 import Navbar from './navbar';
-import Navbar2 from './navbar2';
 import "./users.css";
 
 // Function to generate a random password
@@ -103,16 +102,12 @@ const Users = () => {
         return;
       }
 
-      // Define the local link to include in the email
-     
-
       // Send email using EmailJS to the new user
       const emailParams = {
         name,
         email,
         password,
         position,
-    
       };
 
       emailjs
@@ -152,6 +147,13 @@ const Users = () => {
       return;
     }
 
+    // Prevent updating admin's position
+    const existingUser = users.find((u) => u.id === editingUserId);
+    if (existingUser && existingUser.position === "admin" && position !== "admin") {
+      alert("You cannot change an admin's position.");
+      return;
+    }
+
     setLoading(true);
     setError("");
 
@@ -174,6 +176,13 @@ const Users = () => {
   // Delete a user
   async function deleteUser(userId) {
     const userToDelete = users.find((u) => u.id === userId);
+
+    // Prevent deleting an admin
+    if (userToDelete && userToDelete.position === "admin") {
+      alert("You cannot delete an admin user.");
+      setDeleteUserId(null);
+      return;
+    }
 
     if (userToDelete && userToDelete.email === protectedEmail) {
       alert("You cannot delete this user as their email is protected.");
@@ -217,7 +226,6 @@ const Users = () => {
   return (
     <div className="container">
       <Navbar />
-      <Navbar2/>
       <h1>User Management</h1>
 
       {/* Create User Button */}
@@ -235,7 +243,6 @@ const Users = () => {
       <button className="modal-close" onClick={resetModal}>
         &times;
       </button>
-      
 
       <h2>{isEdit ? "Edit User" : "Create User"}</h2>
       <form onSubmit={isEdit ? updateUser : createUser}>
@@ -289,7 +296,6 @@ const Users = () => {
         )}
 
         <div className="button-group">
-          
           <button type="submit" className="create-btn" disabled={loading}>
             {isEdit ? "Update" : "Create"}
           </button>
