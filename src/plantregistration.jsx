@@ -14,9 +14,8 @@ import 'react-datepicker/dist/react-datepicker.css'; // Import DatePicker CSS
 import { useNavigate } from 'react-router-dom';
 import { supabase } from './createClient';
 import Navbar from './navbar';
+import Navbar2 from './navbar2';
 import './registration.css';
-
-
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
@@ -165,6 +164,16 @@ const PlantRegistration = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Check if required fields are filled
+    if (!formData.plant_name) {
+      setNotification('Please select a plant name.');
+      return;
+    }
+    if (!formData.location) {
+      setNotification('Please select a location.');
+      return;
+    }
   
     try {
       const dataToSubmit = { ...formData };
@@ -204,6 +213,7 @@ const PlantRegistration = () => {
   
       // Close the modal
       setIsModalOpen(false);
+      setNotification(''); // Reset notification when modal is closed
   
       // Fetch updated data
       fetchData();
@@ -213,7 +223,7 @@ const PlantRegistration = () => {
       resetForm();
   
       // Notify user
-      alert('Record added successfully!');
+      setNotification('Record added successfully!');
     } catch (err) {
       console.error('Unexpected error:', err);
     }
@@ -238,6 +248,7 @@ const PlantRegistration = () => {
 
   const openAddNewPlantModal = () => {
     resetForm();
+    setNotification(''); // Reset notification when modal is opened
     setIsModalOpen(true);
   };
 
@@ -374,13 +385,11 @@ const PlantRegistration = () => {
   return (
     <div>
       <Navbar />
+      <Navbar2 />
       <h1>Add Plant</h1>
 
       <button onClick={openAddNewPlantModal}>Add Plant</button>
       <button onClick={() => navigate('/history')}>View History</button>
-      
-
-      {notification && <div className="notification">{notification}</div>} {/* Notification */}
 
       <div>
         <br />
@@ -411,15 +420,13 @@ const PlantRegistration = () => {
       {isModalOpen && (
         <div className="modal-overlay">
           <div className="modal-content2">
-          <button type="button"  className="modal-close" onClick={() => setIsModalOpen(false)}>
-          &times;
-              </button>
+            <button type="button" className="modal-close" onClick={() => setIsModalOpen(false)}>
+              &times;
+            </button>
             <h2>Add New Plant</h2>
+            {notification && <div className="notification">{notification}</div>} {/* Notification inside modal */}
             <form onSubmit={handleSubmit}>
-              <select
-                value={formData.growth_site}
-                onChange={handleGrowthSiteChange}
-              >
+              <select value={formData.growth_site} onChange={handleGrowthSiteChange}>
                 <option value="">Select Planting Area</option>
                 {growthSites.map((site) => (
                   <option key={site} value={site}>
@@ -489,30 +496,10 @@ const PlantRegistration = () => {
                 value={formData.potassium_measurement}
                 disabled
               />
-              <input
-                type="text"
-                placeholder="pH Level"
-                value={formData.ph_level}
-                disabled
-              />
-              <input
-                type="text"
-                placeholder="Temperature"
-                value={formData.temperature}
-                disabled
-              />
-              <input
-                type="text"
-                placeholder="Humidity"
-                value={formData.humidity}
-                disabled
-              />
-              <input
-                type="text"
-                placeholder="Pesticide"
-                value={formData.pesticide}
-                disabled
-              />
+              <input type="text" placeholder="pH Level" value={formData.ph_level} disabled />
+              <input type="text" placeholder="Temperature" value={formData.temperature} disabled />
+              <input type="text" placeholder="Humidity" value={formData.humidity} disabled />
+              <input type="text" placeholder="Pesticide" value={formData.pesticide} disabled />
               <input
                 type="number"
                 placeholder="Harvest Duration (Days)"
@@ -522,12 +509,9 @@ const PlantRegistration = () => {
               <input
                 type="date"
                 value={formData.expected_harvest_date}
-                onChange={(e) =>
-                  setFormData({ ...formData, expected_harvest_date: e.target.value })
-                }
+                onChange={(e) => setFormData({ ...formData, expected_harvest_date: e.target.value })}
               />
               <button type="submit">Add Record</button>
-           
             </form>
           </div>
         </div>

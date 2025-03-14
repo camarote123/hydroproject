@@ -3,6 +3,7 @@ import { supabase } from './createClient';
 import React, { useEffect, useState } from 'react';
 import { FaEdit, FaTrashAlt } from 'react-icons/fa'; // Importing the Edit and Trash icons
 import Navbar from './navbar';
+import Navbar2 from './navbar2';
 import './registration.css';
 
 // Initialize Supabase client
@@ -86,6 +87,7 @@ const Hydro = () => {
         } else {
           fetchPlants();
           resetForm();
+          alert('Plant record updated successfully!');
         }
       }
     } catch (err) {
@@ -178,6 +180,7 @@ const Hydro = () => {
   return (
     <div>
       <Navbar />
+      <Navbar2 />
       <h1>Hydroponics Plant Data</h1>
 
       {/* Button to open the Register Plant modal */}
@@ -222,8 +225,8 @@ const Hydro = () => {
                 value={formData.ph_level || ''}
                 onChange={(e) => setFormData({ ...formData, ph_level: e.target.value })}
                 required
-                title="Format. 00.00 - 00.00"
-                pattern="^\d{2}\.\d{2} - \d{2}\.\d{2}$"
+                title="Format:0.00 - 0.00 00.00 - 00.00 / 000.00 - 000.00"
+                pattern="^\d{1}\.\d{2} - \d{1}\.\d{2}$|^\d{2}\.\d{2} - \d{2}\.\d{2}$|^\d{3}\.\d{2} - \d{3}\.\d{2}$"
               />
 
               <label>Temperature</label>
@@ -233,8 +236,8 @@ const Hydro = () => {
                 value={formData.temperature || ''}
                 onChange={(e) => setFormData({ ...formData, temperature: e.target.value })}
                 required
-                title="Format. 00.00 - 00.00"
-                pattern="^\d{2}\.\d{2} - \d{2}\.\d{2}$"
+                title="Format:0.00 - 0.00 00.00 - 00.00 / 000.00 - 000.00"
+                pattern="^\d{1}\.\d{2} - \d{1}\.\d{2}$|^\d{2}\.\d{2} - \d{2}\.\d{2}$|^\d{3}\.\d{2} - \d{3}\.\d{2}$"
               />
               <label>Humidity</label>
               <input
@@ -243,8 +246,8 @@ const Hydro = () => {
                 value={formData.humidity || ''}
                 onChange={(e) => setFormData({ ...formData, humidity: e.target.value })}
                 required
-                title="Format. 00.00 - 00.00"
-                pattern="^\d{2}\.\d{2} - \d{2}\.\d{2}$"
+                title="Format:0.00 - 0.00 00.00 - 00.00 / 000.00 - 000.00"
+                pattern="^\d{1}\.\d{2} - \d{1}\.\d{2}$|^\d{2}\.\d{2} - \d{2}\.\d{2}$|^\d{3}\.\d{2} - \d{3}\.\d{2}$"
               />
 
               <label>Harvest Duration</label>
@@ -271,7 +274,7 @@ const Hydro = () => {
       {/* Modal for confirming deletion */}
       {isDeleteModalOpen && (
         <div className="modal-overlay">
-          <div className="modal-content1">
+          <div className="modal-content-delete">
             <h2>Confirm Deletion</h2>
             <p>
               Are you sure you want to delete the plant record for{' '}

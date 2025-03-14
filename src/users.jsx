@@ -5,6 +5,7 @@ import { FaEdit, FaTrashAlt } from 'react-icons/fa';
 
 import { supabase } from "./createClient";
 import Navbar from './navbar';
+import Navbar2 from './navbar2';
 import "./users.css";
 
 // Function to generate a random password
@@ -216,6 +217,7 @@ const Users = () => {
   return (
     <div className="container">
       <Navbar />
+      <Navbar2/>
       <h1>User Management</h1>
 
       {/* Create User Button */}

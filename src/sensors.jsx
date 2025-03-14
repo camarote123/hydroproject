@@ -2,6 +2,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom'; // Import useNavigate
 import Navbar from './navbar';
+import Navbar2 from './navbar2';
 import './sensor.css';
 
 
@@ -17,6 +18,7 @@ const Sensors = () => {
     <div className ="sensor-container">
     <div>
    <Navbar/>
+   <Navbar2/>
       <div className="sensors-container">
         <h1 className="humidity-title">Sensors Page</h1>
    

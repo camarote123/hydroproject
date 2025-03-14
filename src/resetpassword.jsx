@@ -12,21 +12,24 @@ const ResetPassword = () => {
 
   useEffect(() => {
     const email = localStorage.getItem('resetEmail'); // Get the email from localStorage
-    console.log('Email retrieved from localStorage:', email); // Debugging log
 
     if (!email) {
       setError('Email address is missing.');
-      navigate('/'); // Redirect to the home page or login page if no email found
+      navigate('/'); // Redirect if no email is found
     }
   }, [navigate]);
+
+  // Function to check password strength
+  const isStrongPassword = (password) => {
+    const strongPasswordRegex =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    return strongPasswordRegex.test(password);
+  };
 
   const handlePasswordReset = async (e) => {
     e.preventDefault();
 
-    console.log('Entered password:', password); // Debugging log
-    console.log('Entered confirm password:', confirmPassword); // Debugging log
-
-    const email = localStorage.getItem('resetEmail'); // Get the email again when handling the reset
+    const email = localStorage.getItem('resetEmail'); // Get the email
 
     if (!password || !confirmPassword) {
       setError('Please fill in both password fields.');
@@ -35,6 +38,13 @@ const ResetPassword = () => {
 
     if (password !== confirmPassword) {
       setError('Passwords do not match.');
+      return;
+    }
+
+    if (!isStrongPassword(password)) {
+      setError(
+        'Password must be at least 8 characters long, include at least one uppercase letter, one lowercase letter, one number, and one special character.'
+      );
       return;
     }
 
@@ -47,10 +57,10 @@ const ResetPassword = () => {
       // Hash the new password before storing it in Supabase
       const hashedPassword = await bcrypt.hash(password, 10);
 
-      // Update the password in Supabase (replace 'users' with your table name if different)
+      // Update the password in Supabase
       const { error: updateError } = await supabase
         .from('users')
-        .update({ password: hashedPassword }) // Update the password field
+        .update({ password: hashedPassword })
         .eq('email', email);
 
       if (updateError) {
@@ -58,19 +68,20 @@ const ResetPassword = () => {
         return;
       }
 
+      setSuccess('Password successfully updated! Redirecting...');
+
       // Redirect to the PasswordChanged page after a successful reset
       setTimeout(() => {
         localStorage.removeItem('resetEmail'); // Clear the stored email
-        navigate('/passwordchanged'); // Redirect to the Password Changed page
+        navigate('/passwordchanged'); // Redirect to Password Changed page
       }, 2000);
-
     } catch (err) {
       setError('Error: ' + err.message);
     }
   };
 
   return (
-    <div class = 'container'>
+    <div className="container">
       <h2>Enter New Password</h2>
       <form onSubmit={handlePasswordReset}>
         <div>
@@ -93,11 +104,9 @@ const ResetPassword = () => {
             required
           />
         </div>
-        
-
         <button type="submit">Reset Password</button>
       </form>
-     
+
       {error && <p style={{ color: 'red' }}>{error}</p>}
       {success && <p style={{ color: 'green' }}>{success}</p>}
     </div>

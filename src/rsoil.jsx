@@ -3,6 +3,7 @@ import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 import { supabase } from './createClient';
 import Navbar from './navbar';
+import Navbar2 from './navbar2';
 import './rhydro.css';
 
 
@@ -168,6 +169,7 @@ const Rsoil = () => {
   return (
     <div className="full-screen-container">
       <Navbar />
+      <Navbar2 />
       <h1>Soil-Based Plant Record</h1>
       
       <div className="calendar-container">

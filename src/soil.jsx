@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { FaEdit, FaTrashAlt } from 'react-icons/fa'; // Importing the Edit and Trash icons
 import { supabase } from './createClient';
 import Navbar from './navbar';
+import Navbar2 from './navbar2';
 import './registration.css';
 
 // Initialize Supabase client
@@ -84,6 +85,7 @@ const Soil = () => {
         } else {
           fetchPlants();
           resetForm();
+          alert('Plant record updated successfully!');
         }
       }
     } catch (err) {
@@ -177,6 +179,7 @@ const Soil = () => {
   return (
     <div >
       <Navbar />
+      <Navbar2 />
       <h1>Soil-Based Plant Data</h1>
 
       {/* Button to open Register Plant modal */}
@@ -215,8 +218,9 @@ const Soil = () => {
                 value={formData.nitrogen_measurement || ''}
                 onChange={(e) => setFormData({ ...formData, nitrogen_measurement: e.target.value })}
                 required
-                title="Format: 00.00 - 00.00 or 000.00 - 000.00"
-                pattern="^\d{2}\.\d{2} - \d{2}\.\d{2}$|^\d{3}\.\d{2} - \d{3}\.\d{2}$"
+                 title="Format:0.00 - 0.00 00.00 - 00.00 / 000.00 - 000.00"
+                pattern="^\d{1}\.\d{2} - \d{1}\.\d{2}$|^\d{2}\.\d{2} - \d{2}\.\d{2}$|^\d{3}\.\d{2} - \d{3}\.\d{2}$
+"
               />
 
               <label>Phosphorus Measurement</label>
@@ -225,8 +229,9 @@ const Soil = () => {
                 value={formData.phosphorus_measurement || ''}
                 onChange={(e) => setFormData({ ...formData, phosphorus_measurement: e.target.value })}
                 required
-                title="Format. 00.00 - 00.00"
-                pattern="^\d{2}\.\d{2} - \d{2}\.\d{2}$"
+                 title="Format:0.00 - 0.00 00.00 - 00.00 / 000.00 - 000.00"
+                 pattern="^\d{1}\.\d{2} - \d{1}\.\d{2}$|^\d{2}\.\d{2} - \d{2}\.\d{2}$|^\d{3}\.\d{2} - \d{3}\.\d{2}$
+"
               />
               <label>Potassium Measurement</label>
               <input
@@ -234,8 +239,9 @@ const Soil = () => {
                 value={formData.potassium_measurement || ''}
                 onChange={(e) => setFormData({ ...formData, potassium_measurement: e.target.value })}
                 required
-                title="Format: 00.00 - 00.00 or 000.00 - 000.00"
-                pattern="^\d{2}\.\d{2} - \d{2}\.\d{2}$|^\d{3}\.\d{2} - \d{3}\.\d{2}$"
+                title="Format:0.00 - 0.00 00.00 - 00.00 / 000.00 - 000.00"
+                 pattern="^\d{1}\.\d{2} - \d{1}\.\d{2}$|^\d{2}\.\d{2} - \d{2}\.\d{2}$|^\d{3}\.\d{2} - \d{3}\.\d{2}$
+"
               />
               <label>pH Level</label>
               <input
@@ -243,8 +249,9 @@ const Soil = () => {
                 value={formData.ph_level || ''}
                 onChange={(e) => setFormData({ ...formData, ph_level: e.target.value })}
                 required
-                title="Format. 00.00 - 00.00"
-                pattern="^\d{2}\.\d{2} - \d{2}\.\d{2}$"
+                 title="Format:0.00 - 0.00 00.00 - 00.00 / 000.00 - 000.00"
+                 pattern="^\d{1}\.\d{2} - \d{1}\.\d{2}$|^\d{2}\.\d{2} - \d{2}\.\d{2}$|^\d{3}\.\d{2} - \d{3}\.\d{2}$
+"
               />
               <label>Temperature</label>
               <input
@@ -252,8 +259,9 @@ const Soil = () => {
                 value={formData.temperature || ''}
                 onChange={(e) => setFormData({ ...formData, temperature: e.target.value })}
                 required
-                title="Format. 00.00 - 00.00"
-                pattern="^\d{2}\.\d{2} - \d{2}\.\d{2}$"
+                 title="Format:0.00 - 0.00 00.00 - 00.00 / 000.00 - 000.00"
+                 pattern="^\d{1}\.\d{2} - \d{1}\.\d{2}$|^\d{2}\.\d{2} - \d{2}\.\d{2}$|^\d{3}\.\d{2} - \d{3}\.\d{2}$
+"
               />
               <label>Humidity</label>
               <input
@@ -261,8 +269,9 @@ const Soil = () => {
                 value={formData.humidity || ''}
                 onChange={(e) => setFormData({ ...formData, humidity: e.target.value })}
                 required
-                title="Format. 00.00 - 00.00"
-                pattern="^\d{2}\.\d{2} - \d{2}\.\d{2}$"
+                 title="Format:0.00 - 0.00 00.00 - 00.00 / 000.00 - 000.00"
+                pattern="^\d{1}\.\d{2} - \d{1}\.\d{2}$|^\d{2}\.\d{2} - \d{2}\.\d{2}$|^\d{3}\.\d{2} - \d{3}\.\d{2}$
+"
               />
               <label>Pesticide</label>
               <input
@@ -300,7 +309,7 @@ const Soil = () => {
       {/* Modal for confirming deletion */}
       {isDeleteModalOpen && (
         <div className="modal-overlay">
-          <div className="modal-content1">
+          <div className="modal-content-delete">
             
             <h2>Confirm Deletion</h2>
             <p>

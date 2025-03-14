@@ -10,6 +10,7 @@ import {
 } from 'chart.js';
 import React, { useEffect, useState } from 'react';
 import Navbar from './navbar';
+import Navbar2 from './navbar2';
 import './registration.css';
 
 // Register Chart.js components
@@ -132,6 +133,7 @@ const Harvest = () => {
   return (
     <div>
       <Navbar />
+      <Navbar2 />
       <h1>Harvest Records</h1>
    
 
