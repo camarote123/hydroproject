@@ -538,7 +538,7 @@ const Dashboard = () => {
           <div className="environment-readings">
             <div className="environment-reading">
               <span className="reading-label">HUMIDITY:</span>
-              <span className="reading-value">{humidityData.length > 0 ? `${humidityData[0].humidity}%` : 'Loading...'}</span>
+              <span className="reading-value">{humidityData.length > 0 ? `${humidityData[0].humidity}°C` : 'Loading...'}</span>
             </div>
             <div className="environment-reading">
               <span className="reading-label">TEMPERATURE:</span>
@@ -594,7 +594,7 @@ const Dashboard = () => {
         <div className="dashboard-card-content">
           <div className="dashboard-card-title">NITROGEN</div>
           <div className="dashboard-card-description">
-            {npkData.length > 0 ? `${npkData[0].nitrogen}%` : 'Loading...'}
+            {npkData.length > 0 ? `${npkData[0].nitrogen} PPM` : 'Loading...'}
           </div>
         </div>
       </div>
@@ -603,7 +603,7 @@ const Dashboard = () => {
         <div className="dashboard-card-content">
           <div className="dashboard-card-title">PHOSPHORUS</div>
           <div className="dashboard-card-description">
-            {npkData.length > 0 ? `${npkData[0].phosphorus}%` : 'Loading...'}
+            {npkData.length > 0 ? `${npkData[0].phosphorus}PPM` : 'Loading...'}
           </div>
         </div>
       </div>
@@ -612,7 +612,7 @@ const Dashboard = () => {
         <div className="dashboard-card-content">
           <div className="dashboard-card-title">POTASSIUM</div>
           <div className="dashboard-card-description">
-            {npkData.length > 0 ? `${npkData[0].potassium}%` : 'Loading...'}
+            {npkData.length > 0 ? `${npkData[0].potassium}PPM` : 'Loading...'}
           </div>
         </div>
       </div>
