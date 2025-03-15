@@ -279,7 +279,7 @@ const Humidity = () => {
               <div className="humidity-card-content">
                 <div className="humidity-card-title">HUMIDITY</div>
                 <div className="humidity-card-description">
-                  {latestData ? `${latestData.humidity}%` : 'Loading...'}
+                  {latestData ? `${latestData.humidity}°C` : 'Loading...'}
                 </div>
               </div>
             </div>
