@@ -1,4 +1,4 @@
-/* Navbar */
+/* Navbar container */
 .navbar2 {
     display: flex;
     justify-content: flex-end;
@@ -20,12 +20,19 @@
     width: calc(100% - 80px);
 }
 
-/* Navigation Links */
+/* Navigation links */
 .nav-links {
     display: flex;
     list-style: none;
     padding: 0;
     margin: 0;
+    align-items: center;
+}
+
+/* Align the notification section to the right */
+.notification-container {
+    position: relative;
+    margin-left: auto; /* Pushes the notifications to the right */
 }
 
 .nav-links li {
@@ -33,6 +40,27 @@
     position: relative;
 }
 
+/* Notification icon */
+.icon {
+    font-size: 20px;
+    position: relative;
+    color: rgb(7, 7, 7);
+}
+
+/* Notification badge */
+.notification-badge {
+    background-color: red;
+    color: white;
+    font-size: 12px;
+    font-weight: bold;
+    border-radius: 50%;
+    padding: 4px 6px;
+    position: absolute;
+    top: -5px;
+    right: -10px;
+}
+
+/* Navigation Links */
 .nav-links a, .user-button {
     color: rgb(7, 7, 7);
     text-decoration: none;
@@ -84,22 +112,58 @@
 }
 
 /* Mobile Styles */
+@media (max-width: 1024px) {
+    .navbar2 {
+        width: 100%;
+        padding: 0.5rem 1rem;
+        justify-content: space-between;
+    }
+
+    .nav-links {
+        flex-grow: 1;
+        justify-content: space-between;
+    }
+
+    .notification-container {
+        margin-left: unset;
+    }
+}
+
 @media (max-width: 768px) {
     .navbar2 {
         width: 100%;
         padding: 0.5rem 1rem;
     }
+
+    .nav-links {
+        flex-direction: row;
+        justify-content: space-between;
+        width: 100%;
+    }
+
+    .notification-container {
+        order: 2;
+        margin-left: auto;
+    }
 }
 
+@media (max-width: 480px) {
+    .navbar2 {
+        padding: 0.5rem;
+    }
 
-.notification-badge {
-    background-color: red;
-    color: white;
-    font-size: 12px;
-    font-weight: bold;
-    border-radius: 50%;
-    padding: 4px 8px;
-    position: absolute;
-    top: 8px;
-    right: 15px;
-  }
+    .nav-links a {
+        font-size: 14px;
+        padding: 8px 12px;
+    }
+
+    .icon {
+        font-size: 18px;
+    }
+
+    .notification-badge {
+        font-size: 10px;
+        padding: 3px 5px;
+        right: -5px;
+    }
+}
