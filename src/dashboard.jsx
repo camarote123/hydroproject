@@ -16,8 +16,6 @@ import { Bar, BarChart, Cell, Pie, PieChart, ResponsiveContainer, XAxis, YAxis }
 import { supabase } from './createClient';
 import './dashboard.css';
 
-
-
 // Register Chart.js components
 ChartJS.register(
   CategoryScale,
@@ -46,7 +44,8 @@ const Dashboard = () => {
   const [phlevelData, setPhlevel] = useState([]);
   const [npkData, setNpk] = useState([]);
   const [totalPlants, setTotalPlants] = useState({ soilBased: 0, hydroponic: 0 });
-
+  const [activeBarIndex, setActiveBarIndex] = useState(null);
+  const [activeWaterIndex, setActiveWaterIndex] = useState(null);
 
   const handleNavigation = (id) => {
     if (id === "01" || id === "02") {
@@ -56,6 +55,13 @@ const Dashboard = () => {
     }
   };
 
+  const handleWaterLevelClick = (index) => {
+    if (index === 0) {
+      navigate('/hydrowaterlevel');
+    } else if (index === 1) {
+      navigate('/reservr');
+    }
+  };
 
   // Data fetching functions
   const fetchNpk = async () => {
@@ -219,7 +225,7 @@ const Dashboard = () => {
   const fetchTotalPlants = async () => {
     try {
       const { data, error } = await supabase
-        .from('registration')
+        .from('history')
         .select('growth_site');
 
       if (error) throw error;
@@ -272,46 +278,60 @@ const Dashboard = () => {
     return d.toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: '2-digit' });
   };
 
-  // Count plants by date and type
-  const countPlantsByDateAndType = () => {
-    const countsByDate = {};
+  // Group plants by week and type
+  const countPlantsByWeekAndType = () => {
+    const countsByWeek = {};
 
     historyData.forEach((record) => {
-      const date = formatDate(record.date_created);
+      const date = new Date(record.date_created);
+      // Get the week number
+      const weekStart = new Date(date);
+      weekStart.setDate(date.getDate() - date.getDay()); // Get Sunday of this week
+      const weekKey = formatDate(weekStart);
+      const weekLabel = `Week of ${weekKey}`;
       const growthType = record.growth_site?.toLowerCase().includes('hydroponic') ? 'hydroponic' : 'soilBased';
 
-      if (!countsByDate[date]) {
-        countsByDate[date] = { month: date, soilBased: 0, hydroponic: 0 };
+      if (!countsByWeek[weekLabel]) {
+        countsByWeek[weekLabel] = { month: weekLabel, soilBased: 0, hydroponic: 0 };
       }
-      countsByDate[date][growthType]++;
+      countsByWeek[weekLabel][growthType]++;
     });
 
-    return Object.values(countsByDate);
+    return Object.values(countsByWeek);
   };
 
-  // Prepare data for the plants by date chart
-  const plantsByDateData = countPlantsByDateAndType()
-    .sort((a, b) => new Date(a.month) - new Date(b.month))
-    .slice(-5); // Get last 5 days
+  // Prepare data for the plants by week chart
+  const plantsByWeekData = countPlantsByWeekAndType()
+    .sort((a, b) => {
+      const dateA = new Date(a.month.substring(8));
+      const dateB = new Date(b.month.substring(8));
+      return dateA - dateB;
+    })
+    .slice(-5); // Get last 5 weeks
 
   // Prepare data for PPM chart using NPK data
   const ppmData = [
     {
-      name: 'Phosphorus',
-      value: npkData.length > 0 ? npkData[0]?.phosphorus || 120 : 120,
-      color: '#4285F4'
-    },
-    {
-      name: 'Potassium',
-      value: npkData.length > 0 ? npkData[0]?.potassium || 110 : 110,
-      color: '#7CB342'
-    },
-    {
       name: 'Nitrogen',
       value: npkData.length > 0 ? npkData[0]?.nitrogen || 130 : 130,
-      color: '#FFC107'
+      status: npkData.length > 0 && npkData[0]?.nitrogen <= 80 ? 'Low' : 'High',
+      color: npkData.length > 0 && npkData[0]?.nitrogen <= 80 ? '#FF5252' : '#FFC107'
+    },
+    {
+      
+  name: 'Phosphorus',
+  value: npkData.length > 0 ? npkData[0]?.phosphorus || 120 : 120,
+  status: npkData.length > 0 && npkData[0]?.phosphorus <= 80 ? 'Low' : 'High',
+  color: npkData.length > 0 && npkData[0]?.phosphorus <= 80 ? '#FF5252' : '#4285F4'
+    },
+    {
+  
+      name: 'Potassium',
+      value: npkData.length > 0 ? npkData[0]?.potassium || 110 : 110,
+      status: npkData.length > 0 && npkData[0]?.potassium <= 30 ? 'Low' : 'High',
+      color: npkData.length > 0 && npkData[0]?.potassium <= 30 ? '#FF5252' : '#7CB342'
     }
-  ];
+  ]
 
   // Prepare water level data for bar chart
   const waterLevelChartData = [
@@ -326,6 +346,91 @@ const Dashboard = () => {
       color: waterData.length > 0 && (100 - (waterData[0]?.distance * 0.5)) > 50 ? '#4285F4' : '#FF5252'
     }
   ];
+
+  // Custom bar for water level with hover effects
+  const CustomWaterBar = (props) => {
+    const { x, y, width, height, index, fill, payload } = props;
+    const [activeWaterIndex, setActiveWaterIndex] = useState(null);
+
+    return (
+      <g>
+        <rect
+          x={x}
+          y={y}
+          width={width}
+          height={height}
+          fill={fill || '#FF5252'} // Default red
+          rx={8}
+          ry={8}
+          className="water-level-bar"
+          style={{
+            cursor: 'pointer',
+            filter: activeWaterIndex === index ? 'brightness(1.2) drop-shadow(0 0 6px rgba(0,0,0,0.3))' : 'none',
+            transition: 'all 0.3s ease'
+          }}
+          onMouseEnter={() => setActiveWaterIndex(index)}
+          onMouseLeave={() => setActiveWaterIndex(null)}
+          onClick={() => handleWaterLevelClick(index)}
+        />
+        {activeWaterIndex === index && (
+          <text
+            x={x + width / 2}
+            y={y - 10}
+            fill="#333"
+            textAnchor="middle"
+            dominantBaseline="middle"
+            style={{ fontWeight: 'bold', fontSize: '14px' }}
+          >
+            {`${payload.value}%`}
+          </text>
+        )}
+      </g>
+    );
+  };
+
+  // Custom bar for PPM with hover effects
+  
+const CustomPpmBar = (props) => {
+  const { x, y, width, height, index, fill, payload } = props;
+  const [activeBarIndex, setActiveBarIndex] = useState(null); // Fix: Define state
+
+  return (
+    <g>
+      <rect
+        x={x}
+        y={y}
+        width={width}
+        height={height}
+        fill={fill || payload.color} // Fix: Use color from ppmData
+        rx={10}
+        ry={10}
+        className="ppm-bar"
+        style={{
+          cursor: "pointer",
+          filter:
+            activeBarIndex === index
+              ? "brightness(1.2) drop-shadow(0 0 6px rgba(0,0,0,0.3))"
+              : "none",
+          transition: "all 0.3s ease",
+        }}
+        onMouseEnter={() => setActiveBarIndex(index)}
+        onMouseLeave={() => setActiveBarIndex(null)}
+      />
+      {activeBarIndex === index && (
+        <text
+          x={x + width / 2}
+          y={y - 10}
+          fill="#333"
+          textAnchor="middle"
+          dominantBaseline="middle"
+          style={{ fontWeight: "bold", fontSize: "12px" }}
+        >
+          {`${payload.value} ppm (${payload.status})`} {/* Display High/Low status */}
+        </text>
+      )}
+    </g>
+  );
+};
 
   // Prepare soil moisture data from soil monitoring data
   const soilMoistureData = [
@@ -352,7 +457,6 @@ const Dashboard = () => {
       name: 'Soil Moisture',
       percent: soilmonitoring2Data.length > 0 ? Math.min(100, Math.max(0, soilmonitoring2Data[0]?.moisture2 || 0)) : 0,
       status: soilmonitoring2Data.length > 0 && soilmonitoring2Data[0]?.moisture2 > 50 ? 'high' : 'low'
-
     }
   ];
 
@@ -378,13 +482,50 @@ const Dashboard = () => {
   const currentDoLevel = doData.length > 0 ? doData[0]?.do_level?.toFixed(2) || '8.63' : '8.63';
   const isDoAlert = parseFloat(currentDoLevel) <= 4.0;
 
-
   const tempGaugeData = [
     { value: currentTemp, name: "Current Temperature" },
     { value: maxTemp - currentTemp, name: "Remaining" },
   ];
 
+  // Custom Plant bar for hover effects
+  const CustomPlantBar = (props) => {
+    const { x, y, width, height, index, fill, dataKey } = props;
+    const isActive = activeBarIndex === `${index}-${dataKey}`;
 
+    return (
+      <g>
+        <rect
+          x={x}
+          y={y}
+          width={width}
+          height={height}
+          fill={fill}
+          rx={10}
+          ry={10}
+          className="plant-bar"
+          style={{
+            cursor: 'pointer',
+            filter: isActive ? 'brightness(1.2) drop-shadow(0 0 6px rgba(0,0,0,0.3))' : 'none',
+            transition: 'all 0.3s ease'
+          }}
+          onMouseEnter={() => setActiveBarIndex(`${index}-${dataKey}`)}
+          onMouseLeave={() => setActiveBarIndex(null)}
+        />
+        {isActive && (
+          <text
+            x={x + width / 2}
+            y={y - 10}
+            fill="#333"
+            textAnchor="middle"
+            dominantBaseline="middle"
+            style={{ fontWeight: 'bold', fontSize: '14px' }}
+          >
+            {`${props.payload[dataKey]} plants`}
+          </text>
+        )}
+      </g>
+    );
+  };
 
   return (
     <div className="dashboard">
@@ -435,11 +576,10 @@ const Dashboard = () => {
                   <XAxis dataKey="name" axisLine={false} tickLine={false} />
                   <YAxis axisLine={false} tickLine={false} domain={[0, 100]} ticks={[0, 25, 50, 75, 100]} />
                   <Tooltip formatter={(value) => [`${value}%`, 'Level']} />
-                  <Bar dataKey="value" radius={[8, 8, 0, 0]}>
-                    {waterLevelChartData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.color} />
-                    ))}
-                  </Bar>
+                  <Bar
+                    dataKey="value"
+                    shape={(props) => <CustomWaterBar {...props} fill={props.payload.color} />}
+                  />
                 </BarChart>
               </ResponsiveContainer>
               <div className="level-indicators">
@@ -541,7 +681,7 @@ const Dashboard = () => {
                     </div>
                   </div>
                 ))}
-              </div>;
+              </div>
             </div>
           </div>
         </div>
@@ -552,27 +692,25 @@ const Dashboard = () => {
           <div className="ppm-chart"
             onClick={() => navigate('/npk')}
             style={{ cursor: 'pointer' }}>
-
-            <h3>Parts Per Million</h3>
+            <h3>Parts Per Million (NPK) </h3>
             <ResponsiveContainer width="100%" height={200}>
               <BarChart data={ppmData} margin={{ top: 20, right: 30, left: 10, bottom: 5 }}>
                 <XAxis dataKey="name" axisLine={false} tickLine={false} />
                 <YAxis axisLine={false} tickLine={false} domain={[0, 150]} ticks={[0, 30, 60, 90, 120, 150]} />
                 <Tooltip formatter={(value) => [`${value} ppm`, 'Concentration']} />
-                <Bar dataKey="value" radius={[10, 10, 0, 0]}>
-                  {ppmData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.color} />
-                  ))}
-                </Bar>
+                <Bar
+                  dataKey="value"
+                  shape={<CustomPpmBar />}
+                />
               </BarChart>
             </ResponsiveContainer>
           </div>
 
-          {/* Plants Planted By Date - Bar chart */}
+          {/* Plants Planted By Week - Bar chart */}
           <div className="plants-chart">
             <div className="plants-header"
-            onClick={() => navigate ('/history')}
-            style={{ cursor: 'pointer'}}>
+              onClick={() => navigate('/history')}
+              style={{ cursor: 'pointer' }}>
               <h3>Total Plants Planted</h3>
               <div className="plants-legend">
                 <div className="legend-item">
@@ -586,22 +724,30 @@ const Dashboard = () => {
               </div>
             </div>
             <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={plantsByDateData} margin={{ top: 20, right: 30, left: 10, bottom: 5 }} barGap={10}>
+              <BarChart data={plantsByWeekData} margin={{ top: 20, right: 30, left: 10, bottom: 5 }} barGap={10}>
                 <XAxis dataKey="month" axisLine={false} tickLine={false} />
                 <YAxis axisLine={false} tickLine={false} />
                 <Tooltip formatter={(value, name) => [
                   `${value} plants`,
                   name === 'soilBased' ? 'Soil-based' : 'Hydroponic'
                 ]} />
-                <Bar dataKey="soilBased" name="Soil-based" fill="#7CB342" radius={[10, 10, 0, 0]} />
-                <Bar dataKey="hydroponic" name="Hydroponic" fill="#FFC107" radius={[10, 10, 0, 0]} />
+                <Bar
+                  dataKey="soilBased"
+                  name="Soil-based"
+                  fill="#7CB342"
+                  shape={props => <CustomPlantBar {...props} dataKey="soilBased" />}
+                />
+                <Bar
+                  dataKey="hydroponic"
+                  name="Hydroponic"
+                  fill="#FFC107"
+                  shape={props => <CustomPlantBar {...props} dataKey="hydroponic" />}
+                />
               </BarChart>
             </ResponsiveContainer>
             <p>Hydroponics Plants: <span className="harvest-count">{totalPlants.hydroponic}</span></p>
             <p>Soil-Based Plants: <span className="harvest-count">{totalPlants.soilBased}</span></p>
           </div>
-
-          {/* Total Plants Summary */}
         </div>
       </div>
     </div>

@@ -44,12 +44,15 @@ h1 {
   border-radius: 16px; /* More rounded corners */
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05); /* Softer shadow */
   transition: transform 0.2s ease, box-shadow 0.2s ease;
+  border: 1px solid #e2e8f0;
+  position: relative; /* For positioning the hover modal */
 }
 
 .calendar-container:hover {
   transform: translateY(-2px);
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
 }
+
 
 /* React Calendar Styles */
 .react-calendar {
@@ -60,6 +63,7 @@ h1 {
   border-radius: 12px;
   overflow: hidden;
 }
+
 
 .react-calendar__navigation {
   display: flex;
@@ -77,6 +81,7 @@ h1 {
   transition: all 0.2s ease;
   font-size: 1.1rem;
 }
+
 
 .react-calendar__navigation button:hover {
   background-color: rgba(19, 104, 19, 0.08);
@@ -103,12 +108,20 @@ h1 {
   cursor: pointer;
 }
 
-.react-calendar__tile--active,
-.react-calendar__tile.highlight {
-  background-color: #136813;
-  color: white !important;
+/* Add these styles to your CSS file */
+.react-calendar__tile.highlight-hydro {
+  background-color: rgba(19, 104, 255, 0.2); /* Light blue for hydro */
+  color: #136813;
   font-weight: 600;
 }
+
+.react-calendar__tile.highlight-soil {
+  background-color: rgba(19, 255, 19, 0.2); /* Light green for soil */
+  color: #136813;
+  font-weight: 600;
+}
+
+
 
 .react-calendar__month-view__weekdays__weekday {
   font-weight: 600;
@@ -185,7 +198,7 @@ h1 {
 /* Table Styles - More Modern */
 .table1-container {
   overflow-x: auto;
-  max-height: 60vh;
+  max-height: 40vh;
   border-radius: 12px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
 }
@@ -209,8 +222,8 @@ h1 {
 }
 
 .day1-table th {
-  background-color: #136813;
-  color: white;
+  background-color: #fafafa;
+  color: rgb(0, 0, 0);
   position: sticky;
   top: 0;
   z-index: 1;
@@ -474,3 +487,240 @@ input[type="checkbox"]:hover {
   opacity: 0;
   transition: opacity 300ms;
 }
+.react-calendar__tile {
+  position: relative; /* Needed for absolute positioning of the date-tile-content */
+}
+
+.hover-modal {
+  position: fixed;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  width: 800px;
+  max-width: 90vw;
+  overflow-y: auto;
+}
+
+.hover-modal h2 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #0f172a;
+  margin-top: 0;
+  margin-bottom: 1rem;
+}
+
+
+
+/* Ensure we can hover on the modal itself without it disappearing */
+.hover-modal-container {
+  pointer-events: auto;
+}
+
+/* Responsive table inside hover modal */
+.hover-modal .table1-container {
+  max-height: 50vh;
+}
+
+/* Add a border around the calendar to make it more distinct */
+.calendar-container {
+  border: 1px solid #e2e8f0;
+  position: relative; /* For positioning the hover modal */
+}
+
+
+.success-toast {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  background-color: #10b981;
+  color: white;
+  padding: 1rem 2rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  z-index: 9999;
+  animation: slideIn 0.3s ease, fadeOut 0.5s ease 2.5s forwards;
+}
+
+.notification-toast {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  background-color: #3b82f6;
+  color: white;
+  padding: 1rem 2rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  z-index: 9999;
+  animation: slideIn 0.3s ease, fadeOut 0.5s ease 4.5s forwards;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.notification-icon {
+  position: relative;
+  cursor: pointer;
+  padding: 10px;
+}
+
+.bell-icon {
+  font-size: 1.5rem;
+}
+
+.notification-badge {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background-color: #ef4444;
+  color: white;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+}
+
+.notifications-panel {
+  position: absolute;
+  top: 80px;
+  right: 20px;
+  width: 350px;
+  max-height: 500px;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+  z-index: 100;
+  overflow: hidden;
+}
+
+.notifications-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.notifications-header h3 {
+  margin: 0;
+}
+
+.close-notifications {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #6b7280;
+}
+
+.notifications-list {
+  overflow-y: auto;
+  max-height: 400px;
+  padding: 0.5rem 0;
+}
+
+.notification-item {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.notification-item:last-child {
+  border-bottom: none;
+}
+
+.notification-message {
+  margin: 0 0 0.25rem 0;
+  font-size: 0.875rem;
+}
+
+.notification-date {
+  margin: 0;
+  font-size: 0.75rem;
+  color: #6b7280;
+}
+
+.no-notifications {
+  padding: 1rem;
+  text-align: center;
+  color: #6b7280;
+}
+
+/* New hover modal styles */
+.hover-modal {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  animation: fadeIn 0.5s ease;
+  overflow: auto;
+  width: 1000px;
+  padding: 1.5rem;
+}
+
+.date-tile-content {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 5;
+}
+
+.modal-loading {
+  text-align: center;
+  padding: 2rem;
+  color: #6b7280;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+/* Add additional responsive styles for the modal */
+@media (max-width: 1200px) {
+  .hover-modal {
+    position: fixed !important;
+   
+     top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    width: 90vw !important;
+    max-height: 100vh !important;
+    overflow-y: auto;
+  }
+}
+

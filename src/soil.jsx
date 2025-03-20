@@ -342,14 +342,18 @@ const Soil = () => {
             {plants.map((plant) => (
               <tr key={plant.id}>
                 <td>{plant.plant_name}</td>
-                <td>{plant.nitrogen_measurement}</td>
-                <td>{plant.phosphorus_measurement}</td>
-                <td>{plant.potassium_measurement}</td>
+                <td>{plant.nitrogen_measurement !== undefined ? `${plant.nitrogen_measurement} ppm` : N/A }</td>
+                <td>{plant.phosphorus_measurement !== undefined ? `${plant.phosphorus_measurement} ppm` : N/A}</td>
+                <td>{plant.potassium_measurement !== undefined ? `${plant.potassium_measurement} ppm`: N/A}</td>
                 <td>{plant.ph_level}</td>
-                <td>{plant.temperature}</td>
-                <td>{plant.humidity}</td>
+                <td>{plant.temperature !== undefined ? `${plant.temperature}°C` : N/A }</td>
+                <td>{plant.humidity !== undefined ? `${plant.humidity}°C` : N/A}</td>
                 <td>{plant.pesticide}</td>
-                <td>{plant.harvest_duration}</td>
+                <td>
+                  {plant.harvest_duration
+                    ? `${plant.harvest_duration} ${plant.harvest_duration == 1 ? 'day' : 'days'}`
+                    : 'N/A'}
+                </td>
                 <td>
                   <div className="action-buttons">
                     <button onClick={() => editPlant(plant)}><FaEdit /></button>

@@ -1,289 +1,335 @@
-/* Page container */
-.sensors-container {
-  padding: 50px;
-  max-width: 500px;
-  margin: 0 auto;
-  text-align: center;
+/* Base styles */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
-/* Title */
-.sensors-title {
-  font-size: 2em;
-  margin-bottom: 10px;
-  color: #333333;
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f5f7fa;
+  
 }
 
-/* Description */
-.sensors-description {
-  font-size: 1em;
-  margin-bottom: 30px;
-  color: #555;
-}
-
-/* Card grid */
-.card-grid {
+/* Dashboard container */
+.dashboard-container {
   display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 20px;
+  min-height: 100vh;
 }
 
-/* Individual card */
-.sensor-card {
-  max-width: 330px;
-  width: 100%;
-  background: #ffffff;
-  border-radius: 12px;
-  box-shadow: 0 40px 80px rgba(3, 94, 41, 0.1);
-  overflow: hidden;
-  text-align: center;
+.main-content {
+  flex: 1;
+  padding: 20px;
 }
 
-.sensor-card-content {
-  padding: 50px;
+/* Tab Navigation */
+.tab-navigation {
+  display: flex;
+  border-bottom: 1px solid #e0e0e0;
+  margin-bottom: 20px;
+  overflow-x: auto;
+  white-space: nowrap;
+  margin-left: 100px;
 }
 
-.sensor-card-title {
-  font-size: 1.25em;
-  font-weight: bold;
-  margin-bottom: 10px;
-  color: #000000;
-}
-
-.sensor-card-description {
-  font-size: 0.9em;
+.tab-button {
+  padding: 10px 15px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  border-bottom: 3px solid transparent;
   color: #666;
+}
+
+.tab-button.active {
+  border-bottom: 3px solid #1c8a34;
+  color: #1c8a34;
+  font-weight: bold;
+}
+
+/* Dashboard content layout */
+.dashboard-content {
+  display: flex;
+  gap: 40px;
+  padding: 10px;
+  justify-content: center;
+  align-items: center;
+  margin-left: 100px;
+  background: rgb(255, 255, 255)
+  
+}
+
+.chart-column {
+  flex: 1;
+  max-width: 70%;
+}
+
+.status-column {
+  width: 300px;
+}
+
+/* Date picker styles */
+.date-picker-wrapper {
   margin-bottom: 20px;
 }
 
-/* Button */
-.sensor-card-button {
-  padding: 10px 20px;
-  background-color: #136813EF;
+.date-select-btn {
+  background-color: #136813;
   color: white;
   border: none;
+  padding: 8px 15px;
   border-radius: 4px;
   cursor: pointer;
-  text-transform: uppercase;
-  font-size: 0.9em;
-  transition: background-color 0.3s ease;
-}
-
-.sensor-card-button:hover {
-  background-color: #0056b3;
-}
-
-/* HUMIDITY General container styling */   
-.humiditycontainer {
-  width: 100%;
-  height: 150px;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 20px;
-  font-family: 'outfit', sans-serif;
-}
-
-/* Header styling */
-.humidity-title1 {
-  font-size: 2.5rem;
-  color: #000000;
-  margin-bottom: 20px;
-  text-align: left;
-  font-size: 30px;
-}
-
-/* Header styling */
-.humidity-title {
-  font-size: 2.5rem;
-  color: #000000;
-  margin-bottom: 20px;
-  text-align: center;
-  font-size: 30px;
-}
-
-/* General container styling */
-.humidity-container {
   display: flex;
-  flex-direction: column;
   align-items: center;
+  gap: 5px;
+}
+
+.dropdown-arrow {
+  font-size: 10px;
+}
+
+.date-picker-custom-input {
+  opacity: 0;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  cursor: pointer;
+}
+
+/* Chart styles */
+.chart-title {
+  font-size: 18px;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.chart-legend {
+  display: flex;
+  margin-bottom: 10px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  margin-right: 20px;
+}
+
+.legend-color {
+  width: 16px;
+  height: 16px;
+  margin-right: 5px;
+}
+
+.chart-container {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  padding: 15px;
+  height: 400px;
+  margin-bottom: 20px;
+  width: 90vh;
+}
+
+/* History section */
+.history-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+}
+
+.history-title {
+  font-size: 16px;
+  color: #333;
+}
+
+.select-date-btn {
+  background-color: #136813;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+/* Status column styles */
+.status-title {
+  font-size: 20px;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.status-card {
+  background-color: #1c8a34;
+  color: white;
+  border-radius: 8px;
+  padding: 10px;
+  margin-bottom: 15px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  width: 70%;
+}
+
+.card-label {
+  font-size: 14px;
+  margin-bottom: 5px;
+}
+
+.card-value {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+/* Modal styles */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
   justify-content: center;
-  width: calc(100vw - 160px); /* Subtract sidebar width */
-  margin-left: 200px; /* Offset by sidebar width */
-  background-color: #f4f4f4;
-  font-family: Arial, sans-serif;
-  transition: margin-left 0.3s ease, width 0.3s ease;
-}
-
-.humidity-content {
-  max-width: 1200px;
-  margin: 0 auto;
-}
-
-.humidity-description {
-  text-align: center;
-  font-size: 1.2rem;
-  margin-bottom: 40px;
-}
-
-/* Cards and graph positioning */
-.cards-and-graph {
-  display: flex;
-  flex-direction: column;
   align-items: center;
-  margin-bottom: 10px;
+  z-index: 1000;
 }
 
-/* Individual card styling */
-.humidity-card {
-  width: 200px;
-  background-color: #136813EF ;
-  border: 3px solid #329d9c;
-  border-radius: 10px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+.modal-content {
+  background-color: white;
+  border-radius: 8px;
   padding: 20px;
-  text-align: center;
-  transition: transform 0.2s ease-in-out;
+  width: 80%;
+  max-width: 800px;
+  max-height: 80vh;
+  overflow-y: auto;
+  position: relative;
 }
 
-.humidity-card:hover {
-  transform: translateY(-5px);
+.modal-close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
 }
 
-.humidity-card-title {
-  font-size: 1rem;
-  font-weight: bold;
-  color: #ffffff;
-  margin-bottom: 10px;
+/* Table styles */
+.table-container {
+  margin-top: 20px;
+  overflow-x: auto;
 }
 
-.humidity-card-description {
-  font-size: 2rem;
-  font-weight: bold;
-  color: #fff8f8;
-}
-
-/* Graph container */
-.graph-container {
-  width: 100%;
-  max-width: 1200px;
-  background-color: #fff;
-  border: 1px solid #ddd;
-  border-radius: 10px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  padding: 20px;
-}
-
-/* Table styling */
-.humidity-data {
-  margin-top: 10px;
-}
-
-.humidity-data h2 {
-  text-align: center;
-  margin-bottom: 20px;
-  font-size: 1.8rem;
-}
-
-.humidity-table {
+.temperature-table {
   width: 100%;
   border-collapse: collapse;
 }
 
-.humidity-table th,
-.humidity-table td {
-  border: 1px solid #136813EF;
+.temperature-table th,
+.temperature-table td {
+  border: 1px solid #e0e0e0;
   padding: 10px;
-  text-align: center;
+  text-align: left;
 }
 
-.humidity-table th {
-  background-color: #136813EF;
-  font-weight: bold;
+.temperature-table th {
+  background-color: #136813;
+  color: white;
+  font-weight: normal;
 }
 
-.humidity-table tr:nth-child(even) {
+.temperature-table tr:nth-child(even) {
   background-color: #f9f9f9;
 }
 
-.date-picker-btn {
-  background-color: #136813EF;
-  color: white;
-  border: none;
-  padding: 8px 15px;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 14px;
-}
-
-.date-picker-btn:hover {
-  background-color: #0056b3;
-}
-
-.history-button {
-  margin-top: 20px;
-}
-
-.soil-container {
+/* Pagination */
+.pagination {
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  width: calc(100vw - 160px); /* Subtract sidebar width */
-  margin-left: 160px; /* Offset by sidebar width */
-  background-color: #f4f4f4;
-  font-family: Arial, sans-serif;
-  transition: margin-left 0.3s ease, width 0.3s ease;
+  margin-top: 20px;
+  gap: 10px;
 }
 
-/* Media Queries for Mobile Responsiveness */
+.pagination button {
+  background-color: #136813;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.pagination button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+/* Responsive styles */
+@media (max-width: 1024px) {
+  .dashboard-content {
+    flex-direction: column;
+  }
+  
+  .chart-column,
+  .status-column {
+    max-width: 100%;
+    width: 100%;
+  }
+  
+  .status-column {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 15px;
+  }
+  
+  .status-card {
+    margin-bottom: 0;
+  }
+}
+
 @media (max-width: 768px) {
-  .sensors-container {
-    padding: 20px;
+  .tab-navigation {
+    padding-bottom: 10px;
   }
-
-  .sensor-card-content {
-    padding: 20px;
+  
+  .chart-container {
+    height: 300px;
   }
-
-  .humidity-container {
-    margin-left: 0;
-    width: 100%;
-  }
-
-  .soil-container {
-    margin-left: 0;
-    width: 100%;
-  }
-
-  .graph-container {
-    padding: 10px;
+  
+  .status-column {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   }
 }
 
 @media (max-width: 480px) {
-  .sensors-title {
-    font-size: 1.5em;
+  .tab-button {
+    padding: 8px 10px;
+    font-size: 12px;
   }
-
-  .sensor-card-title {
-    font-size: 1em;
+  
+  .chart-container {
+    height: 250px;
+    padding: 10px;
   }
-
-  .humidity-title1,
-  .humidity-title {
-    font-size: 1.5rem;
+  
+  .card-value {
+    font-size: 20px;
   }
-
-  .humidity-description {
-    font-size: 1rem;
-  }
-
-  .humidity-card-description {
-    font-size: 1.5rem;
-  }
-
-  .graph-container {
-    padding: 5px;
+  
+  .status-column {
+    grid-template-columns: 1fr;
   }
 }
 
+.title{
+  margin-left: 100px;
+}

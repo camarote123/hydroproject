@@ -107,7 +107,7 @@
 }
 
 .dropdown a {
-  padding: 10px 20px 10px 59px; /* Indent dropdown items (icon width + icon margin + extra indent) */
+  padding: 10px 20px 10px 30px; /* Indent dropdown items (icon width + icon margin + extra indent) */
   font-size: 16px; /* Slightly smaller font for dropdown items */
 }
 

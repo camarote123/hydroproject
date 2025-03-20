@@ -190,11 +190,11 @@ const Hydro = () => {
       {isModalOpen && (
         <div className="modal-overlay">
           <div className="modal-content2">
-          <button type="button" className="modal-close" onClick={resetForm}>
-        &times;
-      </button>
+            <button type="button" className="modal-close" onClick={resetForm}>
+              &times;
+            </button>
 
-    
+
             <h2>{editingRecord ? 'Edit Plant' : 'Register Plant'}</h2>
             <form onSubmit={handleSubmit}>
 
@@ -265,7 +265,7 @@ const Hydro = () => {
                 title="Input harvest_duration Details"
               />
               <button type="submit">{editingRecord ? 'Update' : 'Add Record'}</button>
-             
+
             </form>
           </div>
         </div>
@@ -304,9 +304,17 @@ const Hydro = () => {
               <tr key={plant.id}>
                 <td>{plant.plant_name}</td>
                 <td>{plant.ph_level}</td>
-                <td>{plant.temperature}</td>
-                <td>{plant.humidity}</td>
-                <td>{plant.harvest_duration}</td>
+                <td>
+                  {plant.temperature !== undefined ? `${plant.temperature}°C` : 'N/A'}
+                </td>
+                <td>
+                  {plant.humidity !== undefined ? `${plant.humidity}°C` : 'N/A'}
+                 </td>
+                <td>
+                  {plant.harvest_duration
+                    ? `${plant.harvest_duration} ${plant.harvest_duration == 1 ? 'day' : 'days'}`
+                    : 'N/A'}
+                </td>
                 <td>
                   <div className="action-buttons">
                     <button onClick={() => editPlant(plant)}><FaEdit /></button>

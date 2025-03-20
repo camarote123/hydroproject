@@ -2,402 +2,405 @@
 
 /* Main container styling with earthy background */
 .location-container {
-    background: linear-gradient(to bottom right, #f7f9f4, #f0f4e8);
-    padding: 1.5rem;
-    border-radius: 12px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
-    max-width: 100%;
-    overflow-x: hidden;
-    margin-left: 160px; /* Offset by sidebar width */
-  }
+  background: linear-gradient(to bottom right, #f7f9f4, #f0f4e8);
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+  max-width: 100%;
+  overflow-y: hidden;
+  margin-left: 160px; /* Offset by sidebar width */
   
-  /* Cinematic header with crop imagery */
-  .location-header {
-    position: relative;
-    margin-bottom: 2rem;
-    padding-bottom: 1.5rem;
-    border-bottom: 1px solid rgba(76, 125, 43, 0.2);
-  }
-  
-  .location-header::before {
-    content: "";
-    position: absolute;
-    top: -2rem;
-    right: -2rem;
-    width: 220px;
-    height: 220px;
-    background-image: url('/api/placeholder/220/220');
-    background-size: contain;
-    background-repeat: no-repeat;
-    opacity: 0.07;
-    z-index: 0;
-  }
-  
-  /* Title styling with agricultural green accent */
-  .location-title {
-    font-family: 'Montserrat', sans-serif;
-    font-size: 2.25rem;
-    font-weight: 700;
-    color: #2c5823;
-    position: relative;
-    z-index: 1;
-    margin-bottom: 0.5rem;
-    display: flex;
-    align-items: center;
-  }
-  
-  /* Subtitle with earthy tone */
-  .location-subtitle {
-    font-size: 1rem;
-    color: #6a7563;
-    max-width: 70%;
-    line-height: 1.5;
-  }
-  
-  /* Control panel styling with cinematic depth */
-  .control-panel {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1rem;
-    margin-bottom: 2rem;
-    background-color: rgba(255, 255, 255, 0.8);
-    padding: 1.5rem;
-    border-radius: 8px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04), 
-                0 2px 6px rgba(0, 0, 0, 0.04),
-                0 0 1px rgba(0, 0, 0, 0.1);
-    backdrop-filter: blur(10px);
-  }
-  
-  /* Search input with natural wood-like border */
-  .search-input {
-    border: 1px solid #c3b091;
-    border-radius: 8px;
-    background-color: rgba(255, 255, 255, 0.9);
-    transition: all 0.3s ease;
-    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
-    width: 100%;
-    max-width: 300px;
-    padding: 0.75rem 1rem;
-  }
-  
-  .search-input:focus {
-    border-color: #4c7d2b;
-    box-shadow: 0 0 0 3px rgba(76, 125, 43, 0.2);
-  }
-  
-  /* Filter select with farm-inspired styling */
-  .filter-select {
-    border: 1px solid #c3b091;
-    border-radius: 8px;
-    background-color: rgba(255, 255, 255, 0.9);
-    cursor: pointer;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%234c7d2b' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: calc(100% - 12px) center;
-    transition: all 0.3s ease;
-    -webkit-appearance: none;
-    appearance: none;
-    padding: 0.75rem 2rem 0.75rem 1rem;
-    flex-grow: 1;
-    max-width: 200px;
-  }
-  
-  .filter-select:focus {
-    border-color: #4c7d2b;
-    box-shadow: 0 0 0 3px rgba(76, 125, 43, 0.2);
-  }
-  
-  /* Stats cards with cinematic depth and agricultural colors */
-  .stats-container {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(250px, 1fr));
-    gap: 1.5rem;
-    margin-bottom: 2.5rem;
-  }
-  
-  .stats-card {
-    border-radius: 10px;
-    padding: 1.5rem;
-    display: flex;
-    flex-direction: column;
-    position: relative;
-    overflow: hidden;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-  }
-  
-  .stats-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-  }
-  
-  .stats-card::after {
-    content: "";
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 4px;
-    background: linear-gradient(to right, rgba(76, 125, 43, 0.8), rgba(76, 125, 43, 0.4));
-  }
-  
-  .stats-total {
-    background-color: #e8f0dd;
-  }
-  
-  .stats-used {
-    background-color: #d6e8c9;
-  }
-  
-  .stats-available {
-    background-color: #ecf4dc;
-  }
-  
-  .stats-label {
-    font-size: 0.875rem;
-    font-weight: 600;
-    color: #4c7d2b;
-    margin-bottom: 0.75rem;
-  }
-  
-  .stats-value {
-    font-size: 2rem;
-    font-weight: 700;
-    color: #2c5823;
-  }
-  
-  /* Loading animation with farm tractor inspiration */
-  .loading-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 16rem;
-  }
-  
-  .loading-spinner {
-    width: 64px;
-    height: 64px;
-    border: 4px solid rgba(76, 125, 43, 0.1);
-    border-left-color: #4c7d2b;
-    border-radius: 50%;
-    animation: spin 1.2s linear infinite;
-  }
-  
-  @keyframes spin {
-    to { transform: rotate(360deg); }
-  }
-  
-  /* Location type sections */
-  .locations-section {
-    margin-bottom: 2.5rem;
-  }
-  
-  .section-title {
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: #2c5823;
-    margin-bottom: 1rem;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-  }
-  
-  .section-title::before {
-    content: "";
-    display: inline-block;
-    width: 18px;
-    height: 18px;
-    border-radius: 50%;
-  }
-  
-  .soil-section .section-title::before {
-    background-color: #8b6914;
-  }
-  
-  .hydro-section .section-title::before {
-    background-color: #1a698b;
-  }
-  
-  /* Location cards with field/plot styling */
+}
+
+/* Cinematic header with crop imagery */
+.location-header {
+  position: relative;
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid rgba(76, 125, 43, 0.2);
+}
+
+.location-header::before {
+  content: "";
+  position: absolute;
+  top: -2rem;
+  right: -2rem;
+  width: 220px;
+  height: 220px;
+  background-image: url('/api/placeholder/220/220');
+  background-size: contain;
+  background-repeat: no-repeat;
+  opacity: 0.07;
+  z-index: 0;
+}
+
+/* Title styling with agricultural green accent */
+.location-title {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 2.25rem;
+  font-weight: 700;
+  color: #2c5823;
+  position: relative;
+  z-index: 1;
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+}
+
+/* Subtitle with earthy tone */
+.location-subtitle {
+  font-size: 1rem;
+  color: #6a7563;
+  max-width: 70%;
+  line-height: 1.5;
+}
+
+/* Control panel styling with cinematic depth */
+.control-panel {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  background-color: rgba(255, 255, 255, 0.8);
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04), 
+              0 2px 6px rgba(0, 0, 0, 0.04),
+              0 0 1px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10px);
+}
+
+/* Search input with natural wood-like border */
+.search-input {
+  border: 1px solid #c3b091;
+  border-radius: 8px;
+  background-color: rgba(255, 255, 255, 0.9);
+  transition: all 0.3s ease;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 300px;
+  padding: 0.75rem 1rem;
+}
+
+.search-input:focus {
+  border-color: #4c7d2b;
+  box-shadow: 0 0 0 3px rgba(76, 125, 43, 0.2);
+}
+
+/* Filter select with farm-inspired styling */
+.filter-select {
+  border: 1px solid #c3b091;
+  border-radius: 8px;
+  background-color: rgba(255, 255, 255, 0.9);
+  cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%234c7d2b' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: calc(100% - 12px) center;
+  transition: all 0.3s ease;
+  -webkit-appearance: none;
+  appearance: none;
+  padding: 0.75rem 2rem 0.75rem 1rem;
+  flex-grow: 1;
+  max-width: 200px;
+}
+
+.filter-select:focus {
+  border-color: #4c7d2b;
+  box-shadow: 0 0 0 3px rgba(76, 125, 43, 0.2);
+}
+
+/* Stats cards with cinematic depth and agricultural colors */
+.stats-container {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2.5rem;
+}
+
+.stats-card {
+  border-radius: 10px;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.stats-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+.stats-card::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: linear-gradient(to right, rgba(76, 125, 43, 0.8), rgba(76, 125, 43, 0.4));
+}
+
+.stats-total {
+  background-color: #e8f0dd;
+}
+
+.stats-used {
+  background-color: #d6e8c9;
+}
+
+.stats-available {
+  background-color: #ecf4dc;
+}
+
+.stats-label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #4c7d2b;
+  margin-bottom: 0.75rem;
+}
+
+.stats-value {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #2c5823;
+}
+
+/* Loading animation with farm tractor inspiration */
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 16rem;
+}
+
+.loading-spinner {
+  width: 64px;
+  height: 64px;
+  border: 4px solid rgba(76, 125, 43, 0.1);
+  border-left-color: #4c7d2b;
+  border-radius: 50%;
+  animation: spin 1.2s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Location type sections */
+.locations-section {
+  margin-bottom: 2.5rem;
+}
+
+.section-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #2c5823;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.section-title::before {
+  content: "";
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+}
+
+.soil-section .section-title::before {
+  background-color: #8b6914;
+}
+
+.hydro-section .section-title::before {
+  background-color: #1a698b;
+}
+
+/* Location cards with field/plot styling */
+.locations-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(220px, 1fr));
+  gap: 1.5rem;
+  max-height: 500px; /* Added max-height for overflow handling */
+  overflow-y: auto; /* Enable vertical scrolling */
+}
+
+.location-card {
+  border-radius: 12px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  position: relative;
+  min-height: 120px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 1.25rem;
+}
+
+/* Used location card with harvest-ready appearance */
+.location-card-used {
+  background: linear-gradient(135deg, #5c9d32, #3e7423);
+  box-shadow: 0 6px 20px rgba(60, 117, 33, 0.25);
+}
+
+/* Available location card with field-ready appearance */
+.location-card-available {
+  background-color: #ffffff;
+  border: 1px solid #e0e8d4;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+}
+
+.location-card-available:hover {
+  border-color: #b0ca9d;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+  transform: translateY(-4px);
+}
+
+/* Location card header with plot number styling */
+.location-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+}
+
+.location-name {
+  font-weight: 600;
+  font-size: 1.125rem;
+  line-height: 1.3;
+  word-break: break-word;
+}
+
+.location-name-used {
+  color: #ffffff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.location-name-available {
+  color: #2c5823;
+}
+
+/* Location type badges with soil and hydroponic differentiation */
+.location-badge {
+  font-size: 0.75rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: 1rem;
+  display: inline-block;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.soil-badge-used {
+  background-color: rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+}
+
+.soil-badge-available {
+  background-color: #f2e8d5;
+  color: #8b6914;
+}
+
+.hydro-badge-used {
+  background-color: rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+}
+
+.hydro-badge-available {
+  background-color: #d5e8f2;
+  color: #1a698b;
+}
+
+/* Empty state with farm field visual */
+.empty-state {
+  text-align: center;
+  padding: 3rem;
+  background-color: #f9faf7;
+  border-radius: 12px;
+  border: 1px dashed #c3d4b2;
+}
+
+.empty-message {
+  color: #6a7563;
+  font-size: 1.125rem;
+}
+
+/* Responsive adjustments */
+@media screen and (max-width: 1200px) {
   .locations-grid {
-    display: grid;
-    grid-template-columns: repeat(4, minmax(220px, 1fr));
-    gap: 1.5rem;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  }
+}
+
+@media screen and (max-width: 992px) {
+  .location-title {
+    font-size: 2rem;
   }
   
-  .location-card {
-    border-radius: 12px;
-    overflow: hidden;
-    transition: all 0.3s ease;
-    position: relative;
-    min-height: 120px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
+  .locations-grid {
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .location-container {
     padding: 1.25rem;
   }
   
-  /* Used location card with harvest-ready appearance */
-  .location-card-used {
-    background: linear-gradient(135deg, #5c9d32, #3e7423);
-    box-shadow: 0 6px 20px rgba(60, 117, 33, 0.25);
+  .location-header::before {
+    width: 150px;
+    height: 150px;
+    top: -1rem;
+    right: -1rem;
+    opacity: 0.05;
   }
   
-  /* Available location card with field-ready appearance */
-  .location-card-available {
-    background-color: #ffffff;
-    border: 1px solid #e0e8d4;
-    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+  .location-title {
+    font-size: 1.75rem;
   }
   
-  .location-card-available:hover {
-    border-color: #b0ca9d;
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
-    transform: translateY(-4px);
+  .location-subtitle {
+    max-width: 100%;
   }
   
-  /* Location card header with plot number styling */
-  .location-card-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 1rem;
+  .locations-grid {
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 1rem;
   }
   
-  .location-name {
-    font-weight: 600;
-    font-size: 1.125rem;
-    line-height: 1.3;
-    word-break: break-word;
+  .control-panel {
+    flex-direction: column;
+    align-items: stretch;
   }
   
-  .location-name-used {
-    color: #ffffff;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  .search-input, .filter-select {
+    max-width: 100%;
+    width: 100%;
+  }
+}
+
+@media screen and (max-width: 576px) {
+  .location-container {
+    padding: 1rem;
   }
   
-  .location-name-available {
-    color: #2c5823;
+  .location-title {
+    font-size: 1.5rem;
   }
   
-  /* Location type badges with soil and hydroponic differentiation */
-  .location-badge {
-    font-size: 0.75rem;
-    padding: 0.25rem 0.75rem;
-    border-radius: 1rem;
-    display: inline-block;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
+  .locations-grid {
+    grid-template-columns: 1fr;
   }
   
-  .soil-badge-used {
-    background-color: rgba(255, 255, 255, 0.2);
-    color: #ffffff;
+  .location-card {
+    min-height: 100px;
   }
   
-  .soil-badge-available {
-    background-color: #f2e8d5;
-    color: #8b6914;
+  .stats-container {
+    grid-template-columns: 1fr;
+    gap: 1rem;
   }
-  
-  .hydro-badge-used {
-    background-color: rgba(255, 255, 255, 0.2);
-    color: #ffffff;
-  }
-  
-  .hydro-badge-available {
-    background-color: #d5e8f2;
-    color: #1a698b;
-  }
-  
-  /* Empty state with farm field visual */
-  .empty-state {
-    text-align: center;
-    padding: 3rem;
-    background-color: #f9faf7;
-    border-radius: 12px;
-    border: 1px dashed #c3d4b2;
-  }
-  
-  .empty-message {
-    color: #6a7563;
-    font-size: 1.125rem;
-  }
-  
-  /* Responsive adjustments */
-  @media screen and (max-width: 1200px) {
-    .locations-grid {
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    }
-  }
-  
-  @media screen and (max-width: 992px) {
-    .location-title {
-      font-size: 2rem;
-    }
-    
-    .locations-grid {
-      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-    }
-  }
-  
-  @media screen and (max-width: 768px) {
-    .location-container {
-      padding: 1.25rem;
-    }
-    
-    .location-header::before {
-      width: 150px;
-      height: 150px;
-      top: -1rem;
-      right: -1rem;
-      opacity: 0.05;
-    }
-    
-    .location-title {
-      font-size: a1.75rem;
-    }
-    
-    .location-subtitle {
-      max-width: 100%;
-    }
-    
-    .locations-grid {
-      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-      gap: 1rem;
-    }
-    
-    .control-panel {
-      flex-direction: column;
-      align-items: stretch;
-    }
-    
-    .search-input, .filter-select {
-      max-width: 100%;
-      width: 100%;
-    }
-  }
-  
-  @media screen and (max-width: 576px) {
-    .location-container {
-      padding: 1rem;
-    }
-    
-    .location-title {
-      font-size: 1.5rem;
-    }
-    
-    .locations-grid {
-      grid-template-columns: 1fr;
-    }
-    
-    .location-card {
-      min-height: 100px;
-    }
-    
-    .stats-container {
-      grid-template-columns: 1fr;
-      gap: 1rem;
-    }
-  }
+}

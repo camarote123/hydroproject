@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { FaBars, FaClipboardList, FaHome, FaLeaf, FaMicrochip, FaSeedling, FaTimes, FaUsers, FaWarehouse, FaWater } from "react-icons/fa";
+import { FaBars, FaCalendar, FaClipboardList, FaHome, FaLeaf, FaSeedling, FaTimes, FaUsers, FaWarehouse, FaWater } from "react-icons/fa";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import "./Navbar.css";
 import { supabase } from './createClient'; // Ensure Supabase is correctly configured
@@ -7,12 +7,14 @@ import logo from "/src/assets/logo.png";
 
 const Navbar = () => {
   const [plantsDropdown, setPlantsDropdown] = useState(false);
+  const [sensorDropdown, setSensorDropdown] = useState(false);
   const [registrationDropdown, setRegistrationDropdown] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
 
   const togglePlantsDropdown = () => setPlantsDropdown(!plantsDropdown);
+  const toggleSensorDropdown = () => setSensorDropdown(!sensorDropdown);
   const toggleRegistrationDropdown = () => setRegistrationDropdown(!registrationDropdown);
   const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
 
@@ -41,6 +43,9 @@ const Navbar = () => {
   useEffect(() => {
     const openPlantPages = ["/plants", "/hydro", "/soil"];
     setPlantsDropdown(openPlantPages.includes(location.pathname));
+
+    const openSensorPages = ["/watertemp", "/soilbased"];
+    setSensorDropdown(openSensorPages.includes(location.pathname));
 
     const openRegistrationPages = ["/plantregistration", "/rhydro", "/rsoil"];
     setRegistrationDropdown(openRegistrationPages.includes(location.pathname));
@@ -89,10 +94,28 @@ const Navbar = () => {
             </Link>
           </li>
           
-          <li>
-            <Link to="/sensors" className={isActive("/sensors")} onClick={() => handleLinkClick("/sensors")}>
-              <FaMicrochip className="icon" /> <span>Sensors</span>
-            </Link>
+           {/* Sensors Dropdown */}
+           <li>
+            <button className="dropdown-btn" onClick={toggleSensorDropdown}>
+              <div>
+                <FaClipboardList className="icon" /> <span>Sensors</span>
+              </div>
+              <span>{sensorDropdown ? "▲" : "▼"}</span>
+            </button>
+            {sensorDropdown && (
+              <ul className={`dropdown ${sensorDropdown ? "show" : ""}`}>
+                <li>
+                  <Link to="/watertemp" className={isActive("/watertemp")} onClick={() => handleLinkClick("/watertemp")}>
+                    <FaWater className="dropdown-icon" /> <span>Aquaculture</span>
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/soilbased" className={isActive("/soilbased")} onClick={() => handleLinkClick("/soilbased")}>
+                    <FaSeedling className="dropdown-icon" /> <span>Soil Based</span>
+                  </Link>
+                </li>
+              </ul>
+            )}
           </li>
 
           {/* Plants Dropdown */}
@@ -136,14 +159,10 @@ const Navbar = () => {
                 </li>
                 <li>
                   <Link to="/rhydro" className={isActive("/rhydro")} onClick={() => handleLinkClick("/rhydro")}>
-                    <FaWater className="dropdown-icon" /> <span>Hydroponics</span>
+                    <FaCalendar className="dropdown-icon" /> <span>Plant Calendar</span>
                   </Link>
                 </li>
-                <li>
-                  <Link to="/rsoil" className={isActive("/rsoil")} onClick={() => handleLinkClick("/rsoil")}>
-                    <FaLeaf className="dropdown-icon" /> <span>Soil Based</span>
-                  </Link>
-                </li>
+               
               </ul>
             )}
           </li>
