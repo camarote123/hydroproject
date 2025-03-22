@@ -1,7 +1,7 @@
 /* Sidebar container */
 .sidebar {
   height: 100%;
-  width: 180px; /* Increased width for better spacing */
+  width: 210px; /* Increased width for better spacing */
   position: fixed;
   top: 0;
   left: 0;
