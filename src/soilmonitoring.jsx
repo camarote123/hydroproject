@@ -11,7 +11,7 @@ import {
   Tooltip,
 } from 'chart.js';
 import 'chartjs-adapter-date-fns';
-import zoomPlugin from 'chartjs-plugin-zoom'; // Import zoom plugin
+import zoomPlugin from 'chartjs-plugin-zoom';
 import React, { useEffect, useRef, useState } from 'react';
 import { Line } from 'react-chartjs-2';
 import DatePicker from 'react-datepicker';
@@ -25,7 +25,6 @@ const supabaseUrl = 'https://blxxjmoszhndbfgqrprb.supabase.co';
 const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJseHhqbW9zemhuZGJmZ3FycHJiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzIwMzkyMjEsImV4cCI6MjA0NzYxNTIyMX0._WjnfmgLYBaJP6g64fiCM__a7JWbXPDaZBK_j2yIvV8';
 const supabase = createClient(supabaseUrl, supabaseKey);
 
-// Register Chart.js components + zoom plugin
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -35,46 +34,72 @@ ChartJS.register(
   Tooltip,
   Legend,
   TimeScale,
-  zoomPlugin // Register zoom plugin
+  zoomPlugin
 );
 
-const Soilmonitoring = () => {
-  const [latestData, setLatestData] = useState(null);
+const SoilMoisture = () => {
+  const [latestSoilData, setLatestSoilData] = useState(null);
   const [soilMoistureData, setSoilMoistureData] = useState([]);
   const [selectedDate, setSelectedDate] = useState(null);
   const [isHistoryModalOpen, setIsHistoryModalOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 16; // Number of records per page
+  const itemsPerPage = 30;
   const navigate = useNavigate();
   const totalRecordsRef = useRef(0);
   const allDataRef = useRef([]);
   const [loading, setLoading] = useState(false);
+  const [latestSoilData4, setLatestSoilData4] = useState(null);
 
-  // ✅ Fetch Latest Data for Card Grid
-  const fetchLatestData = async () => {
+  const fetchLatestSoilMoisture4 = async () => {
     try {
-      let { data, error } = await supabase
+      const { data: soilData, error } = await supabase
+        .from('soil_moisture4')  // Fetch from the correct table
+        .select('*')
+        .order('timestamp', { ascending: false })
+        .limit(1);
+
+      if (error) throw error;
+
+      if (soilData.length > 0) {
+        setLatestSoilData4({
+          moisture1: soilData[0].moisture,
+          moisture2: soilData[0].moisture2,
+          timestamp: new Date(soilData[0].timestamp),
+        });
+      }
+    } catch (error) {
+      console.error('Error fetching latest soil moisture data from soil_moisture4:', error);
+    }
+  };
+
+  const fetchLatestSoilMoisture = async () => {
+    try {
+      const { data: soilData, error } = await supabase
         .from('soil_moisture3')
         .select('*')
         .order('timestamp', { ascending: false })
         .limit(1);
 
       if (error) throw error;
-      if (data.length > 0) {
-        setLatestData(data[0]);
+
+      if (soilData.length > 0) {
+        setLatestSoilData({
+          moisture1: soilData[0].moisture,
+          moisture2: soilData[0].moisture2,
+          timestamp: new Date(soilData[0].timestamp)
+        });
       }
     } catch (error) {
       console.error('Error fetching latest soil moisture data:', error);
     }
   };
 
-  // ✅ Fetch Historical Data
   const fetchHistoricalData = async (date, from = 0, to = 1000) => {
     setLoading(true);
     try {
       let query = supabase
         .from('soil_moisture3')
-        .select('*', { count: 'exact' }) // ✅ Ensure count is retrieved
+        .select('*', { count: 'exact' })
         .order('timestamp', { ascending: true })
         .range(from, to);
 
@@ -88,9 +113,10 @@ const Soilmonitoring = () => {
       }
 
       let { data, error, count } = await query;
+
       if (error) throw error;
 
-      // ✅ Convert timestamps to UTC+8
+      // Convert timestamps to UTC+8
       const adjustedData = data.map(item => ({
         ...item,
         timestamp: new Date(new Date(item.timestamp).getTime() + 8 * 60 * 60 * 1000),
@@ -103,7 +129,7 @@ const Soilmonitoring = () => {
       }
 
       allDataRef.current = [...allDataRef.current, ...adjustedData];
-      if (count !== null) totalRecordsRef.current = count; // ✅ Ensure count is updated
+      totalRecordsRef.current = count || 0;
 
     } catch (error) {
       console.error('Error fetching soil moisture data:', error);
@@ -111,13 +137,75 @@ const Soilmonitoring = () => {
     setLoading(false);
   };
 
-  // ✅ Paginate Data
+  useEffect(() => {
+    const fetchData = async () => {
+      await fetchLatestSoilMoisture();
+      await fetchHistoricalData(selectedDate);
+    };
+
+    fetchData();
+
+    // Set up real-time subscriptions for soil_moisture3 table
+    const soilMoistureSubscription = supabase
+      .channel('realtime:soil_moisture3')
+      .on(
+        'postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'soil_moisture3' },
+        (payload) => {
+          const newRecord = {
+            ...payload.new,
+            timestamp: new Date(new Date(payload.new.timestamp).getTime() + 8 * 60 * 60 * 1000),
+          };
+          setSoilMoistureData((prevData) => [...prevData, newRecord]);
+          allDataRef.current = [...allDataRef.current, newRecord];
+          fetchLatestSoilMoisture();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(soilMoistureSubscription);
+    };
+  }, [selectedDate]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      await fetchLatestSoilMoisture();
+      await fetchLatestSoilMoisture4(); // Fetch soil_moisture4 data
+    };
+
+    fetchData();
+
+    // Set up real-time updates
+    const soilMoistureSubscription4 = supabase
+      .channel('realtime:soil_moisture4')
+      .on(
+        'postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'soil_moisture4' },
+        (payload) => {
+          const newRecord = {
+            ...payload.new,
+            timestamp: new Date(new Date(payload.new.timestamp).getTime() + 8 * 60 * 60 * 1000),
+          };
+          setLatestSoilData4({
+            moisture1: newRecord.moisture,
+            moisture2: newRecord.moisture2,
+            timestamp: newRecord.timestamp,
+          });
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(soilMoistureSubscription4);
+    };
+  }, []);
+
   const paginatedData = soilMoistureData.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
 
-  // ✅ Pagination Controls
   const handlePrevPage = () => {
     if (currentPage > 1) setCurrentPage(currentPage - 1);
   };
@@ -130,20 +218,20 @@ const Soilmonitoring = () => {
     }
   };
 
-  // ✅ Chart Data
   const chartData = {
-    labels: soilMoistureData.map(item => new Date(item.timestamp)), // Already adjusted in fetchHistoricalData
+    labels: soilMoistureData.map(item => new Date(item.timestamp)),
     datasets: [
       {
-        label: 'Soil Moisture (%)',
+        label: 'Soil Moisture 1 (%)',
         data: soilMoistureData.map(item => ({
           x: new Date(item.timestamp),
           y: item.moisture,
         })),
         borderColor: 'rgba(19, 104, 19, 0.94)',
-        backgroundColor: 'rgba(19, 104, 19, 0.94)',
+        backgroundColor: 'rgba(19, 104, 19, 0.2)',
         fill: true,
-        pointRadius: 0, // Remove dots on the graph
+        pointRadius: 0,
+        tension: 0.1,
       },
       {
         label: 'Soil Moisture 2 (%)',
@@ -152,14 +240,14 @@ const Soilmonitoring = () => {
           y: item.moisture2,
         })),
         borderColor: 'rgba(214, 166, 7, 0.81)',
-        backgroundColor: 'rgba(214, 166, 7, 0.81)',
+        backgroundColor: 'rgba(214, 166, 7, 0.2)',
         fill: true,
-        pointRadius: 0, // Remove dots on the graph
+        pointRadius: 0,
+        tension: 0.1,
       },
     ],
   };
 
-  // ✅ Chart Options (with Scroll Zoom & Pan)
   const chartOptions = {
     responsive: true,
     maintainAspectRatio: false,
@@ -174,61 +262,31 @@ const Soilmonitoring = () => {
           },
         },
         ticks: {
-          autoSkip: true, // Hide overlapping labels
-          maxRotation: 0, // Prevent diagonal text
+          autoSkip: true,
+          maxRotation: 0,
           minRotation: 0,
         },
-        title: {
-          display: true,
-          text: 'Time',
-        },
+        title: { display: true, text: 'Time' },
       },
       y: {
-        title: {
-          display: true,
-          text: 'Soil Moisture (%)',
-        },
+        title: { display: true, text: 'Moisture (%)' },
       },
     },
     plugins: {
-      legend: {
-        position: 'top',
-      },
-      title: {
-        display: true,
-        text: 'Soil Moisture Trends',
-      },
+      legend: { position: 'top' },
+      title: { display: true, text: 'Soil Moisture Trends' },
       decimation: {
         enabled: true,
-        algorithm: 'lttb', // Use the Largest Triangle Three Buckets algorithm for smooth data
-        samples: 500, // Reduce to 500 points
+        algorithm: 'lttb',
+        samples: 500,
       },
       zoom: {
-        pan: {
-          enabled: true,
-          mode: 'x',
-        },
+        pan: { enabled: true, mode: 'x' },
         zoom: {
-          wheel: {
-            enabled: true,
-          },
-          pinch: {
-            enabled: true,
-          },
+          wheel: { enabled: true },
+          pinch: { enabled: true },
           mode: 'x',
           onZoomComplete({ chart }) {
-            // 🔥 Dynamically adjust X-axis when zooming
-            const xScale = chart.scales.x;
-            const dataPoints = xScale.ticks.length;
-  
-            if (dataPoints > 50) {
-              xScale.options.time.unit = 'hour';
-            } else if (dataPoints > 10) {
-              xScale.options.time.unit = 'day';
-            } else {
-              xScale.options.time.unit = 'week';
-            }
-  
             chart.update('none');
           },
         },
@@ -236,115 +294,111 @@ const Soilmonitoring = () => {
     },
   };
 
-  useEffect(() => {
-    const fetchData = async () => {
-      await fetchLatestData();
-      await fetchHistoricalData(selectedDate);
-    };
-
-    fetchData(); // Initial fetch
-
-    // Subscribe to changes in the 'soil_moisture3' table
-    const soilMoistureSubscription = supabase
-      .channel('realtime:soil_moisture3')
-      .on(
-        'postgres_changes',
-        { event: 'INSERT', schema: 'public', table: 'soil_moisture3' },
-        (payload) => {
-          const newRecord = {
-            ...payload.new,
-            timestamp: new Date(new Date(payload.new.timestamp).getTime() + 8 * 60 * 60 * 1000), // UTC+8 conversion
-          };
-          setSoilMoistureData((prevData) => [...prevData, newRecord]); // Append new record
-          allDataRef.current = [...allDataRef.current, newRecord];
-          setLatestData(newRecord); // Update latest data
-        }
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(soilMoistureSubscription); // Cleanup subscription on unmount
-    };
-  }, [selectedDate]);
-
   return (
-    <div className="humidity-container">
+    <div className="dashboard-container">
       <Navbar />
-      <div className="humidity-content">
-        <h1 className="humidity-title">Soil Moisture Data</h1>
+      <div className="main-content">
+        {/* Tab Navigation */}
+        <div className="tab-navigation">
+          <button className="tab-button active">Soil Moisture 1-2</button>
+          <button className="tab-button" onClick={() => navigate('/soilmonitoring2')}>Soil Moisture 3-4</button>
+          <button className="tab-button" onClick={() => navigate('/npk')}>NPK Levels</button>
+          <button className="tab-button" onClick={() => navigate('/pesticide')}>Pesticide</button>
+        </div>
+        <h3 className='title'>
+          Soil Moisture 1-2
+        </h3>
 
-        {/* Card Grid (Latest Data) */}
-        <div className="humiditycontainer">
-          <div className="card-grid">
-            <div className="humidity-card">
-              <div className="humidity-card-content">
-                <div className="humidity-card-title">SOIL MOISTURE 1</div>
-                <div className="humidity-card-description">
-                  {latestData ? `${latestData.moisture}%` : 'Loading...'}
-                </div>
+        <div className="dashboard-content">
+          {/* Left Column - Chart */}
+          <div className="chart-column">
+            {/* Date picker */}
+            <div className="date-picker-container">
+              <DatePicker
+                selected={selectedDate}
+                onChange={(date) => setSelectedDate(date)}
+                dateFormat="yyyy-MM-dd"
+                isClearable
+                customInput={<button className="date-picker-btn">{selectedDate ? selectedDate.toLocaleDateString() : "Select a Date"}</button>}
+              />
+            </div>
+
+            {/* Chart legend */}
+            <br></br>
+            <div className="chart-legend">
+              <div className="legend-item">
+                <div className="legend-color" style={{ backgroundColor: 'rgba(19, 104, 19, 0.94)' }}></div>
+                <div className="legend-label">Soil Moisture 1 (%)</div>
+              </div>
+              <div className="legend-item">
+                <div className="legend-color" style={{ backgroundColor: 'rgba(214, 166, 7, 0.81)' }}></div>
+                <div className="legend-label">Soil Moisture 2 (%)</div>
               </div>
             </div>
-            <div className="humidity-card">
-              <div className="humidity-card-content">
-                <div className="humidity-card-title">SOIL MOISTURE 2</div>
-                <div className="humidity-card-description">
-                  {latestData ? `${latestData.moisture2}%` : 'Loading...'}
-                </div>
-              </div>
+
+            {/* Chart */}
+            <div className="chart-container">
+              <Line data={chartData} options={chartOptions} />
+            </div>
+
+            {/* History section */}
+            <div className="history-section">
+              <button className="select-date-btn" onClick={() => setIsHistoryModalOpen(true)}>
+                Logs <span className="dropdown-arrow">▼</span>
+              </button>
             </div>
           </div>
+
+          {/* Right Column - Status Cards */}
+          <div className="status-column">
+            <h2 className="status-title">Current Status</h2>
+
+            <div className="status-card soil-moisture-1">
+              <div className="card-label">Soil Moisture 1</div>
+              <div className="card-value">{latestSoilData ? `${latestSoilData.moisture1}%` : 'Loading...'}</div>
+            </div>
+
+            <div className="status-card soil-moisture-2">
+              <div className="card-label">Soil Moisture 2</div>
+              <div className="card-value">{latestSoilData ? `${latestSoilData.moisture2}%` : 'Loading...'}</div>
+            </div>
+
+            <div className="status-card soil-moisture-3">
+              <div className="card-label">Soil Moisture 4</div>
+              <div className="card-value">{latestSoilData4 ? `${latestSoilData4.moisture1}%` : 'Loading...'}</div>
+            </div>
+            <div className="status-card soil-moisture-3">
+              <div className="card-label">Soil Moisture 3</div>
+              <div className="card-value">{latestSoilData4 ? `${latestSoilData4.moisture2}%` : 'Loading...'}</div>
+            </div>
+
+          </div>
         </div>
+      </div>
 
-        {/* Date Picker */}
-        <div className="date-picker-container">
-          <label>Select Date: </label>
-          <DatePicker
-            selected={selectedDate}
-            onChange={(date) => setSelectedDate(date)}
-            dateFormat="yyyy-MM-dd"
-            isClearable
-            customInput={ // 🔥 Custom button instead of input box
-              <button className="date-picker-btn">
-                {selectedDate ? selectedDate.toLocaleDateString() : "Select a Date"}
-              </button>
-            }
-          />
-        </div>
+      {/* History Modal */}
+      {isHistoryModalOpen && (
+        <div className="modal-overlay">
+          <div className="modal-content1">
+            <h2>Soil Moisture Logs</h2>
+            <button className="modal-close" onClick={() => setIsHistoryModalOpen(false)}>&times;</button>
 
-        {/* Graph with Scroll Zoom & Pan */}
-        <div className="graph-container" style={{ height: '400px', marginTop: '20px' }}>
-          <Line data={chartData} options={chartOptions} />
-        </div>
-
-        {/* Button to open the history modal */}
-        <button className="history-button" onClick={() => setIsHistoryModalOpen(true)}>View History</button>
-
-        <div>
-          <br></br>
-          <button onClick={() => navigate('/soilmonitoring2')}>NEXT</button>
-        </div>
-
-        {/* Modal for displaying history logs */}
-        {isHistoryModalOpen && (
-          <div className="modal-overlay">
-            <div className="modal-content">
-              <h2>History Logs</h2>
-              <button className="modal-close" onClick={() => setIsHistoryModalOpen(false)}>&times;</button>
-              <table className="soil-moisture-table">
+            <div className="table-container">
+              <table className="temperature-table">
                 <thead>
                   <tr>
-                    <th>Moisture (%)</th>
-                    <th>Moisture 2 (%)</th>
+                    <th>Moisture 1</th>
+                    <th>Moisture 2</th>
                     <th>Water Pump Status</th>
                     <th>Water Pump 2 Status</th>
                     <th>Timestamp</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {paginatedData.map((item) => (
-                    <tr key={item.id}>
-                      <td>{item.moisture}%</td>
-                      <td>{item.moisture2}%</td>
+                  {paginatedData.map((item, index) => (
+                    <tr key={index}>
+                      <td>{item.moisture !== null ? `${item.moisture}%` : '-'}</td>
+                      <td>{item.moisture2 !== null ? `${item.moisture2}%` : '-'}</td>
                       <td>{item.water_pump ? 'On' : 'Off'}</td>
                       <td>{item.water_pump2 ? 'On' : 'Off'}</td>
                       <td>{new Date(item.timestamp).toLocaleString('en-PH', { timeZone: 'Asia/Manila' })}</td>
@@ -352,20 +406,20 @@ const Soilmonitoring = () => {
                   ))}
                 </tbody>
               </table>
+            </div>
 
-              {/* Pagination Controls */}
-              <div className="pagination">
-                <button onClick={handlePrevPage} disabled={currentPage === 1}>Previous</button>
-                <span>Page {currentPage}</span>
-                <button onClick={handleNextPage} enabled={(currentPage * itemsPerPage) >= totalRecordsRef.current}>Next</button>
-                {loading && <span>Loading...</span>}
-              </div>
+            {/* Pagination */}
+            <div className="pagination">
+              <button onClick={handlePrevPage} disabled={currentPage === 1}>Previous</button>
+              <span>Page {currentPage}</span>
+              <button onClick={handleNextPage} disabled={(currentPage * itemsPerPage) >= totalRecordsRef.current}>Next</button>
+              {loading && <span>Loading...</span>}
             </div>
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 };
 
-export default Soilmonitoring;
+export default SoilMoisture;

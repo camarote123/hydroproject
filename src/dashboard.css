@@ -109,19 +109,20 @@
     padding: 15px;
     display: flex;
     flex-direction: column;
-    color: white;
+    color: rgb(10, 10, 10);
     text-align: center;
 }
 
 .metric-card.alert {
     animation: pulse 1.5s infinite;
+    background-color: #f55050;
 }
 
 .alert-indicator {
     margin-top: 8px;
     font-size: 12px;
     padding: 4px 8px;
-    background-color: rgba(207, 3, 3, 0.2);
+    background-color: rgb(241, 7, 7);
     border-radius: 4px;
     display: inline-block;
 }

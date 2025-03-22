@@ -11,7 +11,7 @@ import {
   Tooltip,
 } from 'chart.js';
 import 'chartjs-adapter-date-fns';
-import zoomPlugin from 'chartjs-plugin-zoom'; // Import zoom plugin
+import zoomPlugin from 'chartjs-plugin-zoom';
 import React, { useEffect, useRef, useState } from 'react';
 import { Line } from 'react-chartjs-2';
 import DatePicker from 'react-datepicker';
@@ -25,8 +25,6 @@ const supabaseUrl = 'https://blxxjmoszhndbfgqrprb.supabase.co';
 const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJseHhqbW9zemhuZGJmZ3FycHJiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzIwMzkyMjEsImV4cCI6MjA0NzYxNTIyMX0._WjnfmgLYBaJP6g64fiCM__a7JWbXPDaZBK_j2yIvV8';
 const supabase = createClient(supabaseUrl, supabaseKey);
 
-
-// Register Chart.js components + zoom plugin
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -36,7 +34,7 @@ ChartJS.register(
   Tooltip,
   Legend,
   TimeScale,
-  zoomPlugin // Register zoom plugin
+  zoomPlugin
 );
 
 const Npk = () => {
@@ -45,13 +43,13 @@ const Npk = () => {
   const [selectedDate, setSelectedDate] = useState(null);
   const [isHistoryModalOpen, setIsHistoryModalOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 16; // Number of records per page
+  const itemsPerPage = 30;
   const navigate = useNavigate();
   const totalRecordsRef = useRef(0);
   const allDataRef = useRef([]);
   const [loading, setLoading] = useState(false);
 
-  // ✅ Fetch Latest Data for Card Grid
+  // Fetch Latest Data for Card Grid
   const fetchLatestData = async () => {
     try {
       let { data, error } = await supabase
@@ -69,13 +67,13 @@ const Npk = () => {
     }
   };
 
-  // ✅ Fetch Historical Data
+  // Fetch Historical Data
   const fetchHistoricalData = async (date, from = 0, to = 1000) => {
     setLoading(true);
     try {
       let query = supabase
         .from('npk')
-        .select('*', { count: 'exact' }) // ✅ Ensure count is retrieved
+        .select('*', { count: 'exact' })
         .order('timestamp', { ascending: true })
         .range(from, to);
 
@@ -91,7 +89,7 @@ const Npk = () => {
       let { data, error, count } = await query;
       if (error) throw error;
 
-      // ✅ Convert timestamps to UTC+8
+      // Convert timestamps to UTC+8
       const adjustedData = data.map(item => ({
         ...item,
         timestamp: new Date(new Date(item.timestamp).getTime() + 8 * 60 * 60 * 1000),
@@ -104,21 +102,19 @@ const Npk = () => {
       }
 
       allDataRef.current = [...allDataRef.current, ...adjustedData];
-      if (count !== null) totalRecordsRef.current = count; // ✅ Ensure count is updated
-
+      totalRecordsRef.current = count || 0;
     } catch (error) {
       console.error('Error fetching NPK data:', error);
     }
     setLoading(false);
   };
 
-  // ✅ Paginate Data
+  // Pagination Controls
   const paginatedData = npkData.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
 
-  // ✅ Pagination Controls
   const handlePrevPage = () => {
     if (currentPage > 1) setCurrentPage(currentPage - 1);
   };
@@ -131,9 +127,9 @@ const Npk = () => {
     }
   };
 
-  // ✅ Chart Data
+  // Chart Data
   const chartData = {
-    labels: npkData.map(item => new Date(item.timestamp)), // Already adjusted in fetchHistoricalData
+    labels: npkData.map(item => new Date(item.timestamp)),
     datasets: [
       {
         label: 'Nitrogen (N)',
@@ -142,9 +138,10 @@ const Npk = () => {
           y: item.nitrogen,
         })),
         borderColor: 'rgba(214, 166, 7, 0.81)',
-        backgroundColor: 'rgba(214, 166, 7, 0.81)',
+        backgroundColor: 'rgba(214, 166, 7, 0.2)',
         fill: true,
-        pointRadius: 0, // Remove dots on the graph
+        pointRadius: 0,
+        tension: 0.1,
       },
       {
         label: 'Phosphorus (P)',
@@ -153,9 +150,10 @@ const Npk = () => {
           y: item.phosphorus,
         })),
         borderColor: 'rgb(38, 226, 79)',
-        backgroundColor: 'rgb(38, 226, 79)',
+        backgroundColor: 'rgba(38, 226, 79, 0.2)',
         fill: true,
-        pointRadius: 0, // Remove dots on the graph
+        pointRadius: 0,
+        tension: 0.1,
       },
       {
         label: 'Potassium (K)',
@@ -166,12 +164,13 @@ const Npk = () => {
         borderColor: 'rgba(255, 159, 64, 1)',
         backgroundColor: 'rgba(255, 159, 64, 0.2)',
         fill: true,
-        pointRadius: 0, // Remove dots on the graph
+        pointRadius: 0,
+        tension: 0.1,
       },
     ],
   };
 
-  // ✅ Chart Options (with Scroll Zoom & Pan)
+  // Chart Options (with Scroll Zoom & Pan)
   const chartOptions = {
     responsive: true,
     maintainAspectRatio: false,
@@ -186,56 +185,31 @@ const Npk = () => {
           },
         },
         ticks: {
-          autoSkip: true, // Hide overlapping labels
-          maxRotation: 0, // Prevent diagonal text
+          autoSkip: true,
+          maxRotation: 0,
           minRotation: 0,
         },
-        title: {
-          display: true,
-          text: 'Time',
-        },
+        title: { display: true, text: 'Time' },
       },
       y: {
-        title: {
-          display: true,
-          text: 'NPK Levels',
-        },
+        title: { display: true, text: 'NPK Levels' },
       },
     },
     plugins: {
-      legend: {
-        position: 'top',
-      },
-      title: {
-        display: true,
-        text: 'NPK Levels Trends',
+      legend: { position: 'top' },
+      title: { display: true, text: 'NPK Levels Trends' },
+      decimation: {
+        enabled: true,
+        algorithm: 'lttb',
+        samples: 500,
       },
       zoom: {
-        pan: {
-          enabled: true,
-          mode: 'x',
-        },
+        pan: { enabled: true, mode: 'x' },
         zoom: {
-          wheel: {
-            enabled: true,
-          },
-          pinch: {
-            enabled: true,
-          },
+          wheel: { enabled: true },
+          pinch: { enabled: true },
           mode: 'x',
           onZoomComplete({ chart }) {
-            // 🔥 Dynamically adjust X-axis when zooming
-            const xScale = chart.scales.x;
-            const dataPoints = xScale.ticks.length;
-  
-            if (dataPoints > 50) {
-              xScale.options.time.unit = 'hour';
-            } else if (dataPoints > 10) {
-              xScale.options.time.unit = 'day';
-            } else {
-              xScale.options.time.unit = 'week';
-            }
-  
             chart.update('none');
           },
         },
@@ -248,105 +222,128 @@ const Npk = () => {
       await fetchLatestData();
       await fetchHistoricalData(selectedDate);
     };
-  
-    fetchData(); // Initial fetch
-  
+
+    fetchData();
+
     // Subscribe to changes in the 'npk' table
     const npkSubscription = supabase
-      .channel('realtime:npk') // Create a channel for real-time updates
+      .channel('realtime:npk')
       .on(
         'postgres_changes',
-        { event: 'INSERT', schema: 'public', table: 'npk' }, 
+        { event: 'INSERT', schema: 'public', table: 'npk' },
         (payload) => {
           const newRecord = {
             ...payload.new,
-            timestamp: new Date(new Date(payload.new.timestamp).getTime() + 8 * 60 * 60 * 1000), // UTC+8 conversion
+            timestamp: new Date(new Date(payload.new.timestamp).getTime() + 8 * 60 * 60 * 1000),
           };
-          setNPKData((prevData) => [...prevData, newRecord]); // Append new record
+          setNPKData((prevData) => [...prevData, newRecord]);
           allDataRef.current = [...allDataRef.current, newRecord];
-          setLatestData(newRecord); // Update latest data
+          fetchLatestData();
         }
       )
       .subscribe();
-  
+
+    // Data refresh interval
+    const intervalId = setInterval(() => {
+      fetchLatestData();
+    }, 2000);
+
     return () => {
-      supabase.removeChannel(npkSubscription); // Cleanup subscription on unmount
+      clearInterval(intervalId);
+      supabase.removeChannel(npkSubscription);
     };
   }, [selectedDate]);
-  
 
   return (
-    <div className="humidity-container">
+    <div className="dashboard-container">
       <Navbar />
-      <div className="humidity-content">
-        <h1 className="humidity-title">NPK Data</h1>
+      <div className="main-content">
+        {/* Tab Navigation */}
+        <div className="tab-navigation">
+          <button className="tab-button" onClick={() => navigate('/soilmonitoring')}>Soil Moisture 1-2</button>
+          <button className="tab-button" onClick={() => navigate('/soilmonitoring2')}>Soil Moisture 3-4</button>
+          <button className="tab-button active">NPK Levels</button>
+          <button className="tab-button" onClick={() => navigate('/pesticide')}>Pesticide</button>
+        </div>
+        <h3 className='title'>
+          NPK Levels
+        </h3>
 
-        {/* Card Grid (Latest Data) */}
-        <div className="humiditycontainer">
-          <div className="card-grid">
-            <div className="humidity-card">
-              <div className="humidity-card-content">
-                <div className="humidity-card-title">NITROGEN (N)</div>
-                <div className="humidity-card-description">
-                  {latestData ? `${latestData.nitrogen}` : 'Loading...'}
-                </div>
+        <div className="dashboard-content">
+          {/* Left Column - Chart */}
+          <div className="chart-column">
+            {/* Date picker */}
+            <div className="date-picker-container">
+              <DatePicker
+                selected={selectedDate}
+                onChange={(date) => setSelectedDate(date)}
+                dateFormat="yyyy-MM-dd"
+                isClearable
+                customInput={<button className="date-picker-btn">{selectedDate ? selectedDate.toLocaleDateString() : "Select a Date"}</button>}
+              />
+            </div>
+
+            {/* Chart legend */}
+            <br></br>
+            <div className="chart-legend">
+              <div className="legend-item">
+                <div className="legend-color" style={{ backgroundColor: 'rgba(214, 166, 7, 0.81)' }}></div>
+                <div className="legend-label">Nitrogen (N)</div>
+              </div>
+              <div className="legend-item">
+                <div className="legend-color" style={{ backgroundColor: 'rgb(38, 226, 79)' }}></div>
+                <div className="legend-label">Phosphorus (P)</div>
+              </div>
+              <div className="legend-item">
+                <div className="legend-color" style={{ backgroundColor: 'rgba(255, 159, 64, 1)' }}></div>
+                <div className="legend-label">Potassium (K)</div>
               </div>
             </div>
-            <div className="humidity-card">
-              <div className="humidity-card-content">
-                <div className="humidity-card-title">PHOSPHORUS (P)</div>
-                <div className="humidity-card-description">
-                  {latestData ? `${latestData.phosphorus}` : 'Loading...'}
-                </div>
-              </div>
+            
+            {/* Chart */}
+            <div className="chart-container">
+              <Line data={chartData} options={chartOptions} />
             </div>
-            <div className="humidity-card">
-              <div className="humidity-card-content">
-                <div className="humidity-card-title">POTASSIUM (K)</div>
-                <div className="humidity-card-description">
-                  {latestData ? `${latestData.potassium}` : 'Loading...'}
-                </div>
-              </div>
+            
+            {/* History section */}
+            <div className="history-section">
+              <button className="select-date-btn" onClick={() => setIsHistoryModalOpen(true)}>
+                Logs <span className="dropdown-arrow">▼</span>
+              </button>
+            </div>
+          </div>
+          
+          {/* Right Column - Status Cards */}
+          <div className="status-column">
+            <h2 className="status-title">Current Status</h2>
+            
+            <div className="status-card nitrogen">
+              <div className="card-label">Nitrogen (N)</div>
+              <div className="card-value">{latestData ? `${latestData.nitrogen}` : 'Loading...'}</div>
+            </div>
+            
+            <div className="status-card phosphorus">
+              <div className="card-label">Phosphorus (P)</div>
+              <div className="card-value">{latestData ? `${latestData.phosphorus}` : 'Loading...'}</div>
+            </div>
+            
+            <div className="status-card potassium">
+              <div className="card-label">Potassium (K)</div>
+              <div className="card-value">{latestData ? `${latestData.potassium}` : 'Loading...'}</div>
             </div>
           </div>
         </div>
-
-        {/* Date Picker */}
-        <div className="date-picker-container">
-          <label>Select Date: </label>
-          <DatePicker
-            selected={selectedDate}
-            onChange={(date) => setSelectedDate(date)}
-            dateFormat="yyyy-MM-dd"
-            isClearable
-            customInput={ // 🔥 Custom button instead of input box
-              <button className="date-picker-btn">
-                {selectedDate ? selectedDate.toLocaleDateString() : "Select a Date"}
-              </button>
-            }
-          />
-        </div>
-
-        {/* Graph with Scroll Zoom & Pan */}
-        <div className="graph-container" style={{ height: '400px', marginTop: '20px' }}>
-          <Line data={chartData} options={chartOptions} />
-        </div>
-
-        {/* Button to open the history modal */}
-        <button className="history-button" onClick={() => setIsHistoryModalOpen(true)}>View History</button>
-
-        <div>
-          <br></br>
-          <button onClick={() => navigate('/pesticide')}>BACK</button>
-        </div>
-
-        {/* Modal for displaying history logs */}
-        {isHistoryModalOpen && (
-          <div className="modal-overlay">
-            <div className="modal-content">
-              <h2>History Logs</h2>
-              <button className="modal-close" onClick={() => setIsHistoryModalOpen(false)}>&times;</button>
-              <table className="soil-moisture-table">
+      </div>
+      
+      {/* History Modal */}
+      {isHistoryModalOpen && (
+        <div className="modal-overlay">
+          <div className="modal-content1">
+            <h2>NPK Level Logs</h2>
+            <button className="modal-close" onClick={() => setIsHistoryModalOpen(false)}>&times;</button>
+            
+            <div className="table-container">
+              <table className="temperature-table">
                 <thead>
                   <tr>
                     <th>Nitrogen (N)</th>
@@ -356,8 +353,8 @@ const Npk = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {paginatedData.map((item) => (
-                    <tr key={item.id}>
+                  {paginatedData.map((item, index) => (
+                    <tr key={index}>
                       <td>{item.nitrogen}</td>
                       <td>{item.phosphorus}</td>
                       <td>{item.potassium}</td>
@@ -366,18 +363,18 @@ const Npk = () => {
                   ))}
                 </tbody>
               </table>
+            </div>
 
-              {/* Pagination Controls */}
-              <div className="pagination">
-                <button onClick={handlePrevPage} disabled={currentPage === 1}>Previous</button>
-                <span>Page {currentPage}</span>
-                <button onClick={handleNextPage} enabled={(currentPage * itemsPerPage) >= totalRecordsRef.current}>Next</button>
-                {loading && <span>Loading...</span>}
-              </div>
+            {/* Pagination */}
+            <div className="pagination">
+              <button onClick={handlePrevPage} disabled={currentPage === 1}>Previous</button>
+              <span>Page {currentPage}</span>
+              <button onClick={handleNextPage} disabled={(currentPage * itemsPerPage) >= totalRecordsRef.current}>Next</button>
+              {loading && <span>Loading...</span>}
             </div>
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 };

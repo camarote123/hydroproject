@@ -175,7 +175,6 @@ const Watertemp = () => {
     };
 
     
-
     fetchData();
 
     const temperatureSubscription = supabase
@@ -195,10 +194,17 @@ const Watertemp = () => {
       )
       .subscribe();
 
+       // Data refresh interval (every 2000ms)
+    const intervalId = setInterval(() => {
+      fetchLatestTemperature();
+    }, 2000);
+
     return () => {
+      clearInterval(intervalId);
       supabase.removeChannel(temperatureSubscription);
     };
   }, [selectedDate]);
+
 
   const paginatedData = temperatureData.slice(
     (currentPage - 1) * itemsPerPage,
@@ -375,7 +381,7 @@ const Watertemp = () => {
       {/* History Modal */}
       {isHistoryModalOpen && (
         <div className="modal-overlay">
-          <div className="modal-content">
+          <div className="modal-content1">
             <h2>Temperature Logs</h2>
             <button className="modal-close" onClick={() => setIsHistoryModalOpen(false)}>&times;</button>
             

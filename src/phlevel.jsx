@@ -186,10 +186,18 @@ const Phlevel = () => {
       )
       .subscribe();
 
-    return () => {
-      supabase.removeChannel(phSubscription);
-    };
-  }, [selectedDate]);
+      
+
+         // Data refresh interval (every 2000ms)
+         const intervalId = setInterval(() => {
+          fetchLatestPhLevel();
+        }, 2000);
+    
+        return () => {
+          clearInterval(intervalId);
+          supabase.removeChannel(phSubscription);
+        };
+      }, [selectedDate]);
 
   const paginatedData = phLevelData.slice(
     (currentPage - 1) * itemsPerPage,
@@ -366,7 +374,7 @@ const Phlevel = () => {
       {/* History Modal */}
       {isHistoryModalOpen && (
         <div className="modal-overlay">
-          <div className="modal-content">
+          <div className="modal-content1">
             <h2>pH Level Logs</h2>
             <button className="modal-close" onClick={() => setIsHistoryModalOpen(false)}>&times;</button>
             

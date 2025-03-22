@@ -186,7 +186,15 @@ const Do = () => {
       )
       .subscribe();
 
+
+
+        // Data refresh interval (every 2000ms)
+    const intervalId = setInterval(() => {
+      fetchLatestDo();
+    }, 2000);
+
     return () => {
+      clearInterval(intervalId);
       supabase.removeChannel(doSubscription);
     };
   }, [selectedDate]);
@@ -342,7 +350,7 @@ const Do = () => {
             
             <div className="status-card pond-level">
               <div className="card-label">Reservoir Water Level</div>
-              <div className="card-value">{waterData.length > 0 ? `${waterData[0].distance}%` : 'Loading...'}</div>
+              <div className="card-value">{waterData.length > 0 ? `${waterData[0].distance} cm` : 'Loading...'}</div>
             </div>
             
             <div className="status-card ph-level">
@@ -366,7 +374,7 @@ const Do = () => {
       {/* History Modal */}
       {isHistoryModalOpen && (
         <div className="modal-overlay">
-          <div className="modal-content">
+          <div className="modal-content1">
             <h2>Dissolved Oxygen Logs</h2>
             <button className="modal-close" onClick={() => setIsHistoryModalOpen(false)}>&times;</button>
             

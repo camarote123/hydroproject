@@ -196,10 +196,16 @@ const Reservior = () => {
       )
       .subscribe();
 
-    return () => {
-      supabase.removeChannel(waterSubscription);
-    };
-  }, [selectedDate]);
+        // Data refresh interval (every 2000ms)
+        const intervalId = setInterval(() => {
+          fetchLatestWaterData();
+        }, 2000);
+    
+        return () => {
+          clearInterval(intervalId);
+          supabase.removeChannel(waterSubscription);
+        };
+      }, [selectedDate]);
 
   const paginatedData = waterData.slice(
     (currentPage - 1) * itemsPerPage,
@@ -375,7 +381,7 @@ const Reservior = () => {
       {/* History Modal */}
       {isHistoryModalOpen && (
         <div className="modal-overlay">
-          <div className="modal-content">
+          <div className="modal-content1">
             <h2>Water Data Logs</h2>
             <button className="modal-close" onClick={() => setIsHistoryModalOpen(false)}>&times;</button>
             

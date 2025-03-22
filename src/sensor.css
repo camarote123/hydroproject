@@ -212,6 +212,17 @@ body {
   position: relative;
 }
 
+.modal-content1 {
+  background-color: white;
+  border-radius: 8px;
+  padding: 20px;
+  width: 80%;
+  max-width: 1000px;
+  max-height: 80vh;
+  overflow-y: auto;
+  position: relative;
+}
+
 .modal-close {
   position: absolute;
   top: 10px;
@@ -333,3 +344,5 @@ body {
 .title{
   margin-left: 100px;
 }
+
+

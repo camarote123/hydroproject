@@ -110,7 +110,7 @@ const Navbar = () => {
                   </Link>
                 </li>
                 <li>
-                  <Link to="/soilbased" className={isActive("/soilbased")} onClick={() => handleLinkClick("/soilbased")}>
+                  <Link to="/soilmonitoring" className={isActive("/soilmonitoring")} onClick={() => handleLinkClick("/soilmonitoring")}>
                     <FaSeedling className="dropdown-icon" /> <span>Soil Based</span>
                   </Link>
                 </li>

@@ -187,11 +187,20 @@ const Hydrowaterlevel = () => {
       )
       .subscribe();
 
+           // Data refresh interval (every 2000ms)
+    const intervalId = setInterval(() => {
+      fetchLatestWaterLevel();
+    }, 2000);
+
     return () => {
+      clearInterval(intervalId);
       supabase.removeChannel(waterLevelSubscription);
     };
   }, [selectedDate]);
 
+      
+
+   
   const paginatedData = waterLevelData.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
@@ -366,7 +375,7 @@ const Hydrowaterlevel = () => {
       {/* History Modal */}
       {isHistoryModalOpen && (
         <div className="modal-overlay">
-          <div className="modal-content">
+          <div className="modal-content1">
             <h2>Water Level Logs</h2>
             <button className="modal-close" onClick={() => setIsHistoryModalOpen(false)}>&times;</button>
 

@@ -215,10 +215,16 @@ const Food = () => {
       )
       .subscribe();
 
-    return () => {
-      supabase.removeChannel(feederSubscription);
-    };
-  }, [selectedDate]);
+         // Data refresh interval (every 2000ms)
+         const intervalId = setInterval(() => {
+          fetchLatestFeederData();
+        }, 2000);
+    
+        return () => {
+          clearInterval(intervalId);
+          supabase.removeChannel(feederSubscription);
+        };
+      }, [selectedDate]);
 
   const paginatedData = feederData.slice(
     (currentPage - 1) * itemsPerPage,
@@ -394,7 +400,7 @@ const Food = () => {
       {/* History Modal */}
       {isHistoryModalOpen && (
         <div className="modal-overlay">
-          <div className="modal-content">
+          <div className="modal-content1">
             <h2>Feeder Data Logs</h2>
             <button className="modal-close" onClick={() => setIsHistoryModalOpen(false)}>&times;</button>
             

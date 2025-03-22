@@ -24,29 +24,66 @@ const Rhydro = () => {
   const [shouldCloseModal, setShouldCloseModal] = useState(false);
   const closeModalTimeoutRef = useRef(null);
   const [notificationCount, setNotificationCount] = useState(0);
-  // Add a new state to track if modal is pinned (clicked)
   const [isModalPinned, setIsModalPinned] = useState(false);
-
+  const notificationTimerRef = useRef(null);
+  const notificationSubscriptionRef = useRef(null);
 
   useEffect(() => {
     fetchData();
     fetchNotifications();
 
-    // Set up a timer to check for notifications every hour
-    const notificationTimer = setInterval(() => {
-      checkForNotifications();
-    }, 3600000); // check every hour
+    // Set up real-time subscription for notifications table
+    setupNotificationSubscription();
 
     // Initial check when component loads
     checkForNotifications();
 
+    // Set up a timer to check for notifications every hour
+    notificationTimerRef.current = setInterval(() => {
+      checkForNotifications();
+    }, 3600000); // check every hour (3600000 ms)
+
     return () => {
-      clearInterval(notificationTimer);
+      // Clean up resources on component unmount
+      if (notificationTimerRef.current) {
+        clearInterval(notificationTimerRef.current);
+      }
       if (closeModalTimeoutRef.current) {
         clearTimeout(closeModalTimeoutRef.current);
       }
+      // Clean up subscription
+      if (notificationSubscriptionRef.current) {
+        notificationSubscriptionRef.current.unsubscribe();
+      }
     };
   }, []);
+
+  // Setup notification subscription as a separate function to ensure proper cleanup
+  const setupNotificationSubscription = () => {
+    // Unsubscribe from previous subscription if it exists
+    if (notificationSubscriptionRef.current) {
+      notificationSubscriptionRef.current.unsubscribe();
+    }
+
+    // Create new subscription
+    notificationSubscriptionRef.current = supabase
+      .channel('date_notifications_changes')
+      .on('postgres_changes', { 
+        event: 'INSERT', 
+        schema: 'public', 
+        table: 'date_notifications' 
+      }, payload => {
+        console.log('New notification received:', payload);
+        // Whenever there's a new notification, refresh the notifications
+        fetchNotifications();
+      })
+      .subscribe((status) => {
+        console.log('Subscription status:', status);
+        if (status === 'SUBSCRIBED') {
+          console.log('Successfully subscribed to date_notifications table');
+        }
+      });
+  };
 
   // Update notification count when notifications change
   useEffect(() => {
@@ -92,7 +129,12 @@ const Rhydro = () => {
       if (error) {
         console.error('Error fetching notifications:', error.message);
       } else {
+        console.log('Fetched notifications:', data);
         setNotifications(data || []);
+        // Update notification count immediately
+        if (!showNotifications) {
+          setNotificationCount(data.length);
+        }
       }
     } catch (err) {
       console.error('Unexpected error fetching notifications:', err);
@@ -105,6 +147,17 @@ const Rhydro = () => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
+    // Get existing notifications to avoid duplicates
+    const { data: existingNotifications, error: fetchError } = await supabase
+      .from('date_notifications')
+      .select('plant_name, harvest_date, message');
+
+    if (fetchError) {
+      console.error('Error checking existing notifications:', fetchError.message);
+      return;
+    }
+
+    // Track which notifications to create
     const notificationsToCreate = [];
 
     data.forEach(plant => {
@@ -112,68 +165,102 @@ const Rhydro = () => {
       harvestDate.setHours(0, 0, 0, 0);
 
       const daysUntilHarvest = Math.ceil((harvestDate - today) / (1000 * 60 * 60 * 24));
+      
+      // Function to check if notification already exists
+      const notificationExists = (message) => {
+        return existingNotifications.some(n => 
+          n.plant_name === plant.plant_name && 
+          n.message === message &&
+          new Date(n.harvest_date).toDateString() === new Date(plant.expected_harvest_date).toDateString()
+        );
+      };
 
       // Check for specific notification days
       if (daysUntilHarvest === 14) {
-        notificationsToCreate.push({
-          message: `${plant.plant_name} will be ready for harvest in 14 days.`,
-          plant_name: plant.plant_name,
-          harvest_date: plant.expected_harvest_date
-        });
+        const message = `${plant.plant_name} will be ready for harvest in 14 days.`;
+        if (!notificationExists(message)) {
+          notificationsToCreate.push({
+            message,
+            plant_name: plant.plant_name,
+            harvest_date: plant.expected_harvest_date
+          });
+        }
       } else if (daysUntilHarvest === 7) {
-        notificationsToCreate.push({
-          message: `${plant.plant_name} will be ready for harvest in 7 days.`,
-          plant_name: plant.plant_name,
-          harvest_date: plant.expected_harvest_date
-        });
+        const message = `${plant.plant_name} will be ready for harvest in 7 days.`;
+        if (!notificationExists(message)) {
+          notificationsToCreate.push({
+            message,
+            plant_name: plant.plant_name,
+            harvest_date: plant.expected_harvest_date
+          });
+        }
       } else if (daysUntilHarvest === 4) {
-        notificationsToCreate.push({
-          message: `${plant.plant_name} will be ready for harvest in 4 days.`,
-          plant_name: plant.plant_name,
-          harvest_date: plant.expected_harvest_date
-        });
+        const message = `${plant.plant_name} will be ready for harvest in 4 days.`;
+        if (!notificationExists(message)) {
+          notificationsToCreate.push({
+            message,
+            plant_name: plant.plant_name,
+            harvest_date: plant.expected_harvest_date
+          });
+        }
       } else if (daysUntilHarvest === 2) {
-        notificationsToCreate.push({
-          message: `${plant.plant_name} will be ready for harvest in 2 days.`,
-          plant_name: plant.plant_name,
-          harvest_date: plant.expected_harvest_date
-        });
+        const message = `${plant.plant_name} will be ready for harvest in 2 days.`;
+        if (!notificationExists(message)) {
+          notificationsToCreate.push({
+            message,
+            plant_name: plant.plant_name,
+            harvest_date: plant.expected_harvest_date
+          });
+        }
       } else if (daysUntilHarvest === 1) {
-        notificationsToCreate.push({
-          message: `${plant.plant_name} will be ready for harvest tomorrow.`,
-          plant_name: plant.plant_name,
-          harvest_date: plant.expected_harvest_date
-        });
+        const message = `${plant.plant_name} will be ready for harvest tomorrow.`;
+        if (!notificationExists(message)) {
+          notificationsToCreate.push({
+            message,
+            plant_name: plant.plant_name,
+            harvest_date: plant.expected_harvest_date
+          });
+        }
       } else if (daysUntilHarvest === 0) {
-        notificationsToCreate.push({
-          message: `${plant.plant_name} is ready for harvest today!`,
-          plant_name: plant.plant_name,
-          harvest_date: plant.expected_harvest_date
-        });
+        const message = `${plant.plant_name} is ready for harvest today!`;
+        if (!notificationExists(message)) {
+          notificationsToCreate.push({
+            message,
+            plant_name: plant.plant_name,
+            harvest_date: plant.expected_harvest_date
+          });
+        }
       } else if (daysUntilHarvest < 0) {
         // Overdue notifications
-        notificationsToCreate.push({
-          message: `${plant.plant_name} is ${Math.abs(daysUntilHarvest)} day(s) overdue for harvest!`,
-          plant_name: plant.plant_name,
-          harvest_date: plant.expected_harvest_date
-        });
+        const message = `${plant.plant_name} is ${Math.abs(daysUntilHarvest)} day(s) overdue for harvest!`;
+        if (!notificationExists(message)) {
+          notificationsToCreate.push({
+            message,
+            plant_name: plant.plant_name,
+            harvest_date: plant.expected_harvest_date
+          });
+        }
       }
     });
+
+    console.log('Notifications to create:', notificationsToCreate);
 
     // Save notifications to Supabase
     if (notificationsToCreate.length > 0) {
       try {
-        const { error } = await supabase
+        const { data: insertedData, error } = await supabase
           .from('date_notifications')
-          .insert(notificationsToCreate);
+          .insert(notificationsToCreate)
+          .select();
 
         if (error) {
           console.error('Error creating notifications:', error.message);
         } else {
+          console.log('Successfully created notifications:', insertedData);
           // Show the most recent notification as a toast
-          showNotificationToast(notificationsToCreate[0].message);
-          // Refresh notifications list
-          fetchNotifications();
+          if (notificationsToCreate[0]) {
+            showNotificationToast(notificationsToCreate[0].message);
+          }
         }
       } catch (err) {
         console.error('Unexpected error creating notifications:', err);
@@ -264,8 +351,15 @@ const Rhydro = () => {
       }));
 
       if (harvestNotifications.length > 0) {
-        await supabase.from('date_notifications').insert(harvestNotifications);
-        fetchNotifications();
+        const { error: notifError } = await supabase
+          .from('date_notifications')
+          .insert(harvestNotifications);
+          
+        if (notifError) {
+          console.error('Error creating harvest notifications:', notifError.message);
+        } else {
+          console.log('Successfully created harvest notifications');
+        }
       }
 
       // Update local state
