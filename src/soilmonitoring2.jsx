@@ -331,11 +331,11 @@ const Soilmonitoring2 = () => {
             <br></br>
             <div className="chart-legend">
               <div className="legend-item">
-                <div className="legend-color" style={{ backgroundColor: 'rgba(0, 102, 255, 0.94)' }}></div>
+                <div className="legend-color" style={{ backgroundColor: 'rgba(214, 166, 7, 0.81)' }}></div>
                 <div className="legend-label">Soil Moisture 3 (%)</div>
               </div>
               <div className="legend-item">
-                <div className="legend-color" style={{ backgroundColor: 'rgba(128, 0, 128, 0.94)' }}></div>
+                <div className="legend-color" style={{ backgroundColor: 'rgba(19, 104, 19, 0.94)' }}></div>
                 <div className="legend-label">Soil Moisture 4 (%)</div>
               </div>
             </div>
