@@ -274,7 +274,7 @@ const Hydro = () => {
       {/* Modal for confirming deletion */}
       {isDeleteModalOpen && (
         <div className="modal-overlay">
-          <div className="modal-content-delete">
+          <div className="modal-content-delete1">
             <h2>Confirm Deletion</h2>
             <p>
               Are you sure you want to delete the plant record for{' '}

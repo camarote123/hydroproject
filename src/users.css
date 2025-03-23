@@ -42,7 +42,7 @@ button:disabled {
 }
 
 .create-user-btn {
-  background-color: #136813EF;
+  background-color: #569033;
   color: white;
   margin-bottom: 20px;
 }
@@ -204,7 +204,7 @@ select {
 }
 
 .generate-password-btn {
-  background-color: #136813EF;
+  background-color: #569033;
   color: white;
   padding: 8px 12px;
   float: right;
@@ -231,7 +231,7 @@ select {
 }
 
 .create-btn {
-  background-color: #136813EF;
+  background-color: #569033;
   color: white;
 }
 

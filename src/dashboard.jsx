@@ -46,6 +46,7 @@ const Dashboard = () => {
   const [totalPlants, setTotalPlants] = useState({ soilBased: 0, hydroponic: 0 });
   const [activeBarIndex, setActiveBarIndex] = useState(null);
   const [activeWaterIndex, setActiveWaterIndex] = useState(null);
+  const [TotalActivePlants, setTotalActivePlants] = useState({ soilBased: 0, hydroponic: 0 })
 
   const handleNavigation = (id) => {
     if (id === "01" || id === "02") {
@@ -245,6 +246,32 @@ const Dashboard = () => {
     }
   };
 
+  const fetchTotalActivePlants = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('registration')
+        .select('growth_site');
+
+      if (error) throw error;
+
+      const soilCount = data.filter(item =>
+        item.growth_site === 'Soil Based').length;
+
+      const hydroCount = data.filter(item =>
+        item.growth_site === 'Hydroponics').length;
+
+      setTotalActivePlants({
+        soilBased: soilCount,
+        hydroponic: hydroCount
+      });
+    } catch (error) {
+      console.error('Error fetching total plants data:', error);
+    }
+  };
+
+
+
+
   // Fetch all data initially and set up polling
   useEffect(() => {
     // Fetch data initially
@@ -261,6 +288,7 @@ const Dashboard = () => {
       fetchPhlevel();
       fetchNpk();
       fetchTotalPlants();
+      fetchTotalActivePlants();
     };
 
     fetchAllData();
@@ -315,21 +343,21 @@ const Dashboard = () => {
       name: 'Nitrogen',
       value: npkData.length > 0 ? npkData[0]?.nitrogen || 130 : 130,
       status: npkData.length > 0 && npkData[0]?.nitrogen <= 80 ? 'Low' : 'High',
-      color: npkData.length > 0 && npkData[0]?.nitrogen <= 80 ? '#FF5252' : '#FFC107'
+      color: npkData.length > 0 && npkData[0]?.nitrogen <= 80 ? '#EF4444' : '#FFC107'
     },
     {
       
   name: 'Phosphorus',
   value: npkData.length > 0 ? npkData[0]?.phosphorus || 120 : 120,
   status: npkData.length > 0 && npkData[0]?.phosphorus <= 80 ? 'Low' : 'High',
-  color: npkData.length > 0 && npkData[0]?.phosphorus <= 80 ? '#FF5252' : '#4285F4'
+  color: npkData.length > 0 && npkData[0]?.phosphorus <= 80 ? '#EF4444' : '#4285F4'
     },
     {
   
       name: 'Potassium',
       value: npkData.length > 0 ? npkData[0]?.potassium || 110 : 110,
       status: npkData.length > 0 && npkData[0]?.potassium <= 30 ? 'Low' : 'High',
-      color: npkData.length > 0 && npkData[0]?.potassium <= 30 ? '#FF5252' : '#7CB342'
+      color: npkData.length > 0 && npkData[0]?.potassium <= 30 ? '#EF4444' : '#7CB342'
     }
   ]
 
@@ -338,12 +366,12 @@ const Dashboard = () => {
     {
       name: 'Pond',
       value: waterLevelData.length > 0 ? waterLevelData[0]?.water_level || 90 : 90,
-      color: waterLevelData.length > 0 && waterLevelData[0]?.water_level > 50 ? '#4285F4' : '#FF5252'
+      color: waterLevelData.length > 0 && waterLevelData[0]?.water_level > 50 ? '#4285F4' : '#EF4444'
     },
     {
       name: 'Reservoir',
       value: waterData.length > 0 ? 100 - (waterData[0]?.distance * 0.5) || 80 : 80,
-      color: waterData.length > 0 && (100 - (waterData[0]?.distance * 0.5)) > 50 ? '#4285F4' : '#FF5252'
+      color: waterData.length > 0 && (100 - (waterData[0]?.distance * 0.5)) > 50 ? '#4285F4' : '#EF4444'
     }
   ];
 
@@ -362,7 +390,7 @@ const Dashboard = () => {
           fill={fill || '#FF5252'} // Default red
           rx={8}
           ry={8}
-          className="water-level-bar"
+          className={`water-level-bar ${fill === '#EF4444' ? 'pulse' : ''}`} // Add pulse if color is red
           style={{
             cursor: 'pointer',
             filter: activeWaterIndex === index ? 'brightness(1.2) drop-shadow(0 0 6px rgba(0,0,0,0.3))' : 'none',
@@ -386,7 +414,7 @@ const Dashboard = () => {
         )}
       </g>
     );
-  };
+};
 
   // Custom bar for PPM with hover effects
   
@@ -401,10 +429,10 @@ const CustomPpmBar = (props) => {
         y={y}
         width={width}
         height={height}
-        fill={fill || payload.color} // Fix: Use color from ppmData
+        fill={fill || payload.color} // Use color from ppmData
         rx={10}
         ry={10}
-        className="ppm-bar"
+        className={`ppm-bar ${payload.color === '#EF4444' ? 'pulse' : ''}`} // Add pulse for red bars
         style={{
           cursor: "pointer",
           filter:
@@ -431,7 +459,6 @@ const CustomPpmBar = (props) => {
     </g>
   );
 };
-
   // Prepare soil moisture data from soil monitoring data
   const soilMoistureData = [
     {
@@ -467,7 +494,7 @@ const CustomPpmBar = (props) => {
   // Create gauge data for the semicircle
   // Temperature gauge colors based on ranges
   const getTempGaugeColor = (temp) => {
-    if (temp >= 50) return "#ff3d00"; // High temp (Red)
+    if (temp >= 50) return "#EF4444"; // High temp (Red)
     if (temp >= 35) return "#ff9100"; // Medium temp (Orange)
     return "#00b0ff"; // Low temp (Blue)
   };
@@ -545,7 +572,7 @@ const CustomPpmBar = (props) => {
               <div className="metric-title">pH Level</div>
 
               <div className="metric-value">pH: {currentPhLevel}</div>
-              {isPhLevelAlert && <div className="alert-indicator">Low pH Alert</div>}
+             
             </div>
 
             <div className={`metric-card feeder-card ${isFeederAlert ? 'alert' : ''}`}
@@ -554,7 +581,7 @@ const CustomPpmBar = (props) => {
 
               <div className="metric-title">Feeder</div>
               <div className="metric-value">{currentFeederLevel} cm</div>
-              {isFeederAlert && <div className="alert-indicator">High Level Alert</div>}
+        
             </div>
 
             <div className={`metric-card oxygen-card ${isDoAlert ? 'alert' : ''}`}
@@ -563,7 +590,7 @@ const CustomPpmBar = (props) => {
               <div className="metric-title">Dissolved Oxygen</div>
 
               <div className="metric-value">{currentDoLevel} mg/L</div>
-              {isDoAlert && <div className="alert-indicator">Low O₂ Alert</div>}
+          
             </div>
           </div>
 
@@ -696,7 +723,7 @@ const CustomPpmBar = (props) => {
             <ResponsiveContainer width="100%" height={200}>
               <BarChart data={ppmData} margin={{ top: 20, right: 30, left: 10, bottom: 5 }}>
                 <XAxis dataKey="name" axisLine={false} tickLine={false} />
-                <YAxis axisLine={false} tickLine={false} domain={[0, 150]} ticks={[0, 30, 60, 90, 120, 150]} />
+                <YAxis axisLine={false} tickLine={false} domain={[0, 150]} ticks={[0, 30, 60, 90, 120, 150,]} />
                 <Tooltip formatter={(value) => [`${value} ppm`, 'Concentration']} />
                 <Bar
                   dataKey="value"
@@ -723,7 +750,7 @@ const CustomPpmBar = (props) => {
                 </div>
               </div>
             </div>
-            <ResponsiveContainer width="100%" height={300}>
+            <ResponsiveContainer width="100%" height={280}>
               <BarChart data={plantsByWeekData} margin={{ top: 20, right: 30, left: 10, bottom: 5 }} barGap={10}>
                 <XAxis dataKey="month" axisLine={false} tickLine={false} />
                 <YAxis axisLine={false} tickLine={false} />
@@ -747,6 +774,10 @@ const CustomPpmBar = (props) => {
             </ResponsiveContainer>
             <p>Hydroponics Plants: <span className="harvest-count">{totalPlants.hydroponic}</span></p>
             <p>Soil-Based Plants: <span className="harvest-count">{totalPlants.soilBased}</span></p>
+            <br></br>
+            <p>ACTIVE PLANTS</p>
+            <p>Hydroponics Plants: <span className="harvest-count">{TotalActivePlants.hydroponic}</span></p>
+            <p>Soil-Based Plants: <span className="harvest-count">{TotalActivePlants.soilBased}</span></p>
           </div>
         </div>
       </div>

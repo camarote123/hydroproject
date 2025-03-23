@@ -27,6 +27,52 @@ const Rhydro = () => {
   const [isModalPinned, setIsModalPinned] = useState(false);
   const notificationTimerRef = useRef(null);
   const notificationSubscriptionRef = useRef(null);
+  const workerRef = useRef(null);
+
+  // Initialize the worker when component mounts
+  useEffect(() => {
+    // Create the web worker
+    workerRef.current = new Worker('/NotificationWorker.js'); // Make sure to save the worker file in your public directory
+    
+    // Set up the message handler
+    workerRef.current.onmessage = (e) => {
+      if (e.data.type === 'check_notifications') {
+        console.log('Worker triggered notification check');
+        checkForNotifications();
+      }
+    };
+    
+    // Start the worker with a 30-minute interval (more frequent than current hourly check)
+    workerRef.current.postMessage({ 
+      action: 'start', 
+      interval: 1800000 // 30 minutes in milliseconds
+    });
+    
+    // Cleanup function
+    return () => {
+      if (workerRef.current) {
+        workerRef.current.postMessage({ action: 'stop' });
+        workerRef.current.terminate();
+      }
+    };
+  }, []);
+
+  // Keep the Supabase connection alive
+  const keepSupabaseConnectionAlive = () => {
+    const pingInterval = 5 * 60 * 1000; // 5 minutes
+    
+    return setInterval(async () => {
+      console.log('Pinging Supabase to keep connection alive');
+      try {
+        // Simple query to keep the connection active
+        await supabase.from('date_notifications').select('count', { count: 'exact' }).limit(1);
+      } catch (err) {
+        console.error('Error pinging Supabase:', err);
+        // If there's an error, try to reestablish the subscription
+        setupNotificationSubscription();
+      }
+    }, pingInterval);
+  };
 
   useEffect(() => {
     fetchData();
@@ -38,10 +84,8 @@ const Rhydro = () => {
     // Initial check when component loads
     checkForNotifications();
 
-    // Set up a timer to check for notifications every hour
-    notificationTimerRef.current = setInterval(() => {
-      checkForNotifications();
-    }, 3600000); // check every hour (3600000 ms)
+    // Set up ping to keep Supabase connection alive
+    const pingIntervalId = keepSupabaseConnectionAlive();
 
     return () => {
       // Clean up resources on component unmount
@@ -55,6 +99,8 @@ const Rhydro = () => {
       if (notificationSubscriptionRef.current) {
         notificationSubscriptionRef.current.unsubscribe();
       }
+      // Clear ping interval
+      clearInterval(pingIntervalId);
     };
   }, []);
 
@@ -65,22 +111,25 @@ const Rhydro = () => {
       notificationSubscriptionRef.current.unsubscribe();
     }
 
-    // Create new subscription
+    // Create new subscription with improved error handling
     notificationSubscriptionRef.current = supabase
       .channel('date_notifications_changes')
       .on('postgres_changes', { 
-        event: 'INSERT', 
+        event: '*', // Listen for all events (INSERT, UPDATE, DELETE)
         schema: 'public', 
         table: 'date_notifications' 
       }, payload => {
-        console.log('New notification received:', payload);
-        // Whenever there's a new notification, refresh the notifications
+        console.log('Notification event received:', payload);
         fetchNotifications();
       })
-      .subscribe((status) => {
+      .subscribe((status, err) => {
         console.log('Subscription status:', status);
         if (status === 'SUBSCRIBED') {
           console.log('Successfully subscribed to date_notifications table');
+        } else if (status === 'CHANNEL_ERROR') {
+          console.error('Channel error:', err);
+          // Attempt to reconnect after a delay
+          setTimeout(() => setupNotificationSubscription(), 5000);
         }
       });
   };
@@ -119,6 +168,7 @@ const Rhydro = () => {
   }, [shouldCloseModal, modalMouseOver, isModalPinned]);
 
   const fetchNotifications = async () => {
+    console.log('Fetching notifications...');
     try {
       const { data, error } = await supabase
         .from('date_notifications')
@@ -128,6 +178,8 @@ const Rhydro = () => {
 
       if (error) {
         console.error('Error fetching notifications:', error.message);
+        // Retry after 5 seconds on error
+        setTimeout(fetchNotifications, 5000);
       } else {
         console.log('Fetched notifications:', data);
         setNotifications(data || []);
@@ -138,10 +190,13 @@ const Rhydro = () => {
       }
     } catch (err) {
       console.error('Unexpected error fetching notifications:', err);
+      // Retry after 5 seconds on error
+      setTimeout(fetchNotifications, 5000);
     }
   };
 
   const checkForNotifications = async () => {
+    console.log('Checking for notifications...');
     if (data.length === 0) return;
 
     const today = new Date();
@@ -261,6 +316,9 @@ const Rhydro = () => {
           if (notificationsToCreate[0]) {
             showNotificationToast(notificationsToCreate[0].message);
           }
+          
+          // Explicitly fetch notifications after creating new ones
+          fetchNotifications();
         }
       } catch (err) {
         console.error('Unexpected error creating notifications:', err);
@@ -359,6 +417,8 @@ const Rhydro = () => {
           console.error('Error creating harvest notifications:', notifError.message);
         } else {
           console.log('Successfully created harvest notifications');
+          // Explicitly fetch notifications after creating harvest notifications
+          fetchNotifications();
         }
       }
 
@@ -781,22 +841,16 @@ const Rhydro = () => {
         </div>
       )}
 
-      {/* Add some additional styles for the pinned modal */}
-      <style jsx="true">{`
-        .pinned-modal {
-          box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
-          border: 2px solid #4a90e2;
-        }
-        
-        .date-tile-content {
-          width: 100%;
-          height: 100%;
-          position: absolute;
-          top: 0;
-          left: 0;
-          cursor: pointer;
-        }
-      `}</style>
+      <div className="legend">
+        <div className="legend-item">
+          <span className="legend-color soil-color"></span>
+          <span>Soil Based</span>
+        </div>
+        <div className="legend-item">
+          <span className="legend-color hydro-color"></span>
+          <span>Hydroponics</span>
+        </div>
+      </div>
     </div>
   );
 };

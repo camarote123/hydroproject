@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { supabase } from './createClient';
 import './location.css';
 
-const Location = () => {
+const Location = ({ onLocationClick }) => {
   const [locations, setLocations] = useState([]);
   const [usedLocations, setUsedLocations] = useState(new Set());
   const [searchTerm, setSearchTerm] = useState("");
@@ -39,12 +39,8 @@ const Location = () => {
       }
     };
   
-    
-
     fetchLocations();
   }, []);
-
-  
 
   // Filter locations based on search term and type
   const filteredLocations = locations.filter(loc => {
@@ -62,6 +58,14 @@ const Location = () => {
   const usedLocationCount = [...usedLocations].length;
   const availableLocationCount = totalLocations - usedLocationCount;
 
+  // Handle location card click
+  const handleLocationCardClick = (loc) => {
+    // Only allow clicking available locations
+    if (!usedLocations.has(loc.name) && onLocationClick) {
+      onLocationClick(loc.name, loc.type);
+    }
+  };
+
   // Render location card
   const renderLocationCard = (loc) => {
     const isUsed = usedLocations.has(loc.name);
@@ -69,6 +73,8 @@ const Location = () => {
       <div
         key={loc.id}
         className={`location-card ${isUsed ? 'location-card-used' : 'location-card-available'}`}
+        onClick={() => handleLocationCardClick(loc)}
+        style={{ cursor: isUsed ? 'default' : 'pointer' }}
       >
         <div className="location-card-header">
           <h3 className={`location-name ${isUsed ? 'location-name-used' : 'location-name-available'}`}>
@@ -101,7 +107,7 @@ const Location = () => {
           Agricultural Plots
         </h1>
         <p className="location-subtitle">
-          Monitor and manage your soil and hydroponic growing locations across all farming operations
+          Select an available plot to add a new plant
         </p>
       </div>
       

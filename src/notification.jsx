@@ -11,7 +11,8 @@ const Notifications = () => {
     { id: 'npk_notification', label: 'NPK' },
     { id: 'pesticide_notification', label: 'Pesticide' },
     { id: 'phlevel_notification', label: 'pH Level' },
-    { id: 'temp_notification', label: 'Temperature' }
+    { id: 'temp_notification', label: 'Temperature' },
+    { id: 'soil_notification', label: 'SoilMoisture'}
   ];
 
   const [activeTab, setActiveTab] = useState(notificationTables[0].id);

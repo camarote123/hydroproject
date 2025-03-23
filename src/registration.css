@@ -330,3 +330,26 @@ table {
   /* keep your other existing properties */
 }
 
+
+
+
+
+
+.modal-content-delete1 {
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  width: 100%;
+  max-width: 280px;
+  text-align: center;
+}
+
+
+
+.regbutton{
+  margin-left: 160px;
+  margin-bottom: 20px;
+  margin-top: 10px;
+}
+

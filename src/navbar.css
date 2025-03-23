@@ -53,7 +53,7 @@
 
 /* Hover effect */
 .sidebar a:hover {
-  background-color: #136813; /* Darker teal */
+  background-color: #569033; /* Darker teal */
   color: #ffffff; /* White text on hover for better contrast */
   padding-left: 30px; /* Indent when hovered */
   transition: all 0.3s ease;
@@ -61,9 +61,9 @@
 
 /* Active link style */
 .sidebar a.active {
-  background-color: #136813; /* Match hover color */
+  background-color: #569033; /* Match hover color */
   color: #fff;
-  border-left: 4px solid #136813; /* Add left border for active indicator */
+  border-left: 4px solid #569033; /* Add left border for active indicator */
   padding-left: 16px; /* Adjust padding to account for border */
 }
 
@@ -89,7 +89,7 @@
 }
 
 .dropdown-btn:hover {
-  background-color: #136813;
+  background-color: #569033;
   color: #ffffff;
 }
 
@@ -121,7 +121,7 @@
 /* Sidebar Toggle Button */
 .sidebar-toggle {
   display: none;
-  background-color: #136813; /* Match sidebar accent color */
+  background-color: #569033; /* Match sidebar accent color */
   color: white;
   font-size: 24px;
   padding: 10px;

@@ -115,8 +115,9 @@
 
 .metric-card.alert {
     animation: pulse 1.5s infinite;
-    background-color: #f55050;
+    background-color: #EF4444;
 }
+
 
 .alert-indicator {
     margin-top: 8px;
@@ -144,15 +145,15 @@
 }
 
 .ph-card {
-    background-color: #7CB342;
+    background-color: #569033;
 }
 
 .feeder-card {
-    background-color: #7CB342;
+    background-color: #569033;
 }
 
 .oxygen-card {
-    background-color: #7CB342;
+    background-color: #569033;
 }
 
 /* Secondary Metrics */
@@ -175,6 +176,8 @@
     padding: 15px;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
+
+
 
 .water-level-card h3,
 .water-temp-card h3,
@@ -215,11 +218,12 @@
 }
 
 .high2::before {
-    background-color: #7CB342;
+    background-color: #569033;
 }
 
 .low::before {
     background-color: #F44336;
+    
 }
 
 /* Water Level Bars */
@@ -271,8 +275,9 @@
 }
 
 .bar.low {
-    background-color: #F44336;
+    background-color: #EF4444;
 }
+
 
 .bar-empty {
     width: 100%;
@@ -473,11 +478,12 @@
 }
 
 .percent-bar.high {
-    background-color: #7CB342;
+    background-color: #569033;
 }
 
 .percent-bar.low {
-    background-color: #F44336;
+    animation: pulse 1.5s infinite;
+    background-color: #EF4444;
 }
 
 .percent-value {
@@ -500,13 +506,13 @@
 }
 
 .percent-value.high {
-    border: 1px solid #7CB342;
-    color: #7CB342;
+    border: 1px solid #569033;
+    color: #569033;
 }
 
 .percent-value.low {
-    border: 1px solid #F44336;
-    color: #F44336;
+    border: 1px solid #EF4444;
+    color: #EF4444;
 }
 
 .percent-value span {
@@ -552,11 +558,11 @@
 }
 
 .legend-color.soil-based {
-    background-color: #7CB342;
+    background-color: #569033;
 }
 
 .legend-color.hydroponic {
-    background-color: #FFC107;
+    background-color: #FFB95A;
 }
 
 /* Harvest Cards */
@@ -707,6 +713,8 @@ p {
 .indicator.low {
     background-color: #FFEBEE;
     color: #D32F2F;
+
+ 
 }
 
 /* Water Temperature Gauge */
@@ -728,3 +736,13 @@ p {
 .temperature-text {
     font-family: 'Inter', sans-serif;
 }
+
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.8; }
+    100% { opacity: 1; }
+  }
+  
+  .pulse {
+    animation: pulse 1s infinite;
+  }

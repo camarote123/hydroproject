@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { FaBars, FaCalendar, FaClipboardList, FaHome, FaLeaf, FaSeedling, FaTimes, FaUsers, FaWarehouse, FaWater } from "react-icons/fa";
+import { FaBars, FaCalendar, FaClipboardList, FaHome, FaLeaf, FaSeedling, FaTimes, FaUsers, FaWater, FaWifi } from "react-icons/fa";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import "./Navbar.css";
 import { supabase } from './createClient'; // Ensure Supabase is correctly configured
@@ -98,7 +98,7 @@ const Navbar = () => {
            <li>
             <button className="dropdown-btn" onClick={toggleSensorDropdown}>
               <div>
-                <FaClipboardList className="icon" /> <span>Sensors</span>
+                <FaWifi className="icon" /> <span>Sensors</span>
               </div>
               <span>{sensorDropdown ? "▲" : "▼"}</span>
             </button>
@@ -173,11 +173,8 @@ const Navbar = () => {
             </Link>
           </li>
           
-          <li>
-          <Link to="/location" className={isActive("/location")} onClick={() => handleLinkClick("/location")}>
-              <FaWarehouse className="icon" /> <span>Location</span>
-            </Link>
-          </li>
+     
+       
 
           
         </ul>

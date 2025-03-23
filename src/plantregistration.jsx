@@ -1,23 +1,11 @@
-import {
-  BarElement,
-  CategoryScale,
-  Chart as ChartJS,
-  Legend,
-  LinearScale,
-  Title,
-  Tooltip,
-} from 'chart.js';
 import React, { useEffect, useState } from 'react';
-import { Bar } from 'react-chartjs-2';
-import DatePicker from 'react-datepicker'; // Import DatePicker
-import 'react-datepicker/dist/react-datepicker.css'; // Import DatePicker CSS
+import 'react-datepicker/dist/react-datepicker.css';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from './createClient';
+import Location from './location'; // Import the Location component
 import Navbar from './navbar';
 import Navbar2 from './navbar2';
 import './registration.css';
-
-ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 const PlantRegistration = () => {
   const navigate = useNavigate();
@@ -43,9 +31,7 @@ const PlantRegistration = () => {
   });
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [historyData, setHistoryData] = useState([]);
-  const [startDate, setStartDate] = useState(null); // State for start date
-  const [endDate, setEndDate] = useState(null); // State for end date
-  const [notification, setNotification] = useState(''); // State for notification
+  const [notification, setNotification] = useState('');
 
   useEffect(() => {
     fetchData();
@@ -118,11 +104,7 @@ const PlantRegistration = () => {
   };
 
   useEffect(() => {
-    fetchHistoryData(); // Call the function to fetch data initially
-
-    const intervalId = setInterval(fetchHistoryData, 2000);
-
-    return () => clearInterval(intervalId);
+    fetchHistoryData();
   }, []);
 
   const fetchPlantDetails = async (plantName) => {
@@ -182,7 +164,7 @@ const PlantRegistration = () => {
       const { data, error } = await supabase
         .from('registration')
         .insert([dataToSubmit])
-        .select(); // Ensure it returns the inserted data
+        .select();
   
       if (error) {
         console.error('Error adding record:', error.message);
@@ -190,7 +172,7 @@ const PlantRegistration = () => {
       }
   
       if (data && data.length > 0) {
-        const newRegistration = data[0]; // Get the inserted row
+        const newRegistration = data[0];
   
         // Insert the same data into the history table
         const { error: historyError } = await supabase.from('history').insert([
@@ -199,7 +181,7 @@ const PlantRegistration = () => {
             plant_name: newRegistration.plant_name,
             harvest_duration: newRegistration.harvest_duration,
             expected_harvest_date: newRegistration.expected_harvest_date,
-            registration_id: newRegistration.id, // Link to registration table
+            registration_id: newRegistration.id,
             location: newRegistration.location,
           },
         ]);
@@ -213,11 +195,11 @@ const PlantRegistration = () => {
   
       // Close the modal
       setIsModalOpen(false);
-      setNotification(''); // Reset notification when modal is closed
+      setNotification('');
   
       // Fetch updated data
       fetchData();
-      fetchHistoryData(); // Ensure history is updated as well
+      fetchHistoryData();
   
       // Reset form fields
       resetForm();
@@ -246,14 +228,23 @@ const PlantRegistration = () => {
     });
   };
 
-  const openAddNewPlantModal = () => {
+  const openAddNewPlantModal = (location = '') => {
     resetForm();
-    setNotification(''); // Reset notification when modal is opened
+    // If a location is provided, set it in the form data
+    if (location) {
+      setFormData(prev => ({
+        ...prev,
+        location: location
+      }));
+    }
+    setNotification('');
     setIsModalOpen(true);
   };
 
   const handleGrowthSiteChange = (e) => {
     const selectedGrowthSite = e.target.value;
+    // Keep the location that was selected from the Location component
+    const currentLocation = formData.location;
     setFormData((prevFormData) => ({
       ...prevFormData,
       growth_site: selectedGrowthSite,
@@ -267,7 +258,7 @@ const PlantRegistration = () => {
       pesticide: '',
       harvest_duration: '',
       expected_harvest_date: '',
-      location: '',
+      location: currentLocation, // Preserve the location
     }));
   };
 
@@ -289,94 +280,24 @@ const PlantRegistration = () => {
     }));
   };
 
-  // Utility function to format date
-  const formatDate = (date) => {
-    const d = new Date(date);
-    return d.toISOString().split('T')[0];
-  };
-
-  // Count plants by growth system (Hydroponic vs. Soil-based)
-  const countPlantsByDateAndSystem = (filteredData) => {
-    const hydroponicCounts = {};
-    const soilCounts = {};
-
-    filteredData.forEach((record) => {
-      const date = formatDate(record.date_created);
-      const growthSystem = record.growth_site.toLowerCase().includes('hydroponic') ? 'Hydroponic' : 'Soil-based';
-
-      if (growthSystem === 'Hydroponic') {
-        if (!hydroponicCounts[date]) {
-          hydroponicCounts[date] = 0;
-        }
-        hydroponicCounts[date]++;
-      } else {
-        if (!soilCounts[date]) {
-          soilCounts[date] = 0;
-        }
-        soilCounts[date]++;
-      }
-    });
-
-    return { hydroponicCounts, soilCounts };
-  };
-
-  // Filter history data by selected date range
-  const filteredHistoryData = historyData.filter((record) => {
-    const recordDate = new Date(record.date_created);
-    if (startDate && endDate) {
-      return recordDate >= startDate && recordDate <= endDate;
+  // Function to handle location click from the Location component
+  const handleLocationClick = (locationName, locationType) => {
+    // Find the appropriate growth site based on location type
+    let appropriateGrowthSite = '';
+    if (locationType === 'soil') {
+      appropriateGrowthSite = growthSites.find(site => site.includes('Soil Based')) || '';
+    } else if (locationType === 'hydro') {
+      appropriateGrowthSite = growthSites.find(site => site.includes('Hydroponic')) || '';
     }
-    return true;
-  });
 
-  // Prepare data for the charts
-  const { hydroponicCounts, soilCounts } = countPlantsByDateAndSystem(filteredHistoryData);
-
-  const hydroponicChartData = {
-    labels: Object.keys(hydroponicCounts),
-    datasets: [
-      {
-        label: 'Hydroponic Plants',
-        data: Object.values(hydroponicCounts),
-        backgroundColor: 'rgba(75, 192, 192, 12)',
-        borderColor: 'rgba(75, 192, 192, 1)',
-        borderWidth: 1,
-      },
-    ],
+    // Open the modal and set the location and growth site
+    setFormData(prev => ({
+      ...prev,
+      location: locationName,
+      growth_site: appropriateGrowthSite
+    }));
+    setIsModalOpen(true);
   };
-
-  const soilChartData = {
-    labels: Object.keys(soilCounts),
-    datasets: [
-      {
-        label: 'Soil-based Plants',
-        data: Object.values(soilCounts),
-        backgroundColor: 'rgba(19, 104, 19, 0.94)',
-        borderColor: 'rgb(255, 255, 255)',
-        borderWidth: 1,
-      },
-    ],
-  };
-
-  // Chart options
-  const chartOptions = {
-    responsive: true,
-    plugins: {
-      title: {
-        display: true,
-        text: 'Plants Planted by Date',
-      },
-    },
-  };
-
-  // Filter out used locations
-  const availableHydroLocations = hydroLocations.filter(
-    (location) => !data.some((record) => record.location === location.name)
-  );
-
-  const availableSoilLocations = soilLocations.filter(
-    (location) => !data.some((record) => record.location === location.name)
-  );
 
   if (loading) {
     return <p>Loading...</p>;
@@ -386,35 +307,16 @@ const PlantRegistration = () => {
     <div>
       <Navbar />
       <Navbar2 />
-      <h1>Add Plant</h1>
+    
 
-      <button onClick={openAddNewPlantModal}>Add Plant</button>
-      <button onClick={() => navigate('/history')}>View History</button>
+      <button  className='regbutton' onClick={() => navigate('/history')}>View History</button>
 
-      <div>
-        <br />
-        <br />
-        <br />
+      {/* Notification outside modal */}
+      {notification && !isModalOpen && <div className="notification">{notification}</div>}
 
-        <div style={{ display: 'flex', gap: '10px' }}>
-          <DatePicker
-            selected={startDate}
-            onChange={(date) => setStartDate(date)}
-            placeholderText="Select start date"
-          />
-          <DatePicker
-            selected={endDate}
-            onChange={(date) => setEndDate(date)}
-            placeholderText="Select end date"
-          />
-        </div>
-
-        <Bar
-          data={hydroponicChartData}
-          options={chartOptions}
-          style={{ width: '100%', height: '300px' }}
-        />
-        <Bar data={soilChartData} options={chartOptions} />
+      {/* Location Component */}
+      <div className="location-section">
+        <Location onLocationClick={handleLocationClick} />
       </div>
 
       {isModalOpen && (
@@ -424,14 +326,18 @@ const PlantRegistration = () => {
               &times;
             </button>
             <h2>Add New Plant</h2>
-            {notification && <div className="notification">{notification}</div>} {/* Notification inside modal */}
+            {notification && <div className="notification">{notification}</div>}
             <form onSubmit={handleSubmit}>
-              <select value={formData.growth_site} onChange={handleGrowthSiteChange}>
+              <select value={formData.growth_site} 
+              onChange={handleGrowthSiteChange}
+              disabled={true}> 
                 <option value="">Select Planting Area</option>
                 {growthSites.map((site) => (
                   <option key={site} value={site}>
                     {site}
+                    
                   </option>
+                
                 ))}
               </select>
 
@@ -439,6 +345,7 @@ const PlantRegistration = () => {
                 value={formData.plant_name}
                 onChange={handlePlantChange}
                 disabled={!formData.growth_site}
+                
               >
                 <option value="">Select Plant Name</option>
                 {plantsBySite
@@ -450,33 +357,13 @@ const PlantRegistration = () => {
                   ))}
               </select>
 
-              {formData.growth_site.includes('Hydroponic') && (
-                <select
-                  value={formData.location}
-                  onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-                >
-                  <option value="">Select Hydroponic Location</option>
-                  {availableHydroLocations.map((location) => (
-                    <option key={location.id} value={location.name}>
-                      {location.name}
-                    </option>
-                  ))}
-                </select>
-              )}
-
-              {formData.growth_site.includes('Soil Based') && (
-                <select
-                  value={formData.location}
-                  onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-                >
-                  <option value="">Select Soil Location</option>
-                  {availableSoilLocations.map((location) => (
-                    <option key={location.id} value={location.name}>
-                      {location.name}
-                    </option>
-                  ))}
-                </select>
-              )}
+              {/* Show the pre-selected location */}
+              <input
+                type="text"
+                placeholder="Selected Location"
+                value={formData.location}
+                readOnly
+              />
 
               <input
                 type="text"

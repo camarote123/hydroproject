@@ -43,8 +43,8 @@ body {
 }
 
 .tab-button.active {
-  border-bottom: 3px solid #1c8a34;
-  color: #1c8a34;
+  border-bottom: 3px solid #569033;
+  color: #569033;
   font-weight: bold;
 }
 
@@ -75,7 +75,7 @@ body {
 }
 
 .date-select-btn {
-  background-color: #136813;
+  background-color: #569033;
   color: white;
   border: none;
   padding: 8px 15px;
@@ -148,7 +148,7 @@ body {
 }
 
 .select-date-btn {
-  background-color: #136813;
+  background-color: #569033;
   color: white;
   border: none;
   padding: 6px 12px;
@@ -168,7 +168,7 @@ body {
 }
 
 .status-card {
-  background-color: #1c8a34;
+  background-color: #569033;
   color: white;
   border-radius: 8px;
   padding: 10px;
@@ -252,7 +252,7 @@ body {
 }
 
 .temperature-table th {
-  background-color: #136813;
+  background-color: #569033;
   color: white;
   font-weight: normal;
 }
@@ -271,7 +271,7 @@ body {
 }
 
 .pagination button {
-  background-color: #136813;
+  background-color: #569033;
   color: white;
   border: none;
   padding: 6px 12px;
