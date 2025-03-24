@@ -358,45 +358,58 @@ const PlantRegistration = () => {
               </select>
 
               {/* Show the pre-selected location */}
+              
+              <label>Location</label>
               <input
                 type="text"
                 placeholder="Selected Location"
                 value={formData.location}
                 readOnly
               />
-
+               <label>Nitrogen Measurement</label>
               <input
                 type="text"
                 placeholder="Nitrogen Measurement"
                 value={formData.nitrogen_measurement}
                 disabled
               />
+
+              <label>Phosphorus Measurement</label>
               <input
                 type="text"
                 placeholder="Phosphorus Measurement"
                 value={formData.phosphorus_measurement}
                 disabled
               />
+
+              <label>Potassium Measurement</label>
               <input
                 type="text"
                 placeholder="Potassium Measurement"
                 value={formData.potassium_measurement}
                 disabled
               />
-              <input type="text" placeholder="pH Level" value={formData.ph_level} disabled />
-              <input type="text" placeholder="Temperature" value={formData.temperature} disabled />
-              <input type="text" placeholder="Humidity" value={formData.humidity} disabled />
-              <input type="text" placeholder="Pesticide" value={formData.pesticide} disabled />
+              <label>PH Level</label><input type="text" placeholder="pH Level" value={formData.ph_level} disabled />
+              <label>Temperature</label><input type="text" placeholder="Temperature" value={formData.temperature} disabled />
+              <label>Humidity</label><input type="text" placeholder="Humidity" value={formData.humidity} disabled />
+              <label>Pesticide</label><input type="text" placeholder="Pesticide" value={formData.pesticide} disabled />
+              
+
+              <label>Estimated Harvest Duration</label>
               <input
                 type="number"
                 placeholder="Harvest Duration (Days)"
                 value={formData.harvest_duration}
                 onChange={handleHarvestDurationChange}
+                disabled
               />
+
+              <label>Expected Harvest Date</label>
               <input
                 type="date"
                 value={formData.expected_harvest_date}
                 onChange={(e) => setFormData({ ...formData, expected_harvest_date: e.target.value })}
+                disabled
               />
               <button type="submit">Add Record</button>
             </form>
