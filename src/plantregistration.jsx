@@ -390,7 +390,7 @@ const PlantRegistration = () => {
                 disabled
               />
               <label>PH Level</label><input type="text" placeholder="pH Level" value={formData.ph_level} disabled />
-              <label>Temperature</label><input type="text" placeholder="Temperature" value={`formData.temperature}°C`} disabled />
+              <label>Temperature</label><input type="text" placeholder="Temperature" value={`${formData.temperature}°C`} disabled />
               <label>Humidity</label>
               <input
                 type="text"
@@ -402,12 +402,12 @@ const PlantRegistration = () => {
 
 
               <label>Estimated Harvest Duration</label>
-<input
-  type="text"
-  placeholder="Harvest Duration"
-  value={`${formData.harvest_duration} days`}
-  disabled
-/>
+              <input
+                type="text"
+                placeholder="Harvest Duration"
+                value={`${formData.harvest_duration} days`}
+                disabled
+              />
 
               <label>Expected Harvest Date</label>
               <input
