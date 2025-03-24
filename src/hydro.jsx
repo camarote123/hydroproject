@@ -250,7 +250,7 @@ const Hydro = () => {
                 pattern="^\d{1}\.\d{2} - \d{1}\.\d{2}$|^\d{2}\.\d{2} - \d{2}\.\d{2}$|^\d{3}\.\d{2} - \d{3}\.\d{2}$"
               />
 
-              <label>Harvest Duration</label>
+              <label>Harvest Duration(Days)</label>
               <input
                 type="number"
                 value={formData.harvest_duration || ''}

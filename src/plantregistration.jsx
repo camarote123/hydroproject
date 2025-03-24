@@ -156,24 +156,24 @@ const PlantRegistration = () => {
       setNotification('Please select a location.');
       return;
     }
-  
+
     try {
       const dataToSubmit = { ...formData };
-  
+
       // Insert data into registration table and return the inserted data
       const { data, error } = await supabase
         .from('registration')
         .insert([dataToSubmit])
         .select();
-  
+
       if (error) {
         console.error('Error adding record:', error.message);
         return;
       }
-  
+
       if (data && data.length > 0) {
         const newRegistration = data[0];
-  
+
         // Insert the same data into the history table
         const { error: historyError } = await supabase.from('history').insert([
           {
@@ -185,25 +185,25 @@ const PlantRegistration = () => {
             location: newRegistration.location,
           },
         ]);
-  
+
         if (historyError) {
           console.error('Error adding record to history:', historyError.message);
         } else {
           console.log('Record added to history table successfully');
         }
       }
-  
+
       // Close the modal
       setIsModalOpen(false);
       setNotification('');
-  
+
       // Fetch updated data
       fetchData();
       fetchHistoryData();
-  
+
       // Reset form fields
       resetForm();
-  
+
       // Notify user
       setNotification('Record added successfully!');
     } catch (err) {
@@ -307,9 +307,9 @@ const PlantRegistration = () => {
     <div>
       <Navbar />
       <Navbar2 />
-    
 
-      <button  className='regbutton' onClick={() => navigate('/history')}>View History</button>
+
+      <button className='regbutton' onClick={() => navigate('/history')}>View History</button>
 
       {/* Notification outside modal */}
       {notification && !isModalOpen && <div className="notification">{notification}</div>}
@@ -328,16 +328,16 @@ const PlantRegistration = () => {
             <h2>Add New Plant</h2>
             {notification && <div className="notification">{notification}</div>}
             <form onSubmit={handleSubmit}>
-              <select value={formData.growth_site} 
-              onChange={handleGrowthSiteChange}
-              disabled={true}> 
+              <select value={formData.growth_site}
+                onChange={handleGrowthSiteChange}
+                disabled={true}>
                 <option value="">Select Planting Area</option>
                 {growthSites.map((site) => (
                   <option key={site} value={site}>
                     {site}
-                    
+
                   </option>
-                
+
                 ))}
               </select>
 
@@ -345,7 +345,7 @@ const PlantRegistration = () => {
                 value={formData.plant_name}
                 onChange={handlePlantChange}
                 disabled={!formData.growth_site}
-                
+
               >
                 <option value="">Select Plant Name</option>
                 {plantsBySite
@@ -358,7 +358,7 @@ const PlantRegistration = () => {
               </select>
 
               {/* Show the pre-selected location */}
-              
+
               <label>Location</label>
               <input
                 type="text"
@@ -366,7 +366,7 @@ const PlantRegistration = () => {
                 value={formData.location}
                 readOnly
               />
-               <label>Nitrogen Measurement</label>
+              <label>Nitrogen Measurement</label>
               <input
                 type="text"
                 placeholder="Nitrogen Measurement"
@@ -390,19 +390,24 @@ const PlantRegistration = () => {
                 disabled
               />
               <label>PH Level</label><input type="text" placeholder="pH Level" value={formData.ph_level} disabled />
-              <label>Temperature</label><input type="text" placeholder="Temperature" value={formData.temperature} disabled />
-              <label>Humidity</label><input type="text" placeholder="Humidity" value={formData.humidity} disabled />
-              <label>Pesticide</label><input type="text" placeholder="Pesticide" value={formData.pesticide} disabled />
-              
-
-              <label>Estimated Harvest Duration</label>
+              <label>Temperature</label><input type="text" placeholder="Temperature" value={`formData.temperature}°C`} disabled />
+              <label>Humidity</label>
               <input
-                type="number"
-                placeholder="Harvest Duration (Days)"
-                value={formData.harvest_duration}
-                onChange={handleHarvestDurationChange}
+                type="text"
+                placeholder="Humidity"
+                value={`${formData.humidity}°C`}
                 disabled
               />
+              <label>Pesticide</label><input type="text" placeholder="Pesticide" value={formData.pesticide} disabled />
+
+
+              <label>Estimated Harvest Duration</label>
+<input
+  type="text"
+  placeholder="Harvest Duration"
+  value={`${formData.harvest_duration} days`}
+  disabled
+/>
 
               <label>Expected Harvest Date</label>
               <input

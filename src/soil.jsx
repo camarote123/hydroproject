@@ -281,7 +281,9 @@ const Soil = () => {
                 required
                 title="Input Pesticide Details"
               />
-              <label>Harvest Duration</label>
+
+              
+              <label>Harvest Duration(Days)</label>
               <input
                 type="number"
                 value={formData.harvest_duration || ''}
