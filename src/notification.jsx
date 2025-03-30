@@ -12,7 +12,14 @@ const Notifications = () => {
     { id: 'pesticide_notification', label: 'Pesticide' },
     { id: 'phlevel_notification', label: 'pH Level' },
     { id: 'temp_notification', label: 'Temperature' },
-    { id: 'soil_notification', label: 'SoilMoisture'}
+    { id: 'soil_notifications', label: 'Soil Moisture' } // Combined tab
+  ];
+
+  const soilNotificationTables = [
+    { id: 'soil_notification1', label: 'Soil 1' },
+    { id: 'soil_notification2', label: 'Soil 2' },
+    { id: 'soil_notification3', label: 'Soil 3' },
+    { id: 'soil_notification4', label: 'Soil 4' }
   ];
 
   const [activeTab, setActiveTab] = useState(notificationTables[0].id);
@@ -34,28 +41,28 @@ const Notifications = () => {
         console.error('Error loading timestamps:', error);
       }
 
-      const tables = notificationTables.map(tab => tab.id);
+      const tables = notificationTables.map(tab => tab.id).filter(id => id !== 'soil_notifications');
       
       try {
-        const results = await Promise.all(
-          tables.map(table => supabase.from(table).select('notif, date'))
-        );
+        const results = await Promise.all([
+          ...tables.map(table => supabase.from(table).select('notif, date')),
+          ...soilNotificationTables.map(({ id }) => supabase.from(id).select('notif, date'))
+        ]);
 
         const notificationsData = {};
         const newCounts = {};
 
         let totalNewNotifications = 0;
-
-        results.forEach(({ data, error }, index) => {
+        
+        // Regular notification tables
+        results.slice(0, tables.length).forEach(({ data, error }, index) => {
           const tableId = tables[index];
           if (!error && data) {
             const sortedData = data.sort((a, b) => new Date(b.date) - new Date(a.date));
             notificationsData[tableId] = sortedData;
 
             const lastSeen = lastSeenTimestamps[tableId] || 0;
-            const newCount = sortedData.filter(
-              notification => new Date(notification.date).getTime() > lastSeen
-            ).length;
+            const newCount = sortedData.filter(notification => new Date(notification.date).getTime() > lastSeen).length;
 
             newCounts[tableId] = newCount;
             totalNewNotifications += newCount;
@@ -65,10 +72,26 @@ const Notifications = () => {
           }
         });
 
+        // Merging soil notifications with source labels
+        const soilData = results.slice(tables.length)
+          .flatMap(({ data }, index) => 
+            data ? data.map(notification => ({
+              ...notification,
+              source: soilNotificationTables[index].label // Add "Soil 1", "Soil 2", etc.
+            })) : []
+          );
+
+        const sortedSoilData = soilData.sort((a, b) => new Date(b.date) - new Date(a.date));
+        notificationsData['soil_notifications'] = sortedSoilData;
+
+        const lastSeenSoil = lastSeenTimestamps['soil_notifications'] || 0;
+        const newSoilCount = sortedSoilData.filter(notification => new Date(notification.date).getTime() > lastSeenSoil).length;
+
+        newCounts['soil_notifications'] = newSoilCount;
+        totalNewNotifications += newSoilCount;
+
         setNotificationsMap(notificationsData);
         setNewNotificationsCounts(newCounts);
-
-        // Update the total new notifications count in localStorage
         localStorage.setItem('newNotificationsCount', totalNewNotifications);
       } catch (error) {
         console.error('Error fetching notifications:', error);
@@ -80,12 +103,16 @@ const Notifications = () => {
     fetchNotifications();
 
     // Subscribe to real-time updates for each notification table
-    const subscriptions = notificationTables.map(({ id }) =>
-      supabase
-        .channel(id)
-        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: id }, fetchNotifications)
-        .subscribe()
-    );
+    const subscriptions = [
+      ...notificationTables.map(({ id }) => 
+        id !== 'soil_notifications' 
+          ? supabase.channel(id).on('postgres_changes', { event: 'INSERT', schema: 'public', table: id }, fetchNotifications).subscribe()
+          : null
+      ),
+      ...soilNotificationTables.map(({ id }) =>
+        supabase.channel(id).on('postgres_changes', { event: 'INSERT', schema: 'public', table: id }, fetchNotifications).subscribe()
+      )
+    ].filter(Boolean);
 
     return () => {
       subscriptions.forEach(subscription => {
@@ -111,7 +138,6 @@ const Notifications = () => {
           [tabId]: 0
         }));
 
-        // Update the total new notifications count in localStorage
         const totalNewNotifications = Object.values(newNotificationsCounts).reduce((a, b) => a + b, 0);
         localStorage.setItem('newNotificationsCount', totalNewNotifications);
       } catch (error) {
@@ -141,43 +167,34 @@ const Notifications = () => {
         {isLoading ? (
           <div className="loading-message">Loading notifications...</div>
         ) : (
-          <>
-            <div className="notification-table-container">
-              <table className="notification-table">
-                <thead>
-                  <tr>
-                    <th className="date-column">Date</th>
-                    <th>Notification</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {notificationsMap[activeTab] && notificationsMap[activeTab].length > 0 ? (
-                    notificationsMap[activeTab].map((notification, index) => (
-                      <tr key={index} className="notification-row">
-                        <td className="date-column">{new Date(notification.date).toLocaleString()}</td>
-                        <td>{notification.notif}</td>
-                      </tr>
-                    ))
-                  ) : (
-                    <tr>
-                      <td colSpan="2" className="no-notifications">
-                        No {notificationTables.find(tab => tab.id === activeTab)?.label} notifications available.
-                      </td>
+          <div className="notification-table-container">
+            <table className="notification-table">
+              <thead>
+                <tr>
+                  <th className="date-column">Date</th>
+                  {activeTab === 'soil_notifications' && <th>Source</th>}
+                  <th>Notification</th>
+                </tr>
+              </thead>
+              <tbody>
+                {notificationsMap[activeTab] && notificationsMap[activeTab].length > 0 ? (
+                  notificationsMap[activeTab].map((notification, index) => (
+                    <tr key={index} className="notification-row">
+                      <td className="date-column">{new Date(notification.date).toLocaleString()}</td>
+                      {activeTab === 'soil_notifications' && <td>{notification.source}</td>}
+                      <td>{notification.notif}</td>
                     </tr>
-                  )}
-                  {/* Add empty rows to maintain consistent table size */}
-                  {notificationsMap[activeTab] && notificationsMap[activeTab].length < 10 && (
-                    [...Array(10 - notificationsMap[activeTab].length)].map((_, index) => (
-                      <tr key={`empty-${index}`} className="empty-row">
-                        <td className="date-column">&nbsp;</td>
-                        <td>&nbsp;</td>
-                      </tr>
-                    ))
-                  )}
-                </tbody>
-              </table>
-            </div>
-          </>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="3" className="no-notifications">
+                      No {notificationTables.find(tab => tab.id === activeTab)?.label} notifications available.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
         )}
       </div>
     </div>

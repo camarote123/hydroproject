@@ -288,7 +288,7 @@ const Hydro = () => {
 
       {/* Table displaying plants data */}
       <div className='container3' >
-        <table border="1" style={{ width: '100%', borderCollapse: 'collapse' }}>
+        <table className='hydrotable' border="1" style={{ width: '1500px', borderCollapse: 'collapse' }}>
           <thead>
             <tr>
               <th>Plant Name</th>

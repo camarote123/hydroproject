@@ -321,7 +321,7 @@ const Users = () => {
       )}
 
       {/* Users Table */}
-      <table>
+      <table className="usertable">
         <thead>
           <tr>
             <th>ID</th>

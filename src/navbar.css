@@ -154,7 +154,7 @@
 /* Tablet: Collapse Sidebar to Icons */
 @media screen and (max-width: 1024px) {
   .sidebar {
-    width: 80px;
+    width: 60px;
   }
 
   .sidebar a {

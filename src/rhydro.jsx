@@ -28,12 +28,13 @@ const Rhydro = () => {
   const notificationTimerRef = useRef(null);
   const notificationSubscriptionRef = useRef(null);
   const workerRef = useRef(null);
+  const [validationError, setValidationError] = useState(null);
 
   // Initialize the worker when component mounts
   useEffect(() => {
     // Create the web worker
     workerRef.current = new Worker('/NotificationWorker.js'); // Make sure to save the worker file in your public directory
-    
+
     // Set up the message handler
     workerRef.current.onmessage = (e) => {
       if (e.data.type === 'check_notifications') {
@@ -41,13 +42,13 @@ const Rhydro = () => {
         checkForNotifications();
       }
     };
-    
+
     // Start the worker with a 30-minute interval (more frequent than current hourly check)
-    workerRef.current.postMessage({ 
-      action: 'start', 
+    workerRef.current.postMessage({
+      action: 'start',
       interval: 1800000 // 30 minutes in milliseconds
     });
-    
+
     // Cleanup function
     return () => {
       if (workerRef.current) {
@@ -60,7 +61,7 @@ const Rhydro = () => {
   // Keep the Supabase connection alive
   const keepSupabaseConnectionAlive = () => {
     const pingInterval = 5 * 60 * 1000; // 5 minutes
-    
+
     return setInterval(async () => {
       console.log('Pinging Supabase to keep connection alive');
       try {
@@ -114,10 +115,10 @@ const Rhydro = () => {
     // Create new subscription with improved error handling
     notificationSubscriptionRef.current = supabase
       .channel('date_notifications_changes')
-      .on('postgres_changes', { 
+      .on('postgres_changes', {
         event: '*', // Listen for all events (INSERT, UPDATE, DELETE)
-        schema: 'public', 
-        table: 'date_notifications' 
+        schema: 'public',
+        table: 'date_notifications'
       }, payload => {
         console.log('Notification event received:', payload);
         fetchNotifications();
@@ -220,11 +221,11 @@ const Rhydro = () => {
       harvestDate.setHours(0, 0, 0, 0);
 
       const daysUntilHarvest = Math.ceil((harvestDate - today) / (1000 * 60 * 60 * 24));
-      
+
       // Function to check if notification already exists
       const notificationExists = (message) => {
-        return existingNotifications.some(n => 
-          n.plant_name === plant.plant_name && 
+        return existingNotifications.some(n =>
+          n.plant_name === plant.plant_name &&
           n.message === message &&
           new Date(n.harvest_date).toDateString() === new Date(plant.expected_harvest_date).toDateString()
         );
@@ -316,7 +317,7 @@ const Rhydro = () => {
           if (notificationsToCreate[0]) {
             showNotificationToast(notificationsToCreate[0].message);
           }
-          
+
           // Explicitly fetch notifications after creating new ones
           fetchNotifications();
         }
@@ -362,6 +363,9 @@ const Rhydro = () => {
   };
 
   const handleCheckboxChange = (id) => {
+    // Clear any previous validation errors when selections change
+    setValidationError(null);
+
     setSelectedRows((prevSelectedRows) =>
       prevSelectedRows.includes(id)
         ? prevSelectedRows.filter((rowId) => rowId !== id)
@@ -371,15 +375,38 @@ const Rhydro = () => {
 
   const handleTransfer = async () => {
     try {
-      const rowsToTransfer = data
-        .filter((record) => selectedRows.includes(record.id))
-        .map((record) => ({
-          growth_site: record.growth_site,
-          plant_name: record.plant_name,
-          registration_id: record.id,
-          harvest_duration: record.harvest_duration,
-          date_created: record.date_created,
-        }));
+      // Clear any previous validation errors
+      setValidationError(null);
+
+      // Get today's date (at midnight for comparison)
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      // Get the selected records and check if any of them have harvest dates in the future
+      const selectedRecords = data.filter((record) => selectedRows.includes(record.id));
+      const prematureHarvests = selectedRecords.filter(record => {
+        const harvestDate = new Date(record.expected_harvest_date);
+        harvestDate.setHours(0, 0, 0, 0);
+        return harvestDate > today;
+      });
+
+      // If there are plants with future harvest dates, show validation error and abort
+      if (prematureHarvests.length > 0) {
+        const plantNames = prematureHarvests.map(p => p.plant_name).join(", ");
+        setValidationError(
+          ` ${plantNames} Cannot harvest plants before their expected harvest date. `
+        );
+        return;
+      }
+
+      // Continue with the transfer process for plants that are ready
+      const rowsToTransfer = selectedRecords.map((record) => ({
+        growth_site: record.growth_site,
+        plant_name: record.plant_name,
+        registration_id: record.id,
+        harvest_duration: record.harvest_duration,
+        date_created: record.date_created,
+      }));
 
       const { error: insertError } = await supabase.from('harvest').insert(rowsToTransfer);
 
@@ -399,7 +426,7 @@ const Rhydro = () => {
       }
 
       // Create harvest notification
-      const harvestedPlants = data.filter((record) => selectedRows.includes(record.id));
+      const harvestedPlants = selectedRecords;
 
       // Create notifications for harvested plants
       const harvestNotifications = harvestedPlants.map(plant => ({
@@ -412,7 +439,7 @@ const Rhydro = () => {
         const { error: notifError } = await supabase
           .from('date_notifications')
           .insert(harvestNotifications);
-          
+
         if (notifError) {
           console.error('Error creating harvest notifications:', notifError.message);
         } else {
@@ -439,6 +466,7 @@ const Rhydro = () => {
 
     } catch (err) {
       console.error('Unexpected error during data transfer and deletion:', err);
+      setValidationError('An unexpected error occurred while processing your request.');
     }
   };
 
@@ -494,6 +522,9 @@ const Rhydro = () => {
     phDate.setHours(phDate.getHours() + 8); // Adjust to UTC+8
 
     setSelectedDate(phDate);
+
+    // Clear any validation errors when opening a new date
+    setValidationError(null);
 
     // Fetch records for the selected date
     setModalFetchingData(true);
@@ -575,6 +606,9 @@ const Rhydro = () => {
 
     setSelectedDate(phDate);
 
+    // Clear any validation errors when opening a new date
+    setValidationError(null);
+
     // Set modal fetching data flag instead of global loading
     setModalFetchingData(true);
     try {
@@ -613,6 +647,7 @@ const Rhydro = () => {
   const closeModal = () => {
     setIsModalOpen(false);
     setIsModalPinned(false); // Reset the pinned state when closing
+    setValidationError(null); // Clear any validation errors when closing
   };
 
   const toggleNotifications = () => {
@@ -688,6 +723,17 @@ const Rhydro = () => {
       month: 'short',
       day: '2-digit'
     }).format(date);
+  };
+
+  // Check if a plant is ready for harvest (expected_harvest_date today or earlier)
+  const isPlantReadyForHarvest = (harvestDate) => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const plantHarvestDate = new Date(harvestDate);
+    plantHarvestDate.setHours(0, 0, 0, 0);
+
+    return plantHarvestDate <= today;
   };
 
   // Only show loading indicator during initial data fetch
@@ -771,6 +817,12 @@ const Rhydro = () => {
                 day: 'numeric'
               })}`}</h2>
 
+              {validationError && (
+                <div className="validation-error">
+                  <p>{validationError}</p>
+                </div>
+              )}
+
               {modalFetchingData ? (
                 <div className="modal-loading">Loading records...</div>
               ) : (
@@ -786,56 +838,51 @@ const Rhydro = () => {
                         <th>Duration</th>
                         <th>Created</th>
                         <th>Harvest Date</th>
+                        <th>Status</th>
                       </tr>
                     </thead>
                     <tbody>
-                      {recordsForDate.map((record) => (
-                        <tr key={record.id}>
-                          <td>
-                            <input
-                              type="checkbox"
-                              checked={selectedRows.includes(record.id)}
-                              onChange={() => handleCheckboxChange(record.id)}
-                            />
-                          </td>
-                          <td>{record.plant_name}</td>
-                          <td style={{ color: record.growth_site === "Hydroponics" ? "blue" : "green" }}>
-                            {record.growth_site}
-                          </td>
-                          <td>{record.id}</td>
-                          <td>{record.location}</td>
-                          <td>
-                            {record.harvest_duration
-                              ? `${record.harvest_duration} ${record.harvest_duration == 1 ? 'day' : 'days'}`
-                              : 'N/A'}
-                          </td>
-                          <td>{formatDate(record.date_created)}</td>
-                          <td>{formatDate(record.expected_harvest_date)}</td>
-                        </tr>
-                      ))}
+                      {recordsForDate.map((record) => {
+                        const ready = isPlantReadyForHarvest(record.expected_harvest_date);
+                        return (
+                          <tr key={record.id} className={ready ? '' : 'not-ready-row'}>
+                            <td>
+                              <input
+                                type="checkbox"
+                                checked={selectedRows.includes(record.id)}
+                                onChange={() => handleCheckboxChange(record.id)}
+                              />
+                            </td>
+                            <td>{record.plant_name}</td>
+                            <td style={{ color: record.growth_site === "Hydroponics" ? "blue" : "green" }}>
+                              {record.growth_site}
+                            </td>
+                            <td>{record.id}</td>
+                            <td>{record.location}</td>
+                            <td>{record.harvest_duration}</td>
+                            <td>{formatDate(record.date_created)}</td>
+                            <td>{formatDate(record.expected_harvest_date)}</td>
+                            <td>{ready ? 'Ready for harvest' : 'Not ready'}</td>
+                          </tr>
+                        );
+                      })}
                     </tbody>
                   </table>
                 </div>
               )}
 
-              <div className="modal-actions" style={{ marginTop: '1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <div>
-                  {selectedRows.length > 0 && (
-                    <span className="selected-count">
-                      {selectedRows.length} plant{selectedRows.length !== 1 ? 's' : ''} selected
-                    </span>
-                  )}
-                </div>
-                <div>
+              <br></br>
+
+              {selectedRows.length > 0 && (
+                <div className="modal-actions">
                   <button
                     className="transfer-button"
                     onClick={handleTransfer}
-                    disabled={selectedRows.length === 0}
                   >
                     Harvest Selected Plants
                   </button>
                 </div>
-              </div>
+              )}
             </div>
           </div>
         </div>
@@ -843,11 +890,11 @@ const Rhydro = () => {
 
       <div className="legend">
         <div className="legend-item">
-          <span className="legend-color soil-color"></span>
+          <div className="legend-color soil"></div>
           <span>Soil Based</span>
         </div>
         <div className="legend-item">
-          <span className="legend-color hydro-color"></span>
+          <div className="legend-color hydro"></div>
           <span>Hydroponics</span>
         </div>
       </div>

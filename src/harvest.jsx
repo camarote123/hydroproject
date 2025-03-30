@@ -171,7 +171,7 @@ const Harvest = () => {
 
 
       <div >
-        <table border="1" style={{ width: '100%', borderCollapse: 'collapse' }}>
+        <table className = 'harvesttable' border="1" style={{ width: '1200px', borderCollapse: 'collapse' }}>
           <thead>
             <tr>
               <th>Growth Site</th>
