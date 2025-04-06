@@ -325,7 +325,7 @@ const Soil = () => {
 
       {/* Display list of plants */}
       <div className='container3'>
-        <table border="1" style={{ width: '100%', borderCollapse: 'collapse' }}>
+        <table className="soiltable" border="1" style={{ width: '100%', borderCollapse: 'collapse' }}>
           <thead>
             <tr>
               <th>Plant Name</th>

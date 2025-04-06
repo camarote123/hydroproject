@@ -162,6 +162,7 @@ button:focus {
 display: flex;
 justify-content: center;
 width: 100%; /* Make the container full width */
+max-width: 1200px;
 padding: 10px; /* Optional padding around the table */
 box-sizing: border-box; /* Include padding in the width/height calculation */
 border-collapse: collapse;
@@ -357,7 +358,21 @@ table {
 
 .hydrotable{
   width: 100%;
-  max-width: 1000px;
+  max-width: 1200px;
+  border-collapse: collapse;
+  margin-top: 20px;
+  background-color: #ffffff;
+  border-radius: 5px;
+  overflow: hidden;
+  box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
+  margin-bottom: 90px;
+
+
+}
+
+.soiltable{
+  width: 100%;
+  max-width: 1200px;
   border-collapse: collapse;
   margin-top: 20px;
   background-color: #ffffff;
@@ -370,9 +385,10 @@ table {
 }
 
 
+
 .harvesttable{
   width: 100%;
-  max-width: 1000px;
+  max-width: 1200px;
   border-collapse: collapse;
   margin-top: 20px;
   background-color: #ffffff;

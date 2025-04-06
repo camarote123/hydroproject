@@ -38,7 +38,7 @@ h1 {
   justify-content: center;
   align-items: center;
   width: 100%;
-  max-width: 1000px; /* Slightly increased for better spacing */
+  max-width: 1200px; /* Slightly increased for better spacing */
   padding: 1.5rem;
   background: #ffffff;
   border-radius: 16px; /* More rounded corners */
@@ -57,7 +57,7 @@ h1 {
 /* React Calendar Styles */
 .react-calendar {
   width: 100%;
-  max-width: 1000px;
+  max-width: 1200px;
   font-family: 'Inter', sans-serif;
   border: none;
   border-radius: 12px;
