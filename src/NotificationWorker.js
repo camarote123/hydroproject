@@ -16,11 +16,13 @@ self.onmessage = function(e) {
     
     // Also trigger an immediate check
     self.postMessage({ type: 'check_notifications' });
+    console.log('Notification worker started with interval:', interval);
     
   } else if (e.data.action === 'stop') {
     if (checkInterval) {
       clearInterval(checkInterval);
       checkInterval = null;
+      console.log('Notification worker stopped');
     }
   }
 };
