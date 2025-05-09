@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { FaBell } from "react-icons/fa";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { supabase } from "./createClient";
-import "./Navbar2.css";
+import "./navbar2.css";
 
 const Navbar2 = ({ sidebarOpen }) => {
   const navigate = useNavigate();
