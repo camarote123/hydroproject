@@ -194,7 +194,7 @@ const Dashboard = () => {
   const fetchFeederData = async () => {
     try {
       const { data, error } = await supabase
-        .from('feeder')
+        .from('feeder1')
         .select('*')
         .order('created_at', { ascending: false });
 
@@ -622,8 +622,8 @@ const CustomPpmBar = (props) => {
             >
               <h3>Water Temperature</h3>
               <div className="level-indicators">
-                <span className="indicator high">High</span>
-                <span className="indicator low">Low</span>
+                <span className="indicator high">Low</span>
+                <span className="indicator low">High</span>
               </div>
               <ResponsiveContainer width="100%" height={220}>
                 <PieChart>
