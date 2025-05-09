@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { FaBars, FaCalendar, FaClipboardList, FaHome, FaLeaf, FaSeedling, FaTimes, FaUsers, FaWater, FaWifi } from "react-icons/fa";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import "./Navbar.css";
 import { supabase } from './createClient'; // Ensure Supabase is correctly configured
+import "./navbar.css";
 import logo from "/src/assets/logo.png";
 
 const Navbar = () => {
