@@ -66,9 +66,8 @@ const AppContent = () => {
 
       <Routes>
         {/* Redirect root ("/") to login */}
-        <Route path="/" element={<Navigate replace to="/login" />} />
-        <Route path="/login" element={<Login />} />
-        
+        <Route path="/" element={<Navigate replace to="/Dashboard" />} />
+     
         {/* Protected Routes */}
         <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
         <Route path="/users" element={<ProtectedRoute><Users /></ProtectedRoute>} />
